@@ -3,11 +3,11 @@ module.exports = function (config) {
         basePath: '',
         frameworks: ['jasmine'],
         files: [
-        'src/setupTests.js', // carga configuración previa (RTL, matchers, cleanup)
+        'src/setupTests.karma.js', // carga configuración previa (RTL, matchers, cleanup)
         'src/**/*.spec.js' // busca tests en src/
         ],
         preprocessors: {
-        'src/setupTests.js': ['webpack'],
+        'src/setupTests.karma.js': ['webpack'],
         'src/**/*.spec.js': ['webpack']
         },
         webpack: {
