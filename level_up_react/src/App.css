@@ -1,38 +1,125 @@
+/* Reset y estilos base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
+}
+
+.main-content {
+  flex: 1;
+  padding-top: 80px; /* Compensar header fixed */
+}
+
+/* Variables CSS - Mantener consistencia con proyecto original */
+:root {
+  --colorVerde: #00ff00;
+  --colorVerdeOscuro: #00cc00;
+  --colorAzul: #0066ff;
+  --colorGrisOscuro: #1a1a1a;
+  --colorBlanco: #ffffff;
+  --colorNegro: #000000;
+  --font-encabezado: 'Orbitron', sans-serif;
+  --font-principal: 'Arial', sans-serif;
+  --font-secundaria: 'Arial', sans-serif;
+}
+
+/* Estilos globales */
+body {
+  font-family: var(--font-principal);
+  background-color: var(--colorGrisOscuro);
+  color: var(--colorBlanco);
+  line-height: 1.6;
+}
+
+/* Enlaces globales */
+a {
+  color: var(--colorAzul);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--colorVerde);
+}
+
+/* Botones globales */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+/* Utilidades */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mt-4 {
+  margin-top: 2rem;
+}
+
+.mb-4 {
+  margin-bottom: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-content {
+    padding-top: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding-top: 60px;
+  }
+}
+
+/* Loading states */
+.loading {
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  height: 200px;
 }
 
-.App-link {
-  color: #61dafb;
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 4px solid var(--colorVerde);
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Estados de error */
+.error {
+  color: #ff4444;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Estados vacíos */
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #888;
 }

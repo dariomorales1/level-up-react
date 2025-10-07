@@ -1,0 +1,92 @@
+.footer{
+  background: var(--colorGrisOscuro);
+  color: var(--colorBlanco);
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+
+.footer_container{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 16px 24px;
+}
+
+.footer_top{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 768px){
+  .footer_top{ grid-template-columns: 1.2fr 1fr 1.2fr; }
+}
+
+.footer-col{ min-width: 0; }
+.footer_logo{ height: 100px; filter: none; }
+.footer_brand{ margin-bottom: 14px; }
+
+.heading{
+  font-family: var(--font-encabezado);
+  color: var(--colorVerde);
+  font-size: 1rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: .75rem;
+}
+
+.footer_label{
+  font-size: .9rem;
+  color: rgba(255,255,255,.8);
+  margin: .25rem 0 .5rem;
+}
+
+.social{ display:flex; gap:10px; margin-bottom:14px; }
+
+.social_btn{
+  width:36px; height:36px; border-radius:50%;
+  display:inline-flex; align-items:center; justify-content:center;
+  background: var(--colorGrisOscuro);
+  border: 1px solid rgba(255,255,255,.12);
+  color: var(--colorBlanco);
+  text-decoration:none;
+  transition: transform .15s ease, filter .2s ease;
+}
+
+.links, .contacto{ list-style: none; padding-left: 0; }
+.links li + li, .contacto li + li{ margin-top: .45rem; }
+
+.links a{
+  color: rgba(255,255,255,.85);
+  text-decoration: none;
+  border-bottom: 1px dotted transparent;
+  transition: color .2s ease, border-color .2s ease;
+}
+
+.contacto li, .contacto a{
+  color: rgba(255,255,255,.85);
+  text-decoration: none;
+  word-break: break-word;
+}
+
+.divider{
+  border: none;
+  height: 1px;
+  background: rgba(255,255,255,.08);
+  margin: 22px 0;
+}
+
+.footer_bajo{
+  display:flex; flex-direction: column; gap: 14px;
+  align-items:center; justify-content: space-between;
+}
+
+@media (min-width: 768px){
+  .footer_bajo{ flex-direction: row; }
+}
+
+.derechosreservados{
+  color: rgba(255,255,255,.6);
+  text-align:center;
+}
+
+.pagos{ display:flex; align-items:center; gap:14px; }
+.pagos img{ height: 100px; object-fit: contain; filter: none; }
