@@ -1,8 +1,9 @@
 import React from 'react';
 import ProductCard from './ProductCard';
-import './ProductGrid.css';
+import '../styles/components/productGridStyles.css';
 
-const ProductGrid = () => {
+
+export default function ProductGrid () {
     return (
         <div className="productosContainer" id="destacadosContainer">
             <ProductCard />
@@ -10,5 +11,3 @@ const ProductGrid = () => {
         </div>
     );
 };
-
-export default ProductGrid;

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Header.css';
+import '../styles/components/headerStyles.css';
 
-const Header = () => {
+export default function Header () {
     const [currentUser, setCurrentUser] = useState(null);
     const [cartOpen, setCartOpen] = useState(false);
     const [cartItems, setCartItems] = useState([]);
@@ -218,5 +218,3 @@ const Header = () => {
         </>
     );
 };
-
-export default Header;

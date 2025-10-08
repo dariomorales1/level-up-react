@@ -1,7 +1,7 @@
 import React from 'react';
-import './ProductCard.css';
+import '../styles/components/productCardStyles.css';
 
-const ProductCard = () => {
+export default function ProductCard () {
     return (
         <div className="card">
             {/* Tarjeta de producto aquí */}
@@ -9,5 +9,3 @@ const ProductCard = () => {
         </div>
     );
 };
-
-export default ProductCard;
