@@ -1,11 +1,11 @@
-import jasmineDom from '@testing-library/jasmine-dom';
+//import jasmineDom from '@testing-library/jasmine-dom';//
 import { cleanup } from '@testing-library/react';
-
-beforeAll(() => {
+//
+//beforeAll(() => {//
   // Registra todos los matchers: toBeInTheDocument, toHaveTextContent, etc.
-    jasmine.addMatchers(jasmineDom);
-});
+   // jasmine.addMatchers(jasmineDom);
+//});
 
-afterEach(() => {
+//afterEach(() => {
     cleanup();
-});
+//});
