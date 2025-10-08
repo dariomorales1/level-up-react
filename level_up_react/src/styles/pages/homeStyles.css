@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
+
+/* Variables CSS - Asegurar que estén definidas */
+:root {
+    --colorBlanco: #ffffff;
+    --colorVerde: #00ff00;
+    --colorVerdeOscuro: #00cc00;
+    --colorAzul: #0066ff;
+    --colorGrisOscuro: #1a1a1a;
+    --colorNegro: #000000;
+}
+
+.page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Estilos para el título Destacados */
+.titulo {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--colorBlanco);
+    text-align: center;
+    margin: 2rem 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* Separadores */
+hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--colorVerde), transparent);
+    margin: 2rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .row .col-2 {
+        display: none;
+    }
+    
+    .row .col-8 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        padding: 0 15px;
+    }
+    
+    .titulo {
+        font-size: 1.5rem;
+        margin: 1.5rem 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .titulo {
+        font-size: 1.25rem;
+        margin: 1rem 0;
+    }
+}
