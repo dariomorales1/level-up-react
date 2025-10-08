@@ -117,7 +117,7 @@ export default function Header () {
                                     </a>
                                     <a 
                                         id="logoutBtn" 
-                                        className="nav-link active btnAgregarHeader" 
+                                        className="nav-link active btnHeader" 
                                         href="#"
                                         onClick={(e) => {
                                             e.preventDefault();
@@ -130,12 +130,8 @@ export default function Header () {
                                 </>
                             ) : (
                                 <>
-                                    <a className="nav-link active btnAgregarHeader" href="/login">
-                                        Ingresar
-                                    </a>
-                                    <a className="nav-link active btnAgregarHeader" href="/register">
-                                        Registrarse
-                                    </a>
+                                    <NavButton text="Ingresar" to="/login" className="btnHeader"/>
+                                    <NavButton text="Registrarse" to="/register" className="btnAgregarHeader"/>
                                 </>
                             )}
                         </div>
