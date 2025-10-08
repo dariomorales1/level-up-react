@@ -12,10 +12,10 @@ export default function Footer () {
                 <div className="footer_top">
                     <div className="footer-col">
                         <div className="footer_brand">
-                            <img src={image} alt='logo' width='80px' />
+                            <img src={image} alt='logo' width='140px' />
                         </div>
 
-                        <p className="footer_label">Síguenos:</p>
+                        <p className="footer_label">Síguenos en nuestras redes</p>
                         <div className="social">
                             <a 
                                 href="https://instagram.com/levelupgamer.cl" 
@@ -98,8 +98,8 @@ export default function Footer () {
                     </div>
                     <div className="pagos">
                         
-                        <img src={logoML} alt='logo' width='40px' />
-                        <img src={logoWP} alt='logo' width='40px' />
+                        <img src={logoML} alt='logo' width='80px' />
+                        <img src={logoWP} alt='logo' width='80px' />
                     </div>
                 </div>
             </div>

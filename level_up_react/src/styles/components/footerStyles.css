@@ -20,7 +20,13 @@
   .footer_top{ grid-template-columns: 1.2fr 1fr 1.2fr; }
 }
 
-.footer-col{ min-width: 0; }
+.footer-col{ 
+  margin: 0 auto;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .footer_logo{ height: 100px; filter: none; }
 .footer_brand{ margin-bottom: 14px; }
 
