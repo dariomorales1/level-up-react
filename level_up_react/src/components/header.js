@@ -1,18 +1,8 @@
-<<<<<<< HEAD
-import React from "react";
-import '../styles/components/headerStyles.css';
-
-export function HeaderNav() {
-    return (
-        <header className="header-nav">
-            <h1>Level Up React</h1>
-            <p>Hola</p>
-        </header>
-=======
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/components/headerStyles.css';
 import image from '../assets/icons/icono.png';
+import NavButton from './navButton';
 
 export default function Header () {
     const [currentUser, setCurrentUser] = useState(null);
@@ -108,12 +98,8 @@ export default function Header () {
 
                     <div className="navBarButtons">
                         <div className="navBarButtonsContainer">
-                            <a className="nav-link active btnAgregarHeader" href="/">
-                                Inicio
-                            </a>
-                            <a className="nav-link active btnAgregarHeader" href="/catalogo">
-                                Catalogo
-                            </a>
+                            <NavButton text="Inicio" to="/"/>
+                            <NavButton text="Catalogo" to="/catalogo"/>
                         </div>
 
                         <div className="navBarButtonsContainer">
@@ -222,6 +208,5 @@ export default function Header () {
                 </div>
             </div>
         </>
->>>>>>> c33efd2ebd64a111d7ceb56eef3da1a555e8e887
     );
 };
