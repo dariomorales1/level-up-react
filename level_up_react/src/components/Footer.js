@@ -1,6 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/components/footerStyles.css';
+import image from '../assets/icons/icono.png';
+import logoML from '../assets/icons/mercado-pago.png';
+import logoWP from '../assets/icons/webpay.png';
 
 export default function Footer () {
     return (
@@ -9,11 +12,7 @@ export default function Footer () {
                 <div className="footer_top">
                     <div className="footer-col">
                         <div className="footer_brand">
-                            <img 
-                                src="/assets/icons/icono.png" 
-                                alt="Level-Up Gamer" 
-                                className="footer_logo" 
-                            />
+                            <img src={image} alt='logo' width='80px' />
                         </div>
 
                         <p className="footer_label">Síguenos:</p>
@@ -98,14 +97,9 @@ export default function Footer () {
                         © Level-Up Gamer, 2025. Todos los derechos reservados.
                     </div>
                     <div className="pagos">
-                        <img 
-                            src="/assets/img/pagos/mercado-pago.png" 
-                            alt="Mercado Pago" 
-                        />
-                        <img 
-                            src="/assets/img/pagos/webpay.png" 
-                            alt="WebPay" 
-                        />
+                        
+                        <img src={logoML} alt='logo' width='40px' />
+                        <img src={logoWP} alt='logo' width='40px' />
                     </div>
                 </div>
             </div>

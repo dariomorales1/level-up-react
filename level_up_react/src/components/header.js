@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/components/headerStyles.css';
+import image from '../assets/icons/icono.png';
 
 export default function Header () {
     const [currentUser, setCurrentUser] = useState(null);
@@ -89,13 +90,7 @@ export default function Header () {
                 <nav className="navbarPpal">
                     <div className="navbarFirstContainer">
                         <a className="navbar-brand logoName" href="/" id="logo">
-                            <img 
-                                src="/assets/icons/icono.png" 
-                                alt="icono" 
-                                width="60" 
-                                height="auto" 
-                                className="d-inline-block align-text-center" 
-                            />
+                            <img src={image} alt='logo' width='40px' />
                             Level-Up
                         </a>
                     </div>
