@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
-import Header from '../components/Header';
+import Header from '../components/header';
 import Carousel from '../components/Carousel';
 import ProductGrid from '../components/ProductGrid';
 import Footer from '../components/Footer';
-import './homeStyles.css';
+import '../styles/pages/homeStyles.css';
 
-const Home = () => {
+export default function Home () {
     
     useEffect(() => {
         // Cargar Bootstrap JS
@@ -40,5 +40,3 @@ const Home = () => {
         </div>
     );
 };
-
-export default Home;

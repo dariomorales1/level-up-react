@@ -1,7 +1,7 @@
 import React from 'react';
-import './Carousel.css';
+import '../styles/components/carouselStyles.css';
 
-const Carousel = () => {
+export default function Carousel () {
     return (
         <div id="carrousel">
             {/* Contenido del carousel aquí */}
@@ -9,5 +9,3 @@ const Carousel = () => {
         </div>
     );
 };
-
-export default Carousel;
