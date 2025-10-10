@@ -1,5 +1,6 @@
 import React from 'react';
 import '../styles/components/cardStyles.css';
+import { showToast } from './toast';
 
 export default function Card ({nombre, imgLink, descripcionCorta, precio} = {}) {
     return (
@@ -14,7 +15,7 @@ export default function Card ({nombre, imgLink, descripcionCorta, precio} = {}) 
                 </div>
             </div>
             <div className="cardFooter">
-                <a className="btnAgregar">Añadir al carrito</a>
+                <button className="btnAgregar" onClick={() => showToast("Se ha ingresado " + nombre + " al carrito")}>Añadir al carrito</button>
             </div>
         </div>
         
