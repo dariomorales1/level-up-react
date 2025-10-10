@@ -1,5 +1,6 @@
 import React from 'react';
 
+
 const Terminos = () => {
     return (
         <div className="container mt-4">
