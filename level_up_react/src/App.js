@@ -1,11 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './pages/Home.js';
+import Home from './pages/home';
 import Contacto from './pages/Contacto';
 import Garantia from './pages/Garantia';
 import Terminos from './pages/Terminos';
 import Blog from './pages/Blog';
-import Catalogo from './pages/Catalogo.js';
+import Catalogo from './pages/catalogo';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Cuenta from './pages/Cuenta';
