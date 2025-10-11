@@ -18,6 +18,7 @@ export default function CardsContainer ({ productos = [] }) {
 
                 <Card
                     key={p["Código"] || p.id}
+                    codigo={p["Código"] || p.id}
                     nombre={p.Nombre}
                     imgLink={require(`../${p.imgLink}`)}
                     descripcionCorta={p["Descripción Corta"]}
