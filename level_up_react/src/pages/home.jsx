@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
-import Header from '../components/header';
 import MyCarousel from '../components/Carousel';
 import CardsContainer from '../components/gridCards';
-import Footer from '../components/footer';
 import '../styles/pages/homeStyles.css';
 import productosDestacados from '../assets/productosDestacados';
 
@@ -23,7 +21,6 @@ export default function Home () {
 
     return (
         <div className="page">
-            <Header />
             <main>
                 <div className="container-fluid">
                     <div className="row">
@@ -40,7 +37,6 @@ export default function Home () {
                 </div>
                 
             </main>
-            <Footer />
         </div>
     );
 };

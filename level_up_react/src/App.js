@@ -11,14 +11,17 @@ import Register from './pages/Register';
 import Cuenta from './pages/Cuenta';
 import Producto from './pages/Producto';
 import './App.css';
+import Header from './components/header';
+import Footer from './components/footer';
 
 function App() {
     return (
         <Router>
+            <Header />
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/catalogo" element={<Catalogo />} />
-                    <Route path="/producto/:id" element={<Producto />} />
+                    <Route path="/producto.html" element={<Producto />} />
                     <Route path="/contacto" element={<Contacto />} />
                     <Route path="/garantia" element={<Garantia />} />
                     <Route path="/terminos" element={<Terminos />} />
@@ -27,6 +30,7 @@ function App() {
                     <Route path="/register" element={<Register />} />
                     <Route path="/cuenta" element={<Cuenta />} />
                 </Routes>
+            <Footer />
         </Router>
     );
 }
