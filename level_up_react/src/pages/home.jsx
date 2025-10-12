@@ -22,20 +22,17 @@ export default function Home () {
     return (
         <div className="page">
             <main>
-                <div className="container-fluid">
-                    <div className="row">
-                        <div className="col-2"></div>
-                        <div className="col-8">
-                            <MyCarousel />
-                            <hr />
-                            <h1 className="titulo">Destacados</h1>
-                            <hr />
-                            <CardsContainer productos={productosDestacados} />
-                        </div>
-                        <div className="col-2"></div>
+                <div className="row">
+                    <div className="col-2"></div>
+                    <div className="col-8">
+                        <MyCarousel />
+                        <hr />
+                        <h1 className="titulo">Destacados</h1>
+                        <hr />
+                        <CardsContainer productos={productosDestacados}/>
                     </div>
+                    <div className="col-2"></div>
                 </div>
-                
             </main>
         </div>
     );
