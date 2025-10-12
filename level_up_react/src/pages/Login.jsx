@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import '../styles/pages/authStyles.css';
-import { showToast } from '../components/toast';
+import showToast from '../components/toast';
 
 const Login = () => {
   const [formData, setFormData] = useState({

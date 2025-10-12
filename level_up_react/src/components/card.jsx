@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/components/cardStyles.css';
-import { showToast } from './toast';
+import showToast from './toast.jsx';
 
 export default function Card ({codigo, nombre, imgLink, descripcionCorta, precio} = {}) {
 

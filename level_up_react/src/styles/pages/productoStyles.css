@@ -12,17 +12,19 @@ main {
 }
 
 .cardDetalle {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
+    display: grid;
+    width: 90%;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
     align-items: center;
     justify-content: center;
 }
 
 .cardDetalle img {
-    width: 400px;
-    height: 400px;
-    object-fit: cover;
+    width: 100%;
+    height: auto;
+    max-height: 500px;
+    object-fit: contain;
     background-color: white;
 }
 
@@ -33,8 +35,15 @@ main {
     color: var(--colorBlanco);
 }
 
-.productInfo h2 {
-    font-size: 2rem;
+.productName {
+    font-size: 2.5rem;
+    width: 100%;
+    text-align: center;
+}
+
+.description {
+    font-size: 1.2rem;
+    text-align: justify;
 }
 
 .compra {
@@ -44,9 +53,19 @@ main {
     gap: 20px;
 }
 
+.btnAgregar {
+    margin: 0;
+}
+
 .precio {
+    font-size: 1.25rem;
     color: var(--colorVerde);
     margin: auto 0;
+}
+
+.estrellas {
+    color: var(--colorVerde);
+    font-size: 1.5rem;
 }
 
 /* Separadores */
@@ -88,6 +107,16 @@ hr {
 tbody {
     display: flex;
     flex-direction: column;
+}
+tbody tr {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+}
+
+.line {
+    width: 100%;
+    text-align: center;
 }
 
 
