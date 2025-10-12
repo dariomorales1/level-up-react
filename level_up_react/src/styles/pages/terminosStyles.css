@@ -1,0 +1,31 @@
+.terminos { color: #d6d6d6; }
+
+.terminos_contenido{
+  background: var(--colorGrisOscuro);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.terminos_lista{
+  counter-reset: item;
+  list-style: none;
+  padding-left: 0;
+}
+
+.terminos_lista > li{
+  position: relative;
+  padding-left: 36px;
+  margin-bottom: 12px;
+  line-height: 1.55;
+}
+
+.terminos_lista > li::before{
+  counter-increment: item;
+  content: counter(item) ".";
+  position: absolute;
+  left: 0; top: 0;
+  color: var(--colorVerde);
+  font-family: var(--font-encabezado);
+  font-weight: 700;
+}

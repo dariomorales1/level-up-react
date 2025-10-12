@@ -5,7 +5,7 @@
     align-items: center;
     justify-content: center;
     position: fixed;
-    width: 100vw;
+    width: 100%;
     top: 0;
     z-index: 100;
 }
@@ -29,11 +29,11 @@
     gap: 5px;
 }
 
-#logoImage {
-    /*background-image: url(/assets/icons/icono.png);*/
-}
 
 .logoName {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-family: var(--font-encabezado);
     font-weight: bold;
     font-size: 20px;
@@ -81,7 +81,7 @@
     }
 }
 
-.btnAgregarHeader {
+.btnHeader {
     margin: 0 auto;
     margin-bottom: 0;
     border: 1px solid var(--colorVerde);
@@ -98,10 +98,11 @@
         color 0.2s ease-in-out;
 }
 
-.btnAgregarHeader:hover {
+.btnHeader:hover {
     background-position: 0;
     color: #000;
 }
+
 
 /*carrito*/
 

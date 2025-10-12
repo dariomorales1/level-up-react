@@ -1,0 +1,98 @@
+main {
+    padding-top: 80px;
+}
+
+.productDetalle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: var(--colorGrisOscuro);
+    padding: 20px;
+}
+
+.cardDetalle {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.cardDetalle img {
+    width: 400px;
+    height: 400px;
+    object-fit: cover;
+    background-color: white;
+}
+
+.productInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    color: var(--colorBlanco);
+}
+
+.productInfo h2 {
+    font-size: 2rem;
+}
+
+.compra {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.precio {
+    color: var(--colorVerde);
+    margin: auto 0;
+}
+
+/* Separadores */
+hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--colorVerde), transparent);
+    width: 100%;
+}
+
+.detalles {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    width: 100%;
+    color: var(--colorBlanco);
+}
+
+.especificaciones, .comentarios {
+    border: 1px solid var(--colorVerde);
+    width: 45%;
+    text-align: center  ;
+    height: fit-content;
+}
+
+.especificaciones thead, .comentarios thead {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.1rem;
+    background-color: var(--colorVerde);
+    color: var(--colorNegro);
+}
+
+.especificaciones tr, .comentarios tr {
+    border-bottom: 1px solid var(--colorVerde);
+}
+
+tbody {
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+
+
+
+
