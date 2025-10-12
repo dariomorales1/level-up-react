@@ -42,6 +42,6 @@ export default function MyCarousel () {
                 alt="Cuarta imagen"
                 />
             </Carousel.Item>
-            </Carousel>
+        </Carousel>
     );
 };

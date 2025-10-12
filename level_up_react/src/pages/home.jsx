@@ -1,8 +1,13 @@
 import React, { useEffect } from 'react';
+<<<<<<< HEAD:level_up_react/src/pages/home.js
 import Header from '../components/header';
 import Carousel from '../components/Carousel';
 import ProductGrid from '../components/ProductGrid';
 import Footer from '../components/Footer';
+=======
+import MyCarousel from '../components/Carousel';
+import CardsContainer from '../components/gridCards';
+>>>>>>> ab4fa8621938f2d3ccf66f7c0d27fd99d351b5ad:level_up_react/src/pages/home.jsx
 import '../styles/pages/homeStyles.css';
 
 export default function Home () {
@@ -22,7 +27,6 @@ export default function Home () {
 
     return (
         <div className="page">
-            <Header />
             <main>
                 <div className="row">
                     <div className="col-2"></div>
@@ -36,7 +40,6 @@ export default function Home () {
                     <div className="col-2"></div>
                 </div>
             </main>
-            <Footer />
         </div>
     );
 };

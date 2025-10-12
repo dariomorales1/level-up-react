@@ -1,10 +1,23 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/components/cardStyles.css';
+import { showToast } from './toast';
 
-export default function Card ({nombre, imgLink, descripcionCorta, precio} = {}) {
+export default function Card ({codigo, nombre, imgLink, descripcionCorta, precio} = {}) {
+
+    const navigate = useNavigate();
+
+    const CardClick = () => {
+        navigate(`/producto.html?codigo=${codigo}`);
+    };
+    const AddToCart = (e) => {
+        e.stopPropagation();
+        showToast("Se ha ingresado " + nombre + " al carrito");
+    };
+
     return (
         <div className="card">
-            <div className="linkCard">
+            <div className="linkCard" onClick={CardClick}>
                 <img className="cardImg" src={imgLink}
                     alt={nombre}/>
                 <div className="card-body cardContainer">
@@ -14,7 +27,7 @@ export default function Card ({nombre, imgLink, descripcionCorta, precio} = {}) 
                 </div>
             </div>
             <div className="cardFooter">
-                <a className="btnAgregar">Añadir al carrito</a>
+                <button className="btnAgregar" onClick={AddToCart}>Añadir al carrito</button>
             </div>
         </div>
         
