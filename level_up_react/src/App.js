@@ -13,10 +13,12 @@ import Producto from './pages/Producto';
 import './App.css';
 import Header from './components/header';
 import Footer from './components/footer';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
     return (
         <Router>
+            <ScrollToTop />
             <Header />
                 <Routes>
                     <Route path="/" element={<Home />} />

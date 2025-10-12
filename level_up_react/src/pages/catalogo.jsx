@@ -1,7 +1,6 @@
 import React from 'react';
 import '../styles/pages/catalogoStyles.css';
 import Header from '../components/header';
-import Footer from '../components/footer';
 import CardsContainer from '../components/gridCards';
 
 import listaProductos from '../assets/listaProductos';
@@ -25,7 +24,6 @@ const Catalogo = () => {
                 </div>
                 
             </main>
-            <Footer />
         </div>
     );
 };
