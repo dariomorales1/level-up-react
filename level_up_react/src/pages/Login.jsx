@@ -1,20 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import '../styles/pages/authStyles.css';
-
-// Función showToast integrada directamente en el componente
-const showToast = (msg) => {
-    const toast = document.createElement("div");
-    toast.className = "toast";
-    toast.textContent = msg;
-    document.body.appendChild(toast);
-
-    setTimeout(() => toast.classList.add("show"), 10);
-    setTimeout(() => {
-        toast.classList.remove("show");
-        setTimeout(() => toast.remove(), 300);
-    }, 2000);
-};
+import { showToast } from '../components/toast';
 
 const Login = () => {
   const [formData, setFormData] = useState({
