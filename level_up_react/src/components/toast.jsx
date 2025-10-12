@@ -1,7 +1,7 @@
 import React from "react";
 import '../styles/components/toastStyles.css';
 
-export function showToast(msg) {
+export default function showToast(msg) {
     const toast = document.createElement("div");
     toast.className = "toast";
     toast.textContent = msg;

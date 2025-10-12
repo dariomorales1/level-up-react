@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import '../styles/pages/authStyles.css'; // Ajusta la ruta según tu estructura
-import { showToast } from "../components/toast";
+import showToast from "../components/toast";
 
-const Register = () => {
+export default function Register () {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -257,5 +257,3 @@ const Register = () => {
     </div>
   );
 };
-
-export default Register;

@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import '../styles/pages/productoStyles.css';
 import listaProductos from '../assets/listaProductos';
 import renderEstrellas from '../components/stars';
+import showToast from '../components/toast';
 
 const Producto = () => {
     const [searchParams] = useSearchParams();
@@ -11,6 +12,11 @@ const Producto = () => {
     const producto = listaProductos.find(p => 
         p["Código"] === codigo || p.id === codigo
     );
+
+    const AddToCart = (e) => {
+            e.stopPropagation();
+            showToast("Se ha ingresado " + producto.Nombre + " al carrito");
+        };
 
     
     
@@ -21,14 +27,14 @@ const Producto = () => {
                     <div className="col-1"></div>
                     <div className="col-10">
                         <section className="productDetalle">
+                            <h2 className='productName'>{producto.Nombre}</h2>
                             <div className="cardDetalle">
                                 <img src={require(`../${producto.imgLink}`)} alt={producto.Nombre} />
                                 <div className="productInfo">
-                                    <h2>{producto.Nombre}</h2>
-                                    <p>{producto['Descripción Larga']}</p>
+                                    <p className='description'>{producto['Descripción Larga']}</p>
                                     <section className='compra'>
                                         <p className='precio'><strong>Precio: $</strong>{producto.Precio}</p>
-                                        <button className="btnAgregar">Añadir al carrito</button>
+                                        <button className="btnAgregar" onClick={AddToCart}>Añadir al carrito</button>
                                     </section>
                                     </div>
                             </div>
@@ -47,7 +53,7 @@ const Producto = () => {
                                     <tbody>
                                         {producto.Especificaciones.map((espec, index) => (
                                             <tr key={index}>
-                                                <td>{espec}</td>
+                                                <td className='line'>{espec}</td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -61,7 +67,7 @@ const Producto = () => {
                                     <tbody>
                                         {producto.Comentarios.map((coments, index) => (
                                             <tr key={index}>
-                                                <td>{coments}</td>
+                                                <td className='line'>{coments}</td>
                                             </tr>
                                         ))}
                                     </tbody>
