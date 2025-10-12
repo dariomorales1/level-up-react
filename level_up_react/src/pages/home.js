@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
 import Header from '../components/header';
-import MyCarousel from '../components/Carousel';
-import CardsContainer from '../components/gridCards';
+import Carousel from '../components/Carousel';
+import ProductGrid from '../components/ProductGrid';
 import Footer from '../components/Footer';
 import '../styles/pages/homeStyles.css';
-import productosDestacados from '../assets/productosDestacados';
 
 export default function Home () {
     
@@ -25,20 +24,17 @@ export default function Home () {
         <div className="page">
             <Header />
             <main>
-                <div className="container-fluid">
-                    <div className="row">
-                        <div className="col-2"></div>
-                        <div className="col-8">
-                            <MyCarousel />
-                            <hr />
-                            <h1 className="titulo">Destacados</h1>
-                            <hr />
-                            <CardsContainer productos={productosDestacados} />
-                        </div>
-                        <div className="col-2"></div>
+                <div className="row">
+                    <div className="col-2"></div>
+                    <div className="col-8">
+                        <Carousel />
+                        <hr />
+                        <h1 className="titulo">Destacados</h1>
+                        <hr />
+                        <ProductGrid />
                     </div>
+                    <div className="col-2"></div>
                 </div>
-                
             </main>
             <Footer />
         </div>
