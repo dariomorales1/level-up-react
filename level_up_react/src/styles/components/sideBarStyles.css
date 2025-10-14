@@ -1,0 +1,22 @@
+.sideBar {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 300px;
+}
+
+.textSideBar {
+    width: 100%;
+    font-weight: bold;
+    text-align: center;
+    padding: 25px 0px;
+    cursor: pointer;
+    font-size: 16px;
+    border: 1px solid var(--colorAzul);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.textSideBar:hover{
+    background-color: var(--colorAzul);
+    color: var(--colorNegro);
+}
