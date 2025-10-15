@@ -1,11 +1,29 @@
 import React from 'react';
-import '../styles/pages/catalogoStyles.css';
+import { useState, useMemo } from 'react';
 import Header from '../components/header';
 import CardsContainer from '../components/gridCards';
-
+import NavbarProductos from '../components/navProductos';
 import listaProductos from '../assets/listaProductos';
 
-const Catalogo = () => {
+import '../styles/pages/catalogoStyles.css';
+
+
+    
+
+export default function Catalogo () {
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    
+    // Filtrar productos basado en la categoría seleccionada
+    const filteredProducts = useMemo(() => {
+        if (!selectedCategory) {
+        return listaProductos;
+        }
+        return listaProductos.filter(producto => producto.Categoría === selectedCategory);
+    }, [selectedCategory]);
+
+    const handleCategoryChange = (category) => {
+        setSelectedCategory(category);
+    };
     return (
         <div >
             <Header />
@@ -15,9 +33,15 @@ const Catalogo = () => {
                         <div className="col-2"></div>
                         <div className="col-8">
                             <hr />
-                            <h1 className="titulo">Catálogo de Producto</h1>
+                            <h1 className="titulo">
+                                Catálogo
+                            </h1>
+                            <h4 className='titulo2'>
+                                {selectedCategory ? `${selectedCategory}` : 'Todos los Productos'}
+                            </h4>
                             <hr />
-                            <CardsContainer productos={listaProductos} />
+                            <NavbarProductos onCategoryChange={handleCategoryChange} />
+                            <CardsContainer productos={filteredProducts} />
                         </div>
                         <div className="col-2"></div>
                     </div>
@@ -27,5 +51,3 @@ const Catalogo = () => {
         </div>
     );
 };
-
-export default Catalogo;
