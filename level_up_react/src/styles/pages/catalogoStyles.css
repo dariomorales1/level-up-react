@@ -1,0 +1,19 @@
+.titulo {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--colorBlanco);
+    text-align: center;
+    margin: 2rem 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.titulo2 {
+    font-family: 'Orbitron', sans-serif;
+    color: var(--colorVerde);
+    text-align: center;
+    margin: 2rem 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
