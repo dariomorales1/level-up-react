@@ -146,7 +146,7 @@
     background: var(--colorGrisOscuro); 
     color: var(--colorAzul);
     padding: 20px;                 /* el padding va en el panel, no en el contenedor */
-    box-shadow: -2px 0 20px var(--colorVerde);
+    box-shadow: -2px 0 20px var(--colorAzul);
     overflow-y: auto;
     font-size: 20px;
     font-weight: 600;
