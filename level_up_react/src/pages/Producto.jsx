@@ -28,6 +28,7 @@ const Producto = () => {
                     <div className="col-10">
                         <section className="productDetalle">
                             <h2 className='productName'>{producto.Nombre}</h2>
+                            <h2 className='productName'>{producto.Nombre}</h2>
                             <div className="cardDetalle">
                                 <img src={require(`../${producto.imgLink}`)} alt={producto.Nombre} />
                                 <div className="productInfo">
@@ -36,7 +37,7 @@ const Producto = () => {
                                         <p className='precio'><strong>Precio: $</strong>{producto.Precio}</p>
                                         <button className="btnAgregar" onClick={AddToCart}>Añadir al carrito</button>
                                     </section>
-                                    </div>
+                                </div>
                             </div>
                             <hr />
                             
