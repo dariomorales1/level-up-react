@@ -1,17 +1,31 @@
 import React from 'react';
+import { useApp } from '../context/AppContext';
 import { useNavigate } from 'react-router-dom';
 import '../styles/components/cardStyles.css';
 import showToast from './toast.jsx';
 
-export default function Card ({codigo, nombre, imgLink, descripcionCorta, precio} = {}) {
 
+
+export default function Card ({codigo, nombre, imgLink, descripcionCorta, precio} = {}) {
+    const { dispatchCart } = useApp();
     const navigate = useNavigate();
 
     const CardClick = () => {
         navigate(`/producto.html?codigo=${codigo}`);
     };
+
     const AddToCart = (e) => {
-        e.stopPropagation();
+    e.stopPropagation();
+    
+    // Crear objeto producto para el carrito
+    const product = {
+        id: codigo,
+        name: nombre,
+        price: precio,
+        image: imgLink
+        };
+        
+        dispatchCart({ type: 'ADD_TO_CART', payload: product });
         showToast("Se ha ingresado " + nombre + " al carrito");
     };
 
