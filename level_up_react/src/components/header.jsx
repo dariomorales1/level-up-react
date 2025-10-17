@@ -7,6 +7,8 @@ import NavButton from '../components/navButton';
 import CartDrawer from '../components/carrito';
 import '../styles/components/headerStyles.css';
 import image from '../assets/icons/icono.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
 
 export default function Header() {
     const [isCartOpen, setIsCartOpen] = useState(false);
@@ -44,7 +46,7 @@ export default function Header() {
                 <div className="navBarButtonsContainer">
                 {/* Botón Carrito */}
                 <button className="btnCarrito" onClick={openCart}>
-                    <i className="fa-solid fa-cart-shopping"></i>
+                    <FontAwesomeIcon icon={faCartShopping} className='carritoIcon' />
                     {cartItemsCount > 0 && (
                     <span className="cartBadge">{cartItemsCount}</span>
                     )}

@@ -66,9 +66,7 @@
 }
 
 .closeButton:hover {
-    color: #333;
-    background: #e9ecef;
-    border-radius: 50%;
+    animation: spin 0.5s ease-in-out;
 }
 
 .cartBody {
@@ -100,7 +98,7 @@
     background-image: linear-gradient(45deg, var(--colorGrisOscuro) 50%, var(--colorVerde) 50%);
     background-position: 100%;
     background-size: 400%;
-    color: #000);
+    color: #000;
     font-weight: bold;
     transition: 
         background 0.2s ease-in-out,
@@ -118,14 +116,14 @@
     display: flex;
     align-items: center;
     padding: 1rem;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--colorVerde);
     gap: 1rem;
 }
 
 .cartItemImage {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
     border-radius: 5px;
     background: #f8f9fa;
     padding: 5px;
@@ -138,11 +136,13 @@
 .itemName {
     font-weight: 500;
     margin-bottom: 0.25rem;
-    color: #333;
+    color: var(--colorBlanco);
+    font-size: 1rem;
+    font-weight: bold;
 }
 
 .itemPrice {
-    color: #666;
+    color: var(--colorBlanco);
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
 }
@@ -156,17 +156,20 @@
 .quantityBtn {
     width: 25px;
     height: 25px;
-    border: 1px solid #ddd;
-    background: white;
+    border: 1px solid var(--colorVerde);
+    background: var(--colorGrisOscuro);
     border-radius: 3px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--colorVerde);
+    transition: 0.3s ease background, 0.3s ease color;
 }
 
 .quantityBtn:hover {
-    background: #f8f9fa;
+    background: var(--colorVerde);
+    color: #000;
 }
 
 .quantityNumber {
@@ -178,7 +181,7 @@
 .removeButton {
     background: none;
     border: none;
-    color: #dc3545;
+    color: var(--colorVerde);
     font-size: 1.25rem;
     cursor: pointer;
     padding: 0.25rem;
@@ -186,13 +189,18 @@
 }
 
 .removeButton:hover {
-    background: #f8d7da;
+    animation: spin 0.5s ease-in-out;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .cartFooter {
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--colorVerde);
     padding: 1.5rem;
-    background: #f8f9fa;
+    background: var(--colorGrisOscuro);
 }
 
 .cartTotals {
@@ -203,15 +211,16 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 0.5rem;
-    color: #333;
+    color: var(--colorBlanco);
 }
 
 .totalRow.total {
     font-weight: bold;
     font-size: 1.1rem;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid var(--colorVerde);
     padding-top: 0.5rem;
     margin-top: 0.5rem;
+    letter-spacing: 1px;
 }
 
 .cartActions {
@@ -221,30 +230,52 @@
 }
 
 .btnSecondary {
-    background: #6c757d;
-    color: white;
-    border: none;
-    padding: 0.75rem;
+    margin: 0 auto;
+    margin-bottom: 0;
+    width: 100%;
+    border: 1px solid var(--colorVerde);
+    padding: 5px 10px;
     border-radius: 5px;
-    cursor: pointer;
+    text-decoration: none;
+    background-image: linear-gradient(45deg, var(--colorVerde) 50%, var(--colorGrisOscuro) 50%);
+    background-position: 100%;
+    background-size: 400%;
+    color: var(--colorVerde);
+    font-weight: bold;
+    transition: 
+        background 0.2s ease-in-out,
+        color 0.2s ease-in-out;
 }
 
 .btnSecondary:hover {
-    background: #545b62;
+    background-position: 0;
+    color: #000;
 }
 
 .btnPrimary {
-    background: #28a745;
-    color: white;
-    border: none;
-    padding: 0.75rem;
+    margin: 0 auto;
+    margin-bottom: 0;
+    width: 100%;
+    height: 3rem;
+    border: 1px solid var(--colorGrisOscuro);
+    padding: 5px 10px;
     border-radius: 5px;
-    cursor: pointer;
-    font-weight: 500;
+    text-decoration: none;
+    background-image: linear-gradient(45deg, var(--colorGrisOscuro) 50%, var(--colorVerde) 50%);
+    background-position: 100%;
+    background-size: 400%;
+    color: var(--colorGrisOscuro);
+    font-weight: bold;
+    transition: 
+        background 0.4s ease-in-out,
+        color 0.4s ease-in-out,
+        border 0.4s ease-in-out;
 }
 
 .btnPrimary:hover {
-    background: #218838;
+    background-position: 0;
+    color: var(--colorVerde);
+    border: 1px solid var(--colorVerde);
 }
 
 /* Animaciones */
@@ -271,4 +302,13 @@
     .cartContent {
         width: 100%;
     }
+}
+
+.toast {
+    background: var(--colorVerde);
+    left: 20px;
+}
+
+.toast.toast {
+    color: var(--colorNegro);
 }

@@ -2,23 +2,24 @@
 import React, { useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import '../styles/components/carritoStyles.css';
+import showToast from '../components/toast';
+
+const AddToCart = (e) => {
+    e.stopPropagation();
+    showToast("Proximamente podrás proceder al pago");
+};
 
 const CartDrawer = ({ isOpen, onClose }) => {
     const { cart, dispatchCart } = useApp();
-
-    // Asegurarnos de que cart.items siempre sea un array
     const cartItems = cart?.items || [];
-
-    // Cerrar con ESC
     useEffect(() => {
         const handleEscape = (e) => {
-        if (e.key === 'Escape' && isOpen) {
-            onClose();
-        }
+            if (e.key === 'Escape' && isOpen) {
+                onClose();
+            }
         };
-
         document.addEventListener('keydown', handleEscape);
-        return () => document.removeEventListener('keydown', handleEscape);
+            return () => document.removeEventListener('keydown', handleEscape);
     }, [isOpen, onClose]);
 
     const clearCart = () => {
@@ -41,7 +42,14 @@ const CartDrawer = ({ isOpen, onClose }) => {
     };
 
     const calculateTotals = () => {
-        const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const subtotal = cartItems.reduce((sum, item) => {
+        // Para CLP: quitar "CLP", espacios, puntos (separador de miles) y comas
+        const priceString = item.price.replace(/[^\d]/g, ''); // Solo dejar números
+        const price = parseInt(priceString) || 0;
+        const quantity = parseInt(item.quantity) || 0;
+        
+        return sum + (price * quantity);
+        }, 0);
         const shipping = 3990;
         const total = subtotal + shipping;
         
@@ -132,7 +140,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                 <button className="btnSecondary" onClick={clearCart}>
                     <i className="fa-solid fa-trash"></i> Vaciar Carrito
                 </button>
-                <button className="btnPrimary">
+                <button className="btnPrimary" onClick={AddToCart}>
                     <i className="fa-solid fa-credit-card"></i> Proceder al Pago
                 </button>
                 </div>
