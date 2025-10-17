@@ -1,0 +1,66 @@
+.dashboard-main {
+  padding: 2rem;
+  background: var(--colorNegro);
+  min-height: 80vh;
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.dashboard-header .titulo {
+  color: var(--colorVerde);
+  margin-bottom: 1rem;
+}
+
+.dashboard-header p {
+  color: var(--colorBlanco);
+  font-size: 1.2rem;
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.dashboard-card {
+  background: var(--colorGrisOscuro);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--colorVerde);
+  box-shadow: 0 10px 25px rgba(0, 255, 0, 0.1);
+}
+
+.dashboard-card i {
+  font-size: 2.5rem;
+  color: var(--colorVerde);
+  margin-bottom: 1rem;
+}
+
+.dashboard-card h3 {
+  color: var(--colorBlanco);
+  margin-bottom: 1rem;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.dashboard-card p {
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+}
+
+.sidebar-container {
+  background: var(--colorGrisOscuro);
+  min-height: 80vh;
+  padding: 0;
+}

@@ -1,4 +1,3 @@
-import React from "react";
 import '../styles/components/toastStyles.css';
 
 export default function showToast(msg) {

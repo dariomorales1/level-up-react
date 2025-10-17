@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import '../styles/pages/authStyles.css';
+import '../styles/pages/registroStyles.css';
 import showToast from '../components/toast';
 
 const Login = () => {
@@ -9,7 +8,6 @@ const Login = () => {
     password: ''
   });
   
-  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,7 +17,6 @@ const Login = () => {
     }));
   };
 
-  // Validaciones directamente en el componente
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -62,17 +59,18 @@ const Login = () => {
 
     // Validar credenciales en localStorage
     const user = validateCredentials(formData.email, formData.password);
-    
+
     if (user) {
-      // Login exitoso
       showToast(`¡Bienvenido de nuevo, ${user.name}!`);
-      
-      // Guardar sesión actual en localStorage
+
       localStorage.setItem('currentUser', JSON.stringify(user));
-      
-      // Redirigir al home usando React Router
+
       setTimeout(() => {
-        navigate('/');
+        if (user.role === 'admin') {
+          window.location.href = '/paneladministrador'; //Panel Admin
+        } else {
+          window.location.href = '/cuenta'; //Panel Cliente
+        }
       }, 1500);
     } else {
       showToast("Credenciales incorrectas. Verifica tu email y contraseña.");

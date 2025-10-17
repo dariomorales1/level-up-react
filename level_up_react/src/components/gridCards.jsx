@@ -1,20 +1,19 @@
 import React from 'react';
 import Card from './card';
 import '../styles/components/gridCardsStyles.css';
-
-import  listaProductos  from "../assets/listaProductos.js";
-
-
+import listaProductos from '../assets/listaProductos.js';
 
 export default function CardsContainer ({ productos = [] }) {
+    // if no productos passed from parent, use the default listaProductos
+    const items = (productos && productos.length) ? productos : listaProductos;
 
     
     return (
         <div className="cardsContainer">
-            {productos.length === 0 ? (
+            {items.length === 0 ? (
                 <p>No hay productos.</p>
             ) : (
-                productos.map((p) => (
+                items.map((p) => (
 
                 <Card
                     key={p["Código"] || p.id}

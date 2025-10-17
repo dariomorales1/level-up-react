@@ -1,3 +1,5 @@
+import '../styles/components/starsStyles.css';
+
 export default function renderEstrellas(puntos) {
     if (puntos === undefined || puntos === null || puntos === 0) {
         return (

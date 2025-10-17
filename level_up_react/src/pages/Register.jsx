@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import '../styles/pages/authStyles.css'; // Ajusta la ruta según tu estructura
+import '../styles/pages/registroStyles.css';
 import showToast from "../components/toast";
 
 export default function Register () {
@@ -102,29 +102,23 @@ export default function Register () {
       return;
     }
 
-    // Verificar si el email ya está registrado
     if (checkEmailExists(formData.email)) {
       showToast("Este email ya está registrado. Usa otro email o inicia sesión.");
       return;
     }
 
-    // Crear objeto de usuario
     const userData = {
-      id: Date.now(), // ID único basado en timestamp
+      id: Date.now(),
       name: formData.name,
       email: formData.email,
       password: formData.password,
+      role: formData.email.endsWith('@levelup.cl') ? 'admin' : 'customer',
       createdAt: new Date().toISOString()
     };
 
-    // Guardar usuario en localStorage
     if (saveUserToLocalStorage(userData)) {
       showToast("¡Cuenta creada exitosamente!");
       
-      // Guardar sesión automáticamente
-      localStorage.setItem('currentUser', JSON.stringify(userData));
-      
-      // Limpiar formulario
       setFormData({
         name: '',
         email: '',
@@ -133,9 +127,10 @@ export default function Register () {
       });
       setAcceptedTerms(false);
       
-      // Redirigir al home usando React Router
       setTimeout(() => {
-        navigate('/');
+        // Limpiar currentUser para forzar que el próximo login sea fresco
+        localStorage.removeItem('currentUser');
+        navigate('/login');
       }, 1500);
     } else {
       showToast("Error al crear la cuenta. Intenta nuevamente.");

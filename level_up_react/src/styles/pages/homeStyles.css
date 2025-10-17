@@ -1,6 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
 
-/* Variables CSS - Asegurar que estén definidas */
+/* Reset y configuración base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Variables CSS */
 :root {
     --colorBlanco: #ffffff;
     --colorVerde: #00ff00;
@@ -10,11 +17,19 @@
     --colorNegro: #000000;
 }
 
+body {
+    font-family: 'Orbitron', sans-serif;
+    background-color: var(--colorNegro);
+    color: var(--colorBlanco);
+    overflow-x: hidden; /* Prevenir scroll horizontal */
+}
+
 .page {
     width: 100%;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* Prevenir overflow */
 }
 
 /* Estilos para el título Destacados */
@@ -26,6 +41,8 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 2px;
+    font-size: 2.5rem;
+    text-shadow: 0 0 10px var(--colorVerde);
 }
 
 /* Separadores */
@@ -33,10 +50,57 @@ hr {
     border: none;
     height: 2px;
     background: linear-gradient(90deg, transparent, var(--colorVerde), transparent);
-    margin: 2rem 0;
+    margin: 2rem auto;
+    width: 90%; /* Limitar el ancho */
+    max-width: 1200px;
+}
+
+/* Contenedor principal para contenido */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Sistema de grid mejorado */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px; /* Compensar padding de las columnas */
+    width: calc(100% + 20px); /* Compensar el margin negativo */
+}
+
+.col-2 {
+    flex: 0 0 16.666667%;
+    max-width: 16.666667%;
+    padding: 0 10px;
+}
+
+.col-8 {
+    flex: 0 0 66.666667%;
+    max-width: 66.666667%;
+    padding: 0 10px;
+}
+
+.col-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 0 10px;
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .titulo {
+        font-size: 2rem;
+        margin: 1.5rem 0;
+    }
+}
+
 @media (max-width: 768px) {
     .row .col-2 {
         display: none;
@@ -45,18 +109,67 @@ hr {
     .row .col-8 {
         flex: 0 0 100%;
         max-width: 100%;
-        padding: 0 15px;
     }
     
     .titulo {
         font-size: 1.5rem;
         margin: 1.5rem 0;
     }
+    
+    .row {
+        margin: 0 -5px;
+        width: calc(100% + 10px);
+    }
+    
+    .col-8, .col-12 {
+        padding: 0 5px;
+    }
 }
 
 @media (max-width: 480px) {
+    .container {
+        padding: 0 10px;
+    }
+    
     .titulo {
         font-size: 1.25rem;
         margin: 1rem 0;
+        letter-spacing: 1px;
     }
+    
+    hr {
+        margin: 1rem auto;
+        width: 95%;
+    }
+}
+
+/* Utilidades para prevenir overflow */
+.no-scroll {
+    overflow: hidden;
+}
+
+.full-width {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+
+/* Estilos para componentes específicos */
+.card {
+    background: var(--colorGrisOscuro);
+    border: 1px solid var(--colorVerde);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
+}
+
+/* Asegurar que las imágenes no causen overflow */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
 }

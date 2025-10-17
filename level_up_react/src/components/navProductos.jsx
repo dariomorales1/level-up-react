@@ -18,43 +18,43 @@ export default function NavbarProductos ({ onCategoryChange }) {
                 <ul className="navbar-nav productosUl">
 
                     <li className="nav-item productosBtn">
-                        <a className="nav-link productosBtnA" href="#" onClick={handleShowAll}>
+                        <button className="nav-link productosBtnA" type="button" onClick={handleShowAll}>
                         Mostrar Todos
-                        </a>
+                        </button>
                     </li>
                 
                     <li className="nav-item dropdown productosBtn">
-                        <a className="nav-link dropdown-toggle productosBtnA" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Zona Gamer
-                        </a>
+                        <button className="nav-link dropdown-toggle productosBtnA" type="button" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Zona Gamer
+                            </button>
                         <ul className="dropdown-menu">
-                        <li><a className="dropdown-item" href="#" onClick={(e) => handleCategoryClick(e, "Consolas")}>Consolas</a></li>
-                        <li><a className="dropdown-item" href="#" onClick={(e) => handleCategoryClick(e, "Computadores Gamers")}>Computadores Gamer</a></li>
-                        <li><a className="dropdown-item" href="#" onClick={(e) => handleCategoryClick(e, "Mouse")}>Mouse</a></li>
-                        <li><a className="dropdown-item" href="#" onClick={(e) => handleCategoryClick(e, "Mousepad")}>MousePad</a></li>
-                        <li><a className="dropdown-item" href="#" onClick={(e) => handleCategoryClick(e, "Sillas Gamers")}>Sillas Gamer</a></li>
+                        <li><button className="dropdown-item" type="button" onClick={(e) => handleCategoryClick(e, "Consolas")}>Consolas</button></li>
+                        <li><button className="dropdown-item" type="button" onClick={(e) => handleCategoryClick(e, "Computadores Gamers")}>Computadores Gamer</button></li>
+                        <li><button className="dropdown-item" type="button" onClick={(e) => handleCategoryClick(e, "Mouse")}>Mouse</button></li>
+                        <li><button className="dropdown-item" type="button" onClick={(e) => handleCategoryClick(e, "Mousepad")}>MousePad</button></li>
+                        <li><button className="dropdown-item" type="button" onClick={(e) => handleCategoryClick(e, "Sillas Gamers")}>Sillas Gamer</button></li>
                         </ul>
                     </li>
 
                     {/* Ropa y Personalizados */}
                     <li className="nav-item dropdown productosBtn">
-                        <a className="nav-link dropdown-toggle productosBtnA" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Ropa y Personalizados
-                        </a>
+                        <button className="nav-link dropdown-toggle productosBtnA" type="button" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Ropa y Personalizados
+                            </button>
                         <ul className="dropdown-menu">
-                        <li><a className="dropdown-item" href="#" onClick={(e) => handleCategoryClick(e, "Poleras Personalizadas")}>Poleras Personalizadas</a></li>
-                        <li><a className="dropdown-item" href="#" onClick={(e) => handleCategoryClick(e, "Polerones Gamers Personalizados")}>Polerones Gamer Personalizados</a></li>
+                        <li><button className="dropdown-item" type="button" onClick={(e) => handleCategoryClick(e, "Poleras Personalizadas")}>Poleras Personalizadas</button></li>
+                        <li><button className="dropdown-item" type="button" onClick={(e) => handleCategoryClick(e, "Polerones Gamers Personalizados")}>Polerones Gamer Personalizados</button></li>
                         </ul>
                     </li>
 
                     {/* Juegos y Accesorios */}
                     <li className="nav-item dropdown productosBtn">
-                        <a className="nav-link dropdown-toggle productosBtnA" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Juegos y Accesorios
-                        </a>
+                        <button className="nav-link dropdown-toggle productosBtnA" type="button" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Juegos y Accesorios
+                            </button>
                         <ul className="dropdown-menu">
-                        <li><a className="dropdown-item" href="#" onClick={(e) => handleCategoryClick(e, "Accesorios")}>Accesorios</a></li>
-                        <li><a className="dropdown-item" href="#" onClick={(e) => handleCategoryClick(e, "Juegos de Mesa")}>Juegos de Mesa</a></li>
+                        <li><button className="dropdown-item" type="button" onClick={(e) => handleCategoryClick(e, "Accesorios")}>Accesorios</button></li>
+                        <li><button className="dropdown-item" type="button" onClick={(e) => handleCategoryClick(e, "Juegos de Mesa")}>Juegos de Mesa</button></li>
                         </ul>
                     </li>
 

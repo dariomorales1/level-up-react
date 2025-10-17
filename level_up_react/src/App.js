@@ -15,6 +15,7 @@ import './App.css';
 import Header from './components/header';
 import Footer from './components/footer';
 import ScrollToTop from './components/ScrollToTop';
+import PanelAdministrador from './pages/PanelAdministrador';
 
 function App() {
     return (
@@ -33,6 +34,7 @@ function App() {
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/cuenta" element={<Cuenta />} />
+                        <Route path="/paneladministrador" element={<PanelAdministrador />} />
                     </Routes>
                 <Footer />
             </Router>
