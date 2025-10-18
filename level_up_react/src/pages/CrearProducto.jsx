@@ -24,6 +24,23 @@ const CrearProducto = ({ onSave, onCancel }) => {
     }));
   };
 
+  // formatea String a number y en moneda CLP
+  const formatPrice = (value) => {
+    if (value === undefined || value === null || value === '') return '';
+    const digits = String(value).replace(/\D/g, '');
+    if (!digits) return '';
+    const num = parseInt(digits, 10) || 0;
+    const formatted = new Intl.NumberFormat('de-DE').format(num);
+    return `${formatted} CLP`;
+  };
+
+  const handlePriceChange = (e) => {
+    const raw = e.target.value;
+    const digits = (raw || '').replace(/\D/g, '');
+    const formatted = formatPrice(digits);
+    setFormData(prev => ({ ...prev, Precio: formatted }));
+  };
+
   const handleSpecificationChange = (index, value) => {
     const newSpecs = [...formData.Especificaciones];
     newSpecs[index] = value;
@@ -102,7 +119,7 @@ const CrearProducto = ({ onSave, onCancel }) => {
               type="text"
               name="Precio"
               value={formData.Precio}
-              onChange={handleInputChange}
+              onChange={handlePriceChange}
               placeholder="29.990 CLP"
               required
             />
@@ -115,6 +132,7 @@ const CrearProducto = ({ onSave, onCancel }) => {
               name="Stock"
               value={formData.Stock}
               onChange={handleInputChange}
+              min="1"
               required
             />
           </div>

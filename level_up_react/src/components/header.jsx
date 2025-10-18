@@ -1,4 +1,3 @@
-// components/Header.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
@@ -16,11 +15,11 @@ export default function Header() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    const [isUserLoaded, setIsUserLoaded] = useState(false); // ← Estado local
+    const [isUserLoaded, setIsUserLoaded] = useState(false);
 
     // Esperar a que el usuario se cargue desde localStorage
     useEffect(() => {
-    // Mejor condición - esperar a que el contexto termine de cargar
+
     if (user !== undefined) {
         setIsUserLoaded(true);
     }
@@ -31,7 +30,7 @@ export default function Header() {
     console.log('Header Debug - localStorage user:', localStorage.getItem('currentUser'));
 
     const cartItemsCount = cart.items.reduce((total, item) => total + item.quantity, 0);
-    const isManagementPage = location.pathname === '/cuenta'; // ← Cambiar a /cuenta
+    const isManagementPage = location.pathname === '/cuenta';
 
     const openCart = () => setIsCartOpen(true);
     const closeCart = () => setIsCartOpen(false);

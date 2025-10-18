@@ -69,7 +69,7 @@ const Login = () => {
         if (user.role === 'admin') {
           window.location.href = '/paneladministrador'; //Panel Admin
         } else {
-          window.location.href = '/cuenta'; //Panel Cliente
+          window.location.href = '/'; //Panel Cliente
         }
       }, 1500);
     } else {

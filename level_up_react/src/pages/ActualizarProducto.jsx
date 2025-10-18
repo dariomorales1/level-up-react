@@ -41,6 +41,22 @@ const EditProduct = ({ product: propProduct, onSave, onCancel }) => {
     }));
   };
 
+  const formatPrice = (value) => {
+    if (value === undefined || value === null || value === '') return '';
+    const digits = String(value).replace(/\D/g, '');
+    if (!digits) return '';
+    const num = parseInt(digits, 10) || 0;
+    const formatted = new Intl.NumberFormat('de-DE').format(num);
+    return `${formatted} CLP`;
+  };
+
+  const handlePriceChange = (e) => {
+    const raw = e.target.value;
+    const digits = (raw || '').replace(/\D/g, '');
+    const formatted = formatPrice(digits);
+    setFormData(prev => ({ ...prev, Precio: formatted }));
+  };
+
   const handleSpecificationChange = (index, value) => {
     const newSpecs = [...formData.Especificaciones];
     newSpecs[index] = value;
@@ -110,7 +126,6 @@ const EditProduct = ({ product: propProduct, onSave, onCancel }) => {
     if (typeof onSave === 'function') {
       onSave(updated);
     } else {
-      // no onSave provided (we navigated here directly), show a message and go back to list
       alert('Producto actualizado (simulado).');
       navigate('/listar');
     }
@@ -158,7 +173,7 @@ const EditProduct = ({ product: propProduct, onSave, onCancel }) => {
               type="text"
               name="Precio"
               value={formData.Precio}
-              onChange={handleInputChange}
+              onChange={handlePriceChange}
               required
             />
           </div>
@@ -170,6 +185,8 @@ const EditProduct = ({ product: propProduct, onSave, onCancel }) => {
               name="Stock"
               value={formData.Stock}
               onChange={handleInputChange}
+              min="1"
+              max="999999"
               required
             />
           </div>

@@ -2,7 +2,6 @@
   background: var(--colorGrisOscuro);
   color: var(--colorBlanco);
   border-top: 1px solid rgba(255,255,255,.06);
-  margin-top: 48px;
 }
 
 .footer_container{
