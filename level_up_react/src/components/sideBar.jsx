@@ -7,8 +7,8 @@ const SideBar = ({ currentView, onViewChange }) => {
     const { user } = useApp();
     
     const adminMenu = [
-        { key: 'listas', label: 'Ver Productos', description: 'Gestionar productos del catálogo' },
-        { key: 'crear', label: 'Crear Producto', description: 'Agregar nuevos productos' },
+        { key: 'list', label: 'Ver Productos', description: 'Gestionar productos del catálogo' },
+        { key: 'create', label: 'Crear Producto', description: 'Agregar nuevos productos' },
     ];
 
     const customerMenu = [
