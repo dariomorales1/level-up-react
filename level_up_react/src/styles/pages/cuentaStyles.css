@@ -1,3 +1,130 @@
+.perfil-container {
+  max-width: 1100px;
+  margin: 40px auto 80px;
+  padding: 0 20px;
+  color: #e5e7eb;
+}               
+
+.perfil-header h1 {
+  font-size: 2rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.perfil-header p {
+  color: #9ca3af;              
+  margin-bottom: 22px;
+}
+
+.perfil-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 22px;
+}
+@media (max-width: 980px) {
+  .perfil-grid { grid-template-columns: 1fr; }
+}
+
+.perfil-card {
+  background: #111827;          
+  border: 1px solid #1f2937;    
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 6px 20px rgb(0 0 0 / 25%);
+}
+.perfil-card h2 {
+  font-size: 1.1rem;
+  color: #00ff00;               
+}
+
+.avatar-wrapper {
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+}
+.avatar {
+  width: 210px;
+  height: 210px;
+  object-fit: cover;
+  border-radius: 9999px;
+  border: 3px solid #00ff00;
+  background: #0b1220;
+}
+.avatar-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.input-group {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.input-group label {
+  color: #9ca3af;
+  font-size: 0.92rem;
+}
+.input-group input {
+  background: #0b1220;
+  border: 1px solid #1f2937;
+  color: #e5e7eb;
+  padding: 10px 12px;
+  border-radius: 10px;
+  outline: none;
+}
+.input-group input:focus {
+  border-color: #00ff00;
+  box-shadow: 0 0 0 3px rgb(16 185 129 / 20%);
+}
+
+.grid-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.grid-three {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 720px) {
+  .grid-two, .grid-three { grid-template-columns: 1fr; }
+}
+
+.btn {
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: transform .05s ease, filter .15s ease, background .15s ease;
+  font-weight: 600;
+}
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+  background: #1f2937;
+  border-color: #2b3646;
+  color: #e5e7eb;
+}
+.btn-primary:hover { filter: brightness(1.08); }
+
+.btn-ghost {
+  background: transparent;
+  border-color: #374151;
+  color: #9ca3af;
+}
+.btn-ghost:hover { border-color: #4b5563; color: #e5e7eb; }
+
+.btn-success {
+  background: linear-gradient(90deg,#00ff00,#00ff00);
+  color: #062a22;
+}
+.btn-success:hover { filter: brightness(1.05); }
+
+.acciones { display: flex; gap: 10px; margin-top: 8px; }
+
+.ayuda { color: #6b7280; font-size: .9rem; margin-top: 6px; }
+
 .cuenta-page {
     padding-top: 70px;
 }

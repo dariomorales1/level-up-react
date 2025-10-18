@@ -16,6 +16,7 @@ import Header from './components/header';
 import Footer from './components/footer';
 import ScrollToTop from './components/ScrollToTop';
 import PanelAdministrador from './pages/PanelAdministrador';
+import CrearProducto from './pages/CrearProducto';
 
 function App() {
     return (
@@ -35,6 +36,7 @@ function App() {
                         <Route path="/register" element={<Register />} />
                         <Route path="/cuenta" element={<Cuenta />} />
                         <Route path="/paneladministrador" element={<PanelAdministrador />} />
+                        <Route path="/crearproducto" element={<CrearProducto />} />
                     </Routes>
                 <Footer />
             </Router>
