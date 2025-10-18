@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import '../styles/pages/registroStyles.css';
 import showToast from '../components/toast';
+import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -8,6 +10,8 @@ const Login = () => {
     password: ''
   });
   
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,7 +67,14 @@ const Login = () => {
     if (user) {
       showToast(`¡Bienvenido de nuevo, ${user.name}!`);
 
-      localStorage.setItem('currentUser', JSON.stringify(user));
+      const userForAuth = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+
+      login(userForAuth);
 
       setTimeout(() => {
         if (user.role === 'admin') {

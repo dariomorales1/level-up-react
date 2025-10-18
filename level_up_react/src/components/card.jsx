@@ -22,7 +22,8 @@ export default function Card ({codigo, nombre, imgLink, descripcionCorta, precio
         id: codigo,
         name: nombre,
         price: precio,
-        image: imgLink
+        image: imgLink,
+        quantity: 1
         };
         
         dispatchCart({ type: 'ADD_TO_CART', payload: product });

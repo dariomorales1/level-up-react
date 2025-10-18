@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import '../styles/pages/registroStyles.css';
 import showToast from "../components/toast";
+import { useAuth } from '../hooks/useAuth';
 
 export default function Register () {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ export default function Register () {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -119,6 +121,15 @@ export default function Register () {
     if (saveUserToLocalStorage(userData)) {
       showToast("¡Cuenta creada exitosamente!");
       
+      const userForAuth = {
+        id: userData.id,
+        name: userData.name,
+        email: userData.email,
+        role: userData.role
+      };
+
+      login(userForAuth);
+
       setFormData({
         name: '',
         email: '',
@@ -128,9 +139,12 @@ export default function Register () {
       setAcceptedTerms(false);
       
       setTimeout(() => {
-        // Limpiar currentUser para forzar que el próximo login sea fresco
-        localStorage.removeItem('currentUser');
-        navigate('/login');
+        // Redirigir según el rol del usuario
+        if (userData.role === 'admin') {
+          navigate('/paneladministrador');
+        } else {
+          navigate('/cuenta');
+        }
       }, 1500);
     } else {
       showToast("Error al crear la cuenta. Intenta nuevamente.");
