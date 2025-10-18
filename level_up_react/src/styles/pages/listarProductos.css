@@ -47,6 +47,8 @@
 .product-image {
   height: 200px;
   overflow: hidden;
+  background-color: #f9f9f9;
+  object-fit: contain;
 }
 
 .product-image img {

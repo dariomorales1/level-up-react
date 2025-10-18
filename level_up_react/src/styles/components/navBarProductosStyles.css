@@ -59,3 +59,15 @@
         font-size: 0.9rem;
     }
 }
+
+@media (max-width: 1150px) {
+    .productosUl {
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    
+    .productosBtn .productosBtnA {
+        padding: 0.3rem;
+        font-size: 0.9rem;
+    }
+}

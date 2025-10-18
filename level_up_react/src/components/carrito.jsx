@@ -12,6 +12,7 @@ const AddToCart = (e) => {
 const CartDrawer = ({ isOpen, onClose }) => {
     const { cart, dispatchCart } = useApp();
     const cartItems = cart?.items || [];
+
     useEffect(() => {
         const handleEscape = (e) => {
             if (e.key === 'Escape' && isOpen) {
@@ -43,13 +44,11 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
     const calculateTotals = () => {
         const subtotal = cartItems.reduce((sum, item) => {
-        // Para CLP: quitar "CLP", espacios, puntos (separador de miles) y comas
-        const priceString = item.price.replace(/[^\d]/g, ''); // Solo dejar números
-        const price = parseInt(priceString) || 0;
-        const quantity = parseInt(item.quantity) || 0;
-        
-        return sum + (price * quantity);
+            const price = item?.price || 0;
+            const quantity = item?.quantity || 0;
+            return sum + (price * quantity);
         }, 0);
+
         const shipping = 3990;
         const total = subtotal + shipping;
         
