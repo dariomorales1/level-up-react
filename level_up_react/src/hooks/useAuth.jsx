@@ -10,44 +10,58 @@ export const useAuth = () => {
         
         const guestCart = [...cart.items];
 
+        
+        const userCartKey = `cart_${userData.id}`;
+        const savedUserCartData = JSON.parse(localStorage.getItem(userCartKey));
+        
+        console.log('🔐 useAuth - RAW saved user cart data:', savedUserCartData);
+        
+        
+        let savedUserItems = [];
+        if (savedUserCartData) {
+            if (Array.isArray(savedUserCartData)) {
+                savedUserItems = savedUserCartData;
+            } else if (savedUserCartData.items && Array.isArray(savedUserCartData.items)) {
+                savedUserItems = savedUserCartData.items;
+            } else {
+                savedUserItems = savedUserCartData.items || [];
+            }
+        }
+        
+        console.log('🔐 useAuth - Processed saved user items:', savedUserItems);
+
+        
         dispatchUser({ type: 'LOGIN', payload: userData });
 
-        setTimeout(() => {
-            const userCartKey = `cart_${userData.id}`;
-            const savedUserCart = JSON.parse(localStorage.getItem(userCartKey)) || { items: [] };
-            
-            console.log('🔐 useAuth - Saved user cart from localStorage:', savedUserCart);
-            console.log('🔐 useAuth - Guest cart to merge:', guestCart);
-
-            const combinedItems = [...savedUserCart.items];
-
-            guestCart.forEach(guestItem => {
-                const existingItem = combinedItems.find(item => item.id === guestItem.id);
-                if (existingItem) {
-                    existingItem.quantity += guestItem.quantity;
-                } else {
-                    combinedItems.push({...guestItem});
-                }
-            });
-
-            console.log('🔐 useAuth - Combined cart after merge:', combinedItems);
-
-            dispatchCart({
-                type: 'SET_USER_CART', 
-                payload: {
-                    items: combinedItems,
-                    userId: userData.id
-                }
-            });
-            
-            localStorage.removeItem('guest_cart');
-            console.log('🔐 useAuth - LOGIN COMPLETED');
         
-        }, 100);
+        const combinedItems = [...savedUserItems];
+
+        guestCart.forEach(guestItem => {
+            const existingItem = combinedItems.find(item => item.id === guestItem.id);
+            if (existingItem) {
+                existingItem.quantity += guestItem.quantity;
+            } else {
+                combinedItems.push({...guestItem});
+            }
+        });
+
+        console.log('🔐 useAuth - Combined cart after merge:', combinedItems);
+
+        dispatchCart({
+            type: 'SET_USER_CART', 
+            payload: {
+                items: combinedItems,
+                userId: userData.id
+            }
+        });
+        
+        localStorage.removeItem('guest_cart');
+        console.log('🔐 useAuth - LOGIN COMPLETED');
     };
 
     const logout = () => {
         console.log('🚪 useAuth - STARTING LOGOUT for user:', user);
+        console.log('🚪 useAuth - Current user cart before logout:', cart.items);
         
         if (user) {
             const userCartKey = `cart_${user.id}`;
@@ -59,14 +73,12 @@ export const useAuth = () => {
         }
         
         dispatchUser({ type: 'LOGOUT' });
+        dispatchCart({ 
+            type: 'LOAD_CART', 
+            payload: { items: [], userId: null }
+        });
         
-        setTimeout(() => {
-            dispatchCart({ 
-                type: 'LOAD_CART', 
-                payload: { items: [], userId: null }
-            });
-            console.log('🚪 useAuth - LOGOUT COMPLETED - Guest cart loaded (empty)');
-        }, 100);
+        console.log('🚪 useAuth - LOGOUT COMPLETED');
     };
 
     const isAuthenticated = !!user;

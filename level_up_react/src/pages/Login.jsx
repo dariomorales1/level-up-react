@@ -30,7 +30,7 @@ const Login = () => {
     return password.length >= 6;
   };
 
-  // Función para validar credenciales en localStorage
+  
   const validateCredentials = (email, password) => {
     try {
       const users = JSON.parse(localStorage.getItem('users') || '[]');
@@ -45,7 +45,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Validaciones básicas
+    
     if (!formData.email || !formData.password) {
       showToast("Por favor completa todos los campos");
       return;
@@ -61,7 +61,7 @@ const Login = () => {
       return;
     }
 
-    // Validar credenciales en localStorage
+    
     const user = validateCredentials(formData.email, formData.password);
 
     if (user) {
@@ -78,9 +78,9 @@ const Login = () => {
 
       setTimeout(() => {
         if (user.role === 'admin') {
-          window.location.href = '/paneladministrador'; //Panel Admin
+          navigate('/paneladministrador');
         } else {
-          window.location.href = '/'; //Panel Cliente
+          navigate('/');
         }
       }, 1500);
     } else {
