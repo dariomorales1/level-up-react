@@ -1,34 +1,41 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useState } from 'react';
 
 const AppContext = createContext();
 
-// Estado inicial del carrito
 const initialCartState = {
     items: [],
     userId: null
 };
 
-// Reducer para el carrito
 const cartReducer = (state, action) => {
+    console.log('🛒 CartReducer - Action:', action.type, 'Payload:', action.payload);
+    
     switch (action.type) {
         case 'ADD_TO_CART':
-            const existingItem = state.items.find(item => item.id === action.payload.id);
-            if (existingItem) {
-                return {
-                    ...state,
-                    items: state.items.map(item =>
-                        item.id === action.payload.id
-                        ? { ...item, quantity: item.quantity + 1 }
-                        : item
-                    )
-                };
-            }
-            return {
-                ...state,
-                items: [...state.items, { ...action.payload, quantity: 1 }]
-            };
+        console.log('🛒 ADD_TO_CART - Current items:', state.items);
+        console.log('🛒 ADD_TO_CART - New product:', action.payload);
         
+        const existingItem = state.items.find(item => item.id === action.payload.id);
+        if (existingItem) {
+            const newState = {
+                ...state,
+                items: state.items.map(item =>
+                    item.id === action.payload.id
+                    ? { ...item, quantity: item.quantity + 1 }
+                    : item
+                )
+            };
+            console.log('🛒 ADD_TO_CART - Item exists, updated state:', newState);
+            return newState;
+        }
+        const newState = {
+            ...state,
+            items: [...state.items, { ...action.payload, quantity: 1 }]
+        };
+        console.log('🛒 ADD_TO_CART - New item, updated state:', newState);
+        return newState;
         case 'SET_USER_CART':
+            console.log('🛒 SET_USER_CART - Setting items:', action.payload.items);
             return {
                 ...state,
                 items: action.payload.items || [],
@@ -66,8 +73,9 @@ const cartReducer = (state, action) => {
     }
 };
 
-// Reducer para usuario
+
 const userReducer = (state, action) => {
+    console.log('👤 UserReducer - Action:', action.type, 'Payload:', action.payload);
     switch (action.type) {
         case 'LOGIN':
             return action.payload;
@@ -83,46 +91,70 @@ const userReducer = (state, action) => {
 export const AppProvider = ({ children }) => {
     const [cart, dispatchCart] = useReducer(cartReducer, initialCartState);
     const [user, dispatchUser] = useReducer(userReducer, null);
-    const [isLoading, setIsLoading] = React.useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // ✅ CORREGIDO: Cargar usuario y su carrito al inicializar
+    
     useEffect(() => {
         const loadInitialData = async () => {
             try {
                 const savedUser = JSON.parse(localStorage.getItem('session_user')) || null;
-                console.log('AppContext - loaded user from localStorage:', savedUser);
+                console.log('🔄 AppContext - loaded user from localStorage:', savedUser);
                 
                 if (savedUser) {
                     dispatchUser({ type: 'LOAD_USER', payload: savedUser });
                     
-                    // ✅ CORREGIDO: Cargar carrito del usuario
-                    const userCartKey = `cart_${savedUser.id}`;
-                    const savedCart = JSON.parse(localStorage.getItem(userCartKey)) || { items: [] };
                     
-                    console.log('AppContext - loaded user cart from:', userCartKey, savedCart);
+                    const userCartKey = `cart_${savedUser.id}`;
+                    const savedCartData = JSON.parse(localStorage.getItem(userCartKey));
+                    console.log('🔄 AppContext - RAW saved cart data from', userCartKey, ':', savedCartData);
+                    
+                    
+                    let savedItems = [];
+                    if (savedCartData) {
+                        if (Array.isArray(savedCartData)) {
+                            savedItems = savedCartData; 
+                        } else if (savedCartData.items && Array.isArray(savedCartData.items)) {
+                            savedItems = savedCartData.items; 
+                        } else if (Array.isArray(savedCartData)) {
+                            savedItems = savedCartData; 
+                        }
+                    }
+                    
+                    console.log('🔄 AppContext - Processed saved items:', savedItems);
                     
                     dispatchCart({
                         type: 'SET_USER_CART',
                         payload: {
-                            items: savedCart.items || [],
+                            items: savedItems,
                             userId: savedUser.id
                         }
                     });
                 } else {
-                    // Cargar carrito de invitado
-                    const guestCart = JSON.parse(localStorage.getItem('guest_cart')) || { items: [] };
-                    console.log('AppContext - loaded guest cart:', guestCart);
+                    
+                    const guestCartData = JSON.parse(localStorage.getItem('guest_cart'));
+                    console.log('🔄 AppContext - RAW guest cart data:', guestCartData);
+                    
+                    let guestItems = [];
+                    if (guestCartData) {
+                        if (Array.isArray(guestCartData)) {
+                            guestItems = guestCartData;
+                        } else if (guestCartData.items && Array.isArray(guestCartData.items)) {
+                            guestItems = guestCartData.items;
+                        }
+                    }
+                    
+                    console.log('🔄 AppContext - Processed guest items:', guestItems);
                     
                     dispatchCart({ 
                         type: 'LOAD_CART', 
                         payload: { 
-                            items: guestCart.items || [],
+                            items: guestItems,
                             userId: null
                         } 
                     });
                 }
             } catch (error) {
-                console.error('Error loading from localStorage:', error);
+                console.error('❌ AppContext - Error loading from localStorage:', error);
             } finally {
                 setIsLoading(false);
             }
@@ -131,40 +163,42 @@ export const AppProvider = ({ children }) => {
         loadInitialData();
     }, []);
 
-    // ✅ CORREGIDO: Persistir carrito cuando cambia
+    
     useEffect(() => {
+        console.log('💾 AppContext - Cart changed, saving... Items:', cart.items);
         try {
             if (user) {
-                // Guardar carrito del usuario
                 const userCartKey = `cart_${user.id}`;
-                localStorage.setItem(userCartKey, JSON.stringify({
+                const cartToSave = {
                     items: cart.items,
                     userId: user.id
-                }));
-                console.log('AppContext - saved user cart to:', userCartKey, cart.items.length, 'items');
+                };
+                localStorage.setItem(userCartKey, JSON.stringify(cartToSave));
+                console.log('💾 AppContext - saved USER cart to:', userCartKey, 'with', cart.items.length, 'items');
             } else {
-                // Guardar carrito de invitado
-                localStorage.setItem('guest_cart', JSON.stringify({
+                const guestCartToSave = {
                     items: cart.items,
                     userId: null
-                }));
-                console.log('AppContext - saved guest cart:', cart.items.length, 'items');
+                };
+                localStorage.setItem('guest_cart', JSON.stringify(guestCartToSave));
+                console.log('💾 AppContext - saved GUEST cart with', cart.items.length, 'items');
             }
         } catch (error) {
-            console.error('Error saving cart to localStorage:', error);
+            console.error('❌ AppContext - Error saving cart to localStorage:', error);
         }
     }, [cart, user]);
 
-    // ✅ CORREGIDO: Persistir usuario
+    
     useEffect(() => {
         try {
             localStorage.setItem('session_user', JSON.stringify(user));
-            console.log('AppContext - saved user to session_user:', user);
+            console.log('💾 AppContext - saved user to session_user:', user);
         } catch (error) {
-            console.error('Error saving user to localStorage:', error);
+            console.error('❌ AppContext - Error saving user to localStorage:', error);
         }
     }, [user]);
 
+    
     const value = {
         cart: cart || initialCartState,
         user,

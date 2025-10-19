@@ -14,21 +14,22 @@ export default function Card ({codigo, nombre, imgLink, descripcionCorta, precio
         navigate(`/producto.html?codigo=${codigo}`);
     };
 
+    // components/Card.jsx - en la función AddToCart
     const AddToCart = (e) => {
-    e.stopPropagation();
-    
-    // Crear objeto producto para el carrito
-    const product = {
-        id: codigo,
-        name: nombre,
-        price: precio,
-        image: imgLink,
-        quantity: 1
+        e.stopPropagation();
+        
+        const product = {
+            id: codigo,
+            name: nombre,
+            price: precio,
+            image: imgLink
         };
         
+        console.log('🛒 Card - Adding product to cart:', product);
         dispatchCart({ type: 'ADD_TO_CART', payload: product });
         showToast("Se ha ingresado " + nombre + " al carrito");
     };
+
 
     return (
         <div className="card">

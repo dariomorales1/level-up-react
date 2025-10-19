@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import '../styles/pages/registroStyles.css';
 import showToast from "../components/toast";
@@ -12,9 +12,29 @@ export default function Register () {
     password2: ''
   });
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false); 
   
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { user, login, isAuthenticated } = useAuth(); 
+
+  
+  useEffect(() => {
+    if (isAuthenticated && user && isRegistering) {
+      console.log('✅ Register - User authenticated, navigating to:', user.role);
+      
+      
+      const timer = setTimeout(() => {
+        if (user.role === 'admin') {
+          navigate('/paneladministrador');
+        } else {
+          navigate('/cuenta');
+        }
+        setIsRegistering(false);
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthenticated, user, isRegistering, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,7 +48,7 @@ export default function Register () {
     setAcceptedTerms(e.target.checked);
   };
 
-  // Validaciones directamente en el componente
+  
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -46,7 +66,7 @@ export default function Register () {
     return password === confirmPassword;
   };
 
-  // Función para verificar si el email ya existe
+  
   const checkEmailExists = (email) => {
     try {
       const users = JSON.parse(localStorage.getItem('users') || '[]');
@@ -57,7 +77,7 @@ export default function Register () {
     }
   };
 
-  // Función para guardar usuario en localStorage
+  
   const saveUserToLocalStorage = (userData) => {
     try {
       const users = JSON.parse(localStorage.getItem('users') || '[]');
@@ -128,8 +148,11 @@ export default function Register () {
         role: userData.role
       };
 
+      console.log('🔄 Register - Calling login with:', userForAuth);
       login(userForAuth);
+      setIsRegistering(true);
 
+      
       setFormData({
         name: '',
         email: '',
@@ -138,14 +161,6 @@ export default function Register () {
       });
       setAcceptedTerms(false);
       
-      setTimeout(() => {
-        // Redirigir según el rol del usuario
-        if (userData.role === 'admin') {
-          navigate('/paneladministrador');
-        } else {
-          navigate('/cuenta');
-        }
-      }, 1500);
     } else {
       showToast("Error al crear la cuenta. Intenta nuevamente.");
     }
@@ -247,8 +262,13 @@ export default function Register () {
                     </label>
                   </div>
 
-                  <button className="btn btn-auth w-100 mb-3" type="submit">
-                    <i className="fa-solid fa-user-plus me-1"></i> Registrarme
+                  <button 
+                    className="btn btn-auth w-100 mb-3" 
+                    type="submit"
+                    disabled={isRegistering}
+                  >
+                    <i className="fa-solid fa-user-plus me-1"></i> 
+                    {isRegistering ? 'Registrando...' : 'Registrarme'}
                   </button>
 
                   <p className="text-center mb-0">
