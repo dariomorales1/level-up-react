@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
 import '../styles/pages/productoStyles.css';
 import listaProductos from '../assets/listaProductos';
 import renderEstrellas from '../components/stars';
@@ -9,36 +8,14 @@ import showToast from '../components/toast';
 const Producto = () => {
     const [searchParams] = useSearchParams();
     const codigo = searchParams.get('codigo');
-    const { dispatchCart } = useApp();
 
     const producto = listaProductos.find(p => 
         p["Código"] === codigo || p.id === codigo
     );
 
-    const { 
-        Nombre: nombre, 
-        Precio: precio, 
-        imgLink
-        // ... otras propiedades que necesites
-    } = producto;
-
-    const productImage = require(`../${imgLink}`)
-
     const AddToCart = (e) => {
         e.stopPropagation();
-        
-        // Crear objeto producto para el carrito
-        const product = {
-            id: codigo,
-            name: nombre,
-            price: precio,
-            image: productImage
-        };
-
-        
-            
-        dispatchCart({ type: 'ADD_TO_CART', payload: product });
-        showToast("Se ha ingresado " + nombre + " al carrito");
+        showToast("Se ha ingresado " + producto.Nombre + " al carrito");
     };
 
     
@@ -50,6 +27,7 @@ const Producto = () => {
                     <div className="col-1"></div>
                     <div className="col-10">
                         <section className="productDetalle">
+                            <h2 className='productName'>{producto.Nombre}</h2>
                             <h2 className='productName'>{producto.Nombre}</h2>
                             <div className="cardDetalle">
                                 <img src={require(`../${producto.imgLink}`)} alt={producto.Nombre} />
