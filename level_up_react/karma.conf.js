@@ -1,61 +1,58 @@
+// karma.conf.js
 module.exports = function (config) {
     config.set({
         basePath: '',
         frameworks: ['jasmine'],
+        
+        // Solo incluir tests, no archivos de imagen
         files: [
-        'src/setupTests.karma.js', // carga configuración previa (RTL, matchers, cleanup)
-        'src/**/*.spec.js' // busca tests en src/
+            'src/**/*.spec.js'
         ],
+        
         preprocessors: {
-        'src/setupTests.karma.js': ['webpack'],
-        'src/**/*.spec.js': ['webpack']
+            'src/**/*.spec.js': ['webpack']
         },
+        
         webpack: {
-        mode: 'development',
-        module: {
-            rules: [
-            {
-                test: /\.jsx?$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                    presets: [
-                        '@babel/preset-env',
-                        ['@babel/preset-react', { runtime: 'automatic', development: true }]
-                    ]
+            mode: 'development',
+            module: {
+                rules: [
+                    {
+                        test: /\.js$/,
+                        exclude: /node_modules/,
+                        use: {
+                            loader: 'babel-loader',
+                            options: {
+                                presets: [
+                                    '@babel/preset-env',
+                                    ['@babel/preset-react', { runtime: 'automatic' }]
+                                ]
+                            }
+                        }
+                    },
+                    // Ignorar todos los archivos que no son JS
+                    {
+                        test: /\.(css|png|jpg|jpeg|gif|svg|webp)$/,
+                        use: 'null-loader'
                     }
-                }
+                ]
             },
-            //regla para imágenes (jpg/png/gif/webp/svg)
-            {
-                test: /\.(png|jpe?g|gif|webp|svg)$/i,
-                //use: [{ loader: 'null-loader' }], // Para no cargar imagenes (npm i -D null-loader).
-                //type: 'asset/resource', //Cargar imagenes.
-                type: 'asset/inline',
+            resolve: {
+                extensions: ['.js']
             }
-            ]
         },
-        resolve: {
-            extensions: ['.js', '.jsx']
-        }
-        },
-
-        reporters: ['spec', 'coverage'],
-        specReporter: {
-        suppressPassed: false, // muestra los passed
-        suppressSkipped: true,
-        showSpecTiming: true
-        },
-
-        coverageReporter: {
-        type: 'html',
-        dir: 'coverage/'
-        },
-
+        
+        reporters: ['progress'],
         browsers: ['ChromeHeadless'],
         singleRun: true,
         colors: true,
-        logLevel: config.LOG_INFO
+        logLevel: config.LOG_INFO,
+        
+        plugins: [
+            'karma-jasmine',
+            'karma-webpack', 
+            'karma-chrome-launcher',
+            'karma-spec-reporter'
+        ]
     });
 };
