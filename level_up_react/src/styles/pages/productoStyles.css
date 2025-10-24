@@ -22,6 +22,7 @@ main {
 .cardDetalle img {
     width: 100%;
     height: auto;
+    max-height: 400px;
     object-fit: contain;
     background-color: white;
 }

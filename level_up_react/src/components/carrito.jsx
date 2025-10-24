@@ -42,9 +42,22 @@ const CartDrawer = ({ isOpen, onClose }) => {
         });
     };
 
+    const parseCurrency = (currencyString) => {
+        if (!currencyString) return 0;
+        
+        const numericString = currencyString.replace(/[^\d,.-]/g, '');
+        
+        // Remover separadores de miles y convertir coma decimal a punto
+        const cleanString = numericString
+            .replace(/\./g, '')  // remover puntos (separadores de miles)
+            .replace('.', '');  // convertir coma decimal a punto
+        
+        return parseFloat(cleanString) || 0;
+    };
+
     const calculateTotals = () => {
         const subtotal = cartItems.reduce((sum, item) => {
-            const price = item?.price || 0;
+            const price = parseCurrency(item?.price); // Usamos la función de conversión
             const quantity = item?.quantity || 0;
             return sum + (price * quantity);
         }, 0);
@@ -55,9 +68,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
         return { subtotal, shipping, total };
     };
 
-    const { subtotal, shipping, total } = calculateTotals();
-
-    if (!isOpen) return null;
+const { subtotal, shipping, total } = calculateTotals();
 
     return (
         <div className={`cartDrawer ${isOpen ? 'show' : ''}`}>
