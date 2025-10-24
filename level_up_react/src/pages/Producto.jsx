@@ -1,5 +1,7 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useApp } from '../context/AppContext';
+import { useNavigate } from 'react-router-dom';
 import '../styles/pages/productoStyles.css';
 import listaProductos from '../assets/listaProductos';
 import renderEstrellas from '../components/stars';
@@ -8,6 +10,7 @@ import showToast from '../components/toast';
 const Producto = () => {
     const [searchParams] = useSearchParams();
     const codigo = searchParams.get('codigo');
+    const { dispatchCart } = useApp();
 
     const producto = listaProductos.find(p => 
         p["Código"] === codigo || p.id === codigo
@@ -15,6 +18,18 @@ const Producto = () => {
 
     const AddToCart = (e) => {
         e.stopPropagation();
+        
+        const imgLink = producto.imgLink.startsWith('http') ? producto.imgLink : require(`../${producto.imgLink}`);
+
+        const product = {
+            id: producto["Código"],
+            name: producto.Nombre,
+            price: producto.Precio,
+            image: imgLink
+        };
+        
+        console.log('🛒 Card - Adding product to cart:', product);
+        dispatchCart({ type: 'ADD_TO_CART', payload: product });
         showToast("Se ha ingresado " + producto.Nombre + " al carrito");
     };
 
@@ -27,7 +42,6 @@ const Producto = () => {
                     <div className="col-1"></div>
                     <div className="col-10">
                         <section className="productDetalle">
-                            <h2 className='productName'>{producto.Nombre}</h2>
                             <h2 className='productName'>{producto.Nombre}</h2>
                             <div className="cardDetalle">
                                 <img src={require(`../${producto.imgLink}`)} alt={producto.Nombre} />
