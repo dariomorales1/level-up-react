@@ -24,7 +24,7 @@ const CrearProducto = ({ onSave, onCancel }) => {
     }));
   };
 
-  // formatea String a number y en moneda CLP
+  //formatea String a number y en moneda CLP
   const formatPrice = (value) => {
     if (value === undefined || value === null || value === '') return '';
     const digits = String(value).replace(/\D/g, '');
@@ -68,13 +68,13 @@ const CrearProducto = ({ onSave, onCancel }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Validaciones básicas
+    //Validaciones básicas
     if (!formData.Código || !formData.Nombre || !formData.Precio) {
       alert('Por favor complete los campos obligatorios');
       return;
     }
 
-    // Filtrar especificaciones vacías
+    //Filtrar especificaciones vacías
     const filteredSpecs = formData.Especificaciones.filter(spec => spec.trim() !== '');
     
     onSave({

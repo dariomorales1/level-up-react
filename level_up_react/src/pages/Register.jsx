@@ -20,7 +20,7 @@ export default function Register () {
   
   useEffect(() => {
     if (isAuthenticated && user && isRegistering) {
-      console.log('✅ Register - User authenticated, navigating to:', user.role);
+      console.log('Registro exitoso - Rol del usuario:', user.role);
       
       
       const timer = setTimeout(() => {
@@ -93,7 +93,7 @@ export default function Register () {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Validaciones
+    //Validaciones
     if (!formData.name || !formData.email || !formData.password || !formData.password2) {
       showToast("Por favor completa todos los campos");
       return;
@@ -148,7 +148,7 @@ export default function Register () {
         role: userData.role
       };
 
-      console.log('🔄 Register - Calling login with:', userForAuth);
+      console.log('Registro exitoso - Usuario autenticado:', userForAuth);
       login(userForAuth);
       setIsRegistering(true);
 

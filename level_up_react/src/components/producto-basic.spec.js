@@ -1,7 +1,5 @@
-// src/pages/producto-basic.spec.js
-describe('Producto Component - Basic Logic', () => {
+describe('Producto Component - estructura base', () => {
     
-    // Mock de datos de producto
     const mockProducto = {
         "Código": "TEST001",
         "Nombre": "Producto Test",
@@ -11,29 +9,26 @@ describe('Producto Component - Basic Logic', () => {
         "Comentarios": ["Comentario 1", "Comentario 2"]
     };
 
-    it('1. should find product by code from URL parameters', () => {
-        // Simular URLSearchParams
+    it('1. buscar el producto por código a partir de los parámetros de URL', () => {
+
         const searchParams = new URLSearchParams('codigo=TEST001');
         const codigo = searchParams.get('codigo');
         
-        // Simular búsqueda en listaProductos
         const productoEncontrado = mockProducto["Código"] === codigo ? mockProducto : null;
         
         expect(productoEncontrado).not.toBeNull();
         expect(productoEncontrado.Nombre).toBe('Producto Test');
     });
 
-    it('2. should call showToast with correct message when adding to cart', () => {
-        // Mock de showToast
+    it('2. llama a showToast con el mensaje correcto al agregar al carrito', () => {
+
         const mockShowToast = jasmine.createSpy('showToast');
         
-        // Simular función AddToCart
         const AddToCart = function(e) {
             if (e && e.stopPropagation) e.stopPropagation();
             mockShowToast("Se ha ingresado " + mockProducto.Nombre + " al carrito");
         };
         
-        // Simular evento de click
         const mockEvent = { stopPropagation: jasmine.createSpy('stopPropagation') };
         AddToCart(mockEvent);
         
@@ -41,8 +36,7 @@ describe('Producto Component - Basic Logic', () => {
         expect(mockShowToast).toHaveBeenCalledWith('Se ha ingresado Producto Test al carrito');
     });
 
-    it('3. should render all product information sections', () => {
-        // Verificar que el producto tiene todas las secciones necesarias
+    it('3. Muestra todas las secciones de información del producto.', () => {
         expect(mockProducto.Nombre).toBeDefined();
         expect(mockProducto['Descripción Larga']).toBeDefined();
         expect(mockProducto.Precio).toBeDefined();
@@ -52,8 +46,7 @@ describe('Producto Component - Basic Logic', () => {
         expect(mockProducto.Comentarios.length).toBeGreaterThan(0);
     });
 
-    it('4. should have valid product data structure', () => {
-        // Verificar estructura del objeto producto
+    it('4. estructura de datos de producto válida', () => {
         expect(typeof mockProducto['Código']).toBe('string');
         expect(typeof mockProducto.Nombre).toBe('string');
         expect(typeof mockProducto.Precio).toBe('string');
@@ -61,7 +54,6 @@ describe('Producto Component - Basic Logic', () => {
         expect(Array.isArray(mockProducto.Especificaciones)).toBe(true);
         expect(Array.isArray(mockProducto.Comentarios)).toBe(true);
         
-        // Verificar que el precio es un número válido
         const precioNumerico = parseFloat(mockProducto.Precio.replace(/[^0-9.]/g, ''));
         expect(precioNumerico).toBeGreaterThan(0);
     });

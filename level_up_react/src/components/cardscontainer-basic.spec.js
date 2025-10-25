@@ -1,5 +1,5 @@
 // src/components/cardscontainer-basic.spec.js
-describe('CardsContainer Component - Basic Logic', () => {
+describe('CardsContainer Component - estructura base', () => {
     
     const mockListaProductos = [
         {
@@ -31,14 +31,14 @@ describe('CardsContainer Component - Basic Logic', () => {
         }
     ];
 
-    it('1. should show empty message when products array is empty', () => {
+    it('1. debería mostrar un mensaje vacío cuando el array de productos está vacío', () => {
         const productos = [];
         const shouldShowEmptyMessage = productos.length === 0;
         
         expect(shouldShowEmptyMessage).toBe(true);
     });
 
-    it('2. should use default products when no products provided from parent', () => {
+    it('2. debería usar productos por defecto cuando no se proporcionan productos desde el padre', () => {
         const productosFromParent = [];
         const itemsToRender = productosFromParent.length ? productosFromParent : mockListaProductos;
         
@@ -47,7 +47,7 @@ describe('CardsContainer Component - Basic Logic', () => {
         expect(itemsToRender[0].Nombre).toBe('Producto Default 1');
     });
 
-    it('3. should use custom products when provided from parent', () => {
+    it('3. debería usar productos personalizados cuando se proporcionan desde el padre', () => {
         const productosFromParent = mockCustomProducts;
         const itemsToRender = productosFromParent.length ? productosFromParent : mockListaProductos;
         
@@ -56,7 +56,7 @@ describe('CardsContainer Component - Basic Logic', () => {
         expect(itemsToRender[1].Nombre).toBe('Producto Personalizado 2');
     });
 
-    it('4. should generate unique keys for each product', () => {
+    it('4. debería generar claves únicas para cada producto', () => {
         const productos = mockCustomProducts;
         const keys = productos.map(p => p["Código"] || p.id);
         
@@ -71,7 +71,7 @@ describe('CardsContainer Component - Basic Logic', () => {
         });
     });
 
-    it('5. should handle mixed product data formats', () => {
+    it('5. debería manejar formatos de datos de productos mixtos', () => {
         const mixedProducts = [
             { "Código": "PROD1", "Nombre": "Producto 1", "Precio": "10000" },
             { "id": "PROD2", "Nombre": "Producto 2", "Precio": "20000" },

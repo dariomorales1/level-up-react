@@ -57,6 +57,7 @@
     "babel-loader": "^10.0.0",
     "esbuild": "^0.25.10",
     "esbuild-plugin-istanbul": "^0.3.0",
+    "jasmine": "^5.12.0",
     "jasmine-core": "^5.11.0",
     "karma": "^6.4.4",
     "karma-babel-preprocessor": "^8.0.2",

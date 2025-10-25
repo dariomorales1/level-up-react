@@ -156,7 +156,6 @@
     color: #cccccc;
 }
 
-/* Scrollbar personalizado */
 .sideBar::-webkit-scrollbar {
     width: 6px;
 }

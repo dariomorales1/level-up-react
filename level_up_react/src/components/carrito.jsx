@@ -1,4 +1,3 @@
-// components/CartDrawer.js
 import React, { useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import '../styles/components/carritoStyles.css';
@@ -49,15 +48,15 @@ const CartDrawer = ({ isOpen, onClose }) => {
         
         // Remover separadores de miles y convertir coma decimal a punto
         const cleanString = numericString
-            .replace(/\./g, '')  // remover puntos (separadores de miles)
-            .replace('.', '');  // convertir coma decimal a punto
+            .replace(/\./g, '')  //remueve puntos (separadores de miles)
+            .replace('.', '');  //convierte coma decimal a punto
         
         return parseFloat(cleanString) || 0;
     };
 
     const calculateTotals = () => {
         const subtotal = cartItems.reduce((sum, item) => {
-            const price = parseCurrency(item?.price); // Usamos la función de conversión
+            const price = parseCurrency(item?.price); //función de conversión
             const quantity = item?.quantity || 0;
             return sum + (price * quantity);
         }, 0);

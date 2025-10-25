@@ -23,7 +23,7 @@ export default function Cuenta() {
   const [mensaje, setMensaje] = useState("");
   const inputFileRef = useRef(null);
 
-  // Cargar desde localStorage al entrar
+  //Cargar desde localStorage al ingresar
   useEffect(() => {
     const guardado = localStorage.getItem("levelup.perfil");
     const foto = localStorage.getItem("levelup.perfil.avatar");
@@ -31,7 +31,7 @@ export default function Cuenta() {
     if (foto) setAvatarUrl(foto);
   }, []);
 
-  // Handlers
+  //Handlers (maneja las interacciones del usuario)
   const onChange = (e) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
@@ -39,7 +39,7 @@ export default function Cuenta() {
 
   const onGuardar = (e) => {
     e.preventDefault();
-    // Validaciones simples
+    //Validaciones simples
     if (!form.nombre || !form.apellido) {
       setMensaje("Completa al menos Nombre y Apellido.");
       return;

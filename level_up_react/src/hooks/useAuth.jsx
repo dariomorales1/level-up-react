@@ -1,12 +1,11 @@
-// hooks/useAuth.js
 import { useApp } from '../context/AppContext';
 
 export const useAuth = () => {
     const { user, dispatchUser, cart, dispatchCart } = useApp();
 
     const login = (userData) => {
-        console.log('🔐 useAuth - STARTING LOGIN for user:', userData);
-        console.log('🔐 useAuth - Current guest cart before login:', cart.items);
+        console.log('useAuth - STARTING LOGIN for user:', userData);
+        console.log('useAuth - Current guest cart before login:', cart.items);
         
         const guestCart = [...cart.items];
 
@@ -14,7 +13,7 @@ export const useAuth = () => {
         const userCartKey = `cart_${userData.id}`;
         const savedUserCartData = JSON.parse(localStorage.getItem(userCartKey));
         
-        console.log('🔐 useAuth - RAW saved user cart data:', savedUserCartData);
+        console.log('useAuth - RAW saved user cart data:', savedUserCartData);
         
         
         let savedUserItems = [];
@@ -28,7 +27,7 @@ export const useAuth = () => {
             }
         }
         
-        console.log('🔐 useAuth - Processed saved user items:', savedUserItems);
+        console.log('useAuth - Processed saved user items:', savedUserItems);
 
         
         dispatchUser({ type: 'LOGIN', payload: userData });
@@ -45,7 +44,7 @@ export const useAuth = () => {
             }
         });
 
-        console.log('🔐 useAuth - Combined cart after merge:', combinedItems);
+        console.log('useAuth - Combined cart after merge:', combinedItems);
 
         dispatchCart({
             type: 'SET_USER_CART', 
@@ -56,12 +55,12 @@ export const useAuth = () => {
         });
         
         localStorage.removeItem('guest_cart');
-        console.log('🔐 useAuth - LOGIN COMPLETED');
+        console.log('useAuth - LOGIN COMPLETED');
     };
 
     const logout = () => {
-        console.log('🚪 useAuth - STARTING LOGOUT for user:', user);
-        console.log('🚪 useAuth - Current user cart before logout:', cart.items);
+        console.log('useAuth - STARTING LOGOUT for user:', user);
+        console.log('useAuth - Current user cart before logout:', cart.items);
         
         if (user) {
             const userCartKey = `cart_${user.id}`;
@@ -69,7 +68,7 @@ export const useAuth = () => {
                 items: cart.items, 
                 userId: user.id 
             }));
-            console.log('🚪 useAuth - User cart saved to localStorage:', userCartKey, cart.items);
+            console.log('useAuth - User cart saved to localStorage:', userCartKey, cart.items);
         }
         
         dispatchUser({ type: 'LOGOUT' });
@@ -78,7 +77,7 @@ export const useAuth = () => {
             payload: { items: [], userId: null }
         });
         
-        console.log('🚪 useAuth - LOGOUT COMPLETED');
+        console.log('useAuth - LOGOUT COMPLETED');
     };
 
     const isAuthenticated = !!user;

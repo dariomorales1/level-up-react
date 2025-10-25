@@ -27,7 +27,6 @@ export default function renderEstrellas(puntos) {
 
     const estrellas = configEstrellas[puntuacion] || ['empty', 'empty', 'empty', 'empty', 'empty'];
 
-    // Iconos por tipo
     const iconos = {
         'full': 'fa-solid fa-star',
         'half': 'fa-solid fa-star-half-stroke', 

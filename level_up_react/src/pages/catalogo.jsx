@@ -13,7 +13,7 @@ import '../styles/pages/catalogoStyles.css';
 export default function Catalogo () {
     const [selectedCategory, setSelectedCategory] = useState(null);
     
-    // Filtrar productos basado en la categoría seleccionada
+    //Filtro productos categoría
     const filteredProducts = useMemo(() => {
         if (!selectedCategory) {
         return listaProductos;

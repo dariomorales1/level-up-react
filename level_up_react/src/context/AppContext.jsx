@@ -8,12 +8,12 @@ const initialCartState = {
 };
 
 const cartReducer = (state, action) => {
-    console.log('🛒 CartReducer - Action:', action.type, 'Payload:', action.payload);
+    console.log('CartReducer - Action:', action.type, 'Payload:', action.payload);
     
     switch (action.type) {
         case 'ADD_TO_CART':
-        console.log('🛒 ADD_TO_CART - Current items:', state.items);
-        console.log('🛒 ADD_TO_CART - New product:', action.payload);
+        console.log('ADD_TO_CART - Current items:', state.items);
+        console.log('ADD_TO_CART - New product:', action.payload);
         
         const existingItem = state.items.find(item => item.id === action.payload.id);
         if (existingItem) {
@@ -25,17 +25,17 @@ const cartReducer = (state, action) => {
                     : item
                 )
             };
-            console.log('🛒 ADD_TO_CART - Item exists, updated state:', newState);
+            console.log('ADD_TO_CART - Item exists, updated state:', newState);
             return newState;
         }
         const newState = {
             ...state,
             items: [...state.items, { ...action.payload, quantity: 1 }]
         };
-        console.log('🛒 ADD_TO_CART - New item, updated state:', newState);
+        console.log('ADD_TO_CART - New item, updated state:', newState);
         return newState;
         case 'SET_USER_CART':
-            console.log('🛒 SET_USER_CART - Setting items:', action.payload.items);
+            console.log('SET_USER_CART - Setting items:', action.payload.items);
             return {
                 ...state,
                 items: action.payload.items || [],
@@ -75,7 +75,7 @@ const cartReducer = (state, action) => {
 
 
 const userReducer = (state, action) => {
-    console.log('👤 UserReducer - Action:', action.type, 'Payload:', action.payload);
+    console.log('UserReducer - Action:', action.type, 'Payload:', action.payload);
     switch (action.type) {
         case 'LOGIN':
             return action.payload;
@@ -98,7 +98,7 @@ export const AppProvider = ({ children }) => {
         const loadInitialData = async () => {
             try {
                 const savedUser = JSON.parse(localStorage.getItem('session_user')) || null;
-                console.log('🔄 AppContext - loaded user from localStorage:', savedUser);
+                console.log('AppContext - loaded user from localStorage:', savedUser);
                 
                 if (savedUser) {
                     dispatchUser({ type: 'LOAD_USER', payload: savedUser });
@@ -106,7 +106,7 @@ export const AppProvider = ({ children }) => {
                     
                     const userCartKey = `cart_${savedUser.id}`;
                     const savedCartData = JSON.parse(localStorage.getItem(userCartKey));
-                    console.log('🔄 AppContext - RAW saved cart data from', userCartKey, ':', savedCartData);
+                    console.log('AppContext - RAW saved cart data from', userCartKey, ':', savedCartData);
                     
                     
                     let savedItems = [];
@@ -120,7 +120,7 @@ export const AppProvider = ({ children }) => {
                         }
                     }
                     
-                    console.log('🔄 AppContext - Processed saved items:', savedItems);
+                    console.log('AppContext - Processed saved items:', savedItems);
                     
                     dispatchCart({
                         type: 'SET_USER_CART',
@@ -132,7 +132,7 @@ export const AppProvider = ({ children }) => {
                 } else {
                     
                     const guestCartData = JSON.parse(localStorage.getItem('guest_cart'));
-                    console.log('🔄 AppContext - RAW guest cart data:', guestCartData);
+                    console.log('AppContext - RAW guest cart data:', guestCartData);
                     
                     let guestItems = [];
                     if (guestCartData) {
@@ -143,7 +143,7 @@ export const AppProvider = ({ children }) => {
                         }
                     }
                     
-                    console.log('🔄 AppContext - Processed guest items:', guestItems);
+                    console.log('AppContext - Processed guest items:', guestItems);
                     
                     dispatchCart({ 
                         type: 'LOAD_CART', 
@@ -154,7 +154,7 @@ export const AppProvider = ({ children }) => {
                     });
                 }
             } catch (error) {
-                console.error('❌ AppContext - Error loading from localStorage:', error);
+                console.error('AppContext - Error loading from localStorage:', error);
             } finally {
                 setIsLoading(false);
             }
@@ -165,7 +165,7 @@ export const AppProvider = ({ children }) => {
 
     
     useEffect(() => {
-        console.log('💾 AppContext - Cart changed, saving... Items:', cart.items);
+        console.log('AppContext - Cart changed, saving... Items:', cart.items);
         try {
             if (user) {
                 const userCartKey = `cart_${user.id}`;
@@ -174,17 +174,17 @@ export const AppProvider = ({ children }) => {
                     userId: user.id
                 };
                 localStorage.setItem(userCartKey, JSON.stringify(cartToSave));
-                console.log('💾 AppContext - saved USER cart to:', userCartKey, 'with', cart.items.length, 'items');
+                console.log('AppContext - saved USER cart to:', userCartKey, 'with', cart.items.length, 'items');
             } else {
                 const guestCartToSave = {
                     items: cart.items,
                     userId: null
                 };
                 localStorage.setItem('guest_cart', JSON.stringify(guestCartToSave));
-                console.log('💾 AppContext - saved GUEST cart with', cart.items.length, 'items');
+                console.log('AppContext - saved GUEST cart with', cart.items.length, 'items');
             }
         } catch (error) {
-            console.error('❌ AppContext - Error saving cart to localStorage:', error);
+            console.error('AppContext - Error saving cart to localStorage:', error);
         }
     }, [cart, user]);
 
@@ -192,9 +192,9 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         try {
             localStorage.setItem('session_user', JSON.stringify(user));
-            console.log('💾 AppContext - saved user to session_user:', user);
+            console.log('AppContext - saved user to session_user:', user);
         } catch (error) {
-            console.error('❌ AppContext - Error saving user to localStorage:', error);
+            console.error('AppContext - Error saving user to localStorage:', error);
         }
     }, [user]);
 

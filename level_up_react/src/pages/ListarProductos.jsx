@@ -10,7 +10,7 @@ const ProductList = ({ products: initialProducts, onEdit, onDelete }) => {
   const [selectedCategory, setSelectedCategory] = useState('');
 
   useEffect(() => {
-    // If parent provided products (e.g. ProductManagement), use them; otherwise fall back to listaProductos
+    
     const source = (initialProducts && initialProducts.length) ? initialProducts : listaProductos;
     setProducts(source);
     setFilteredProducts(source);
@@ -70,7 +70,7 @@ const ProductList = ({ products: initialProducts, onEdit, onDelete }) => {
 
       <div className="products-grid">
         {filteredProducts.map(product => {
-          // resolve image from src/assets path (listaProductos provides relative path like "assets/img/..")
+
           let imgSrc = null;
           if (product.imgLink) {
             try {
@@ -106,7 +106,6 @@ const ProductList = ({ products: initialProducts, onEdit, onDelete }) => {
                     if (typeof onEdit === 'function') {
                       onEdit(product);
                     } else {
-                      // navigate to actualizar page with product data in state
                       navigate('/actualizar', { state: { product } });
                     }
                   }}

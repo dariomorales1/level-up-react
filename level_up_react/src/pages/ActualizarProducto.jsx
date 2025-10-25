@@ -113,7 +113,7 @@ const EditProduct = ({ product: propProduct, onSave, onCancel }) => {
       return;
     }
 
-    // Filtrar especificaciones y comentarios vacíos
+    //Filtro especificaciones y comentarios vacios
     const filteredSpecs = formData.Especificaciones.filter(spec => spec.trim() !== '');
     const filteredComments = formData.Comentarios.filter(comment => comment.trim() !== '');
     

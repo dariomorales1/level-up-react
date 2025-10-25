@@ -13,7 +13,7 @@
 
 .main-content {
   flex: 1;
-  padding-top: 80px; /* Compensar header fixed */
+  padding-top: 80px;
 }
 
 /* Variables CSS - Mantener consistencia con proyecto original */

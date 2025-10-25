@@ -1,4 +1,4 @@
-// karma.conf.js
+//archivo de configuración de Karma para ejecutar pruebas con Jasmine y Webpack
 module.exports = function (config) {
     config.set({
         basePath: '',

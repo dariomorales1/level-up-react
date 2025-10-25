@@ -165,7 +165,6 @@
   align-items: center;
 }
 
-/* Estilos para el contenedor principal de la página */
 .page {
   width: 100%;
   min-height: 100vh;
@@ -174,7 +173,6 @@
   background: var(--colorNegro);
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .auth-card {
     padding: 1.5rem;
@@ -210,7 +208,6 @@
     font-size: 0.9rem;
   }
 
-    /* Toast Styles */
   .toast {
     position: fixed;
     top: 20px;
@@ -234,7 +231,6 @@
     opacity: 1;
   }
 
-  /* Centrado vertical del formulario */
   .auth {
     min-height: 70vh;
     display: flex;

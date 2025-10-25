@@ -1,13 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
 
-/* Reset y configuración base */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Variables CSS */
+
 :root {
     --colorBlanco: #ffffff;
     --colorVerde: #00ff00;
@@ -21,7 +20,7 @@ body {
     font-family: 'Orbitron', sans-serif;
     background-color: var(--colorNegro);
     color: var(--colorBlanco);
-    overflow-x: hidden; /* Prevenir scroll horizontal */
+    overflow-x: hidden;
 }
 
 .page {
@@ -29,10 +28,9 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Prevenir overflow */
+    overflow: hidden;
 }
 
-/* Estilos para el título Destacados */
 .titulo {
     font-family: 'Orbitron', sans-serif;
     color: var(--colorBlanco);
@@ -45,17 +43,15 @@ body {
     text-shadow: 0 0 10px var(--colorVerde);
 }
 
-/* Separadores */
 hr {
     border: none;
     height: 2px;
     background: linear-gradient(90deg, transparent, var(--colorVerde), transparent);
     margin: 2rem auto;
-    width: 90%; /* Limitar el ancho */
+    width: 90%;
     max-width: 1200px;
 }
 
-/* Contenedor principal para contenido */
 .container {
     width: 100%;
     max-width: 1200px;
@@ -63,12 +59,11 @@ hr {
     padding: 0 20px;
 }
 
-/* Sistema de grid mejorado */
 .row {
     display: flex;
     flex-wrap: wrap;
-    margin: 0 -10px; /* Compensar padding de las columnas */
-    width: calc(100% + 20px); /* Compensar el margin negativo */
+    margin: 0 -10px;
+    width: calc(100% + 20px);
 }
 
 .col-2 {
@@ -143,7 +138,6 @@ hr {
     }
 }
 
-/* Utilidades para prevenir overflow */
 .no-scroll {
     overflow: hidden;
 }
@@ -157,7 +151,6 @@ hr {
     margin-right: -50vw;
 }
 
-/* Estilos para componentes específicos */
 .card {
     background: var(--colorGrisOscuro);
     border: 1px solid var(--colorVerde);
@@ -167,7 +160,6 @@ hr {
     box-shadow: 0 0 15px rgba(0, 255, 0, 0.1);
 }
 
-/* Asegurar que las imágenes no causen overflow */
 img {
     max-width: 100%;
     height: auto;

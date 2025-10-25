@@ -126,7 +126,6 @@
     align-items: center;
 }
 
-/* Agregar esta clase nueva */
 .navBarButtonsRight {
     display: flex;
     flex-direction: row;

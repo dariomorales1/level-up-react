@@ -1,4 +1,3 @@
-// src/setupTests.karma.js
 import '@testing-library/jasmine-dom';
 
 // Mock para localStorage (sin jasmine global)

@@ -1,5 +1,4 @@
-// src/demo-logic.spec.js
-describe('Demo Tests - Business Logic', () => {
+describe('Tests - Logica de Negocio', () => {
     
     it('should validate product search functionality', () => {
         const productos = [
@@ -16,11 +15,11 @@ describe('Demo Tests - Business Logic', () => {
         expect(productoEncontrado.Precio).toBe('24990');
     });
 
-    it('should handle cart item addition logic', () => {
+    it('Maneja la logica de agregar articulos al carrito', () => {
         const cart = { items: [] };
         const newProduct = { id: "TEST001", name: "Test Product", price: "19990", quantity: 1 };
         
-        // Simular ADD_TO_CART
+        //Simular Agregar Carrito
         cart.items.push(newProduct);
         
         expect(cart.items.length).toBe(1);
@@ -28,7 +27,7 @@ describe('Demo Tests - Business Logic', () => {
         expect(cart.items[0].quantity).toBe(1);
     });
 
-    it('should calculate cart total correctly', () => {
+    it('Muestra el calculo correcto del carrito', () => {
         const cartItems = [
             { price: "19990", quantity: 2 },
             { price: "24990", quantity: 1 }

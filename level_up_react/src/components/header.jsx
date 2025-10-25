@@ -1,4 +1,3 @@
-// components/Header.js
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
@@ -17,11 +16,9 @@ export default function Header() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // ✅ ELIMINAR el estado de carga - dejar que el Context maneje el estado
     console.log('Header - user:', user);
     console.log('Header - isAuthenticated:', isAuthenticated);
 
-    // ✅ Manejar cart de forma segura
     const cartItems = cart?.items || [];
     const cartItemsCount = cartItems.reduce((total, item) => total + (item?.quantity || 0), 0);
     
@@ -37,7 +34,6 @@ export default function Header() {
         closeCart();
     };
 
-    // ✅ NO mostrar loading - mostrar el header siempre, incluso si user es null
     return (
         <>
             <header className="headerPpal">
@@ -55,6 +51,7 @@ export default function Header() {
                             <div className="navBarButtonsContainer">
                                 <NavButton text="Inicio" to="/"/>
                                 <NavButton text="Catalogo" to="/catalogo"/>
+                                <NavButton text="Blog" to="/blog"/>
                             </div>
                         )}
 
@@ -69,7 +66,7 @@ export default function Header() {
                                 </button>
                             )}
 
-                            {/* ✅ Mostrar botones según autenticación - user puede ser null */}
+                            {/* Mostrar botones según autenticación - user puede ser null */}
                             {isAuthenticated && user ? (
                                 <>
                                     {!isManagementPage && (

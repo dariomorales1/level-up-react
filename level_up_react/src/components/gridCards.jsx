@@ -4,7 +4,7 @@ import '../styles/components/gridCardsStyles.css';
 import listaProductos from '../assets/listaProductos.js';
 
 export default function CardsContainer ({ productos = [] }) {
-    // if no productos passed from parent, use the default listaProductos
+ 
     const items = (productos && productos.length) ? productos : listaProductos;
 
     
