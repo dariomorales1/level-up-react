@@ -22,14 +22,15 @@ describe('Producto Component - estructura base', () => {
 
     it('2. llama a showToast con el mensaje correcto al agregar al carrito', () => {
 
-        const mockShowToast = jasmine.createSpy('showToast');
+        const mockShowToast = jest.fn(); // ✅ CORREGIDO: jasmine.createSpy -> jest.fn()
+        const miFuncion = jest.fn();
         
         const AddToCart = function(e) {
             if (e && e.stopPropagation) e.stopPropagation();
             mockShowToast("Se ha ingresado " + mockProducto.Nombre + " al carrito");
         };
         
-        const mockEvent = { stopPropagation: jasmine.createSpy('stopPropagation') };
+        const mockEvent = { stopPropagation: jest.fn() }; // ✅ CORREGIDO: jasmine.createSpy -> jest.fn()
         AddToCart(mockEvent);
         
         expect(mockEvent.stopPropagation).toHaveBeenCalled();

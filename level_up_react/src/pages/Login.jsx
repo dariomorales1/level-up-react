@@ -1,90 +1,140 @@
 import React, { useState } from "react";
-import '../styles/pages/registroStyles.css';
-import showToast from '../components/toast';
-import { useAuth } from '../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import "../styles/pages/registroStyles.css";
+import showToast from "../components/toast";
+import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+
+import { auth, db } from "../firebase/config";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
-  
+  const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+  const validateEmail = (email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  const validatePassword = (password) => {
-    return password.length >= 6;
-  };
+  const validatePassword = (password) => password.length >= 6;
 
-  
-  const validateCredentials = (email, password) => {
-    try {
-      const users = JSON.parse(localStorage.getItem('users') || '[]');
-      const user = users.find(user => user.email === email && user.password === password);
-      return user;
-    } catch (error) {
-      console.error('Error al validar credenciales:', error);
-      return null;
-    }
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    
+
+    // Metrica global del flujo de login
+    console.time("LOGIN_FLOW");
+
     if (!formData.email || !formData.password) {
       showToast("Por favor completa todos los campos");
+      console.timeEnd("LOGIN_FLOW");
       return;
     }
 
     if (!validateEmail(formData.email)) {
       showToast("Por favor ingresa un email válido");
+      console.timeEnd("LOGIN_FLOW");
       return;
     }
 
     if (!validatePassword(formData.password)) {
       showToast("La contraseña debe tener al menos 6 caracteres");
+      console.timeEnd("LOGIN_FLOW");
       return;
     }
 
-    
-    const user = validateCredentials(formData.email, formData.password);
+    setLoading(true);
 
-    if (user) {
-      showToast(`¡Bienvenido de nuevo, ${user.name}!`);
+    try {
+      // 1️⃣ Autenticar con Firebase Auth
+      console.time("FIREBASE_AUTH");
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+      console.timeEnd("FIREBASE_AUTH");
 
-      const userForAuth = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role
+      const firebaseUser = userCredential.user;
+
+      // 2️⃣ Valores base (rápidos) sin depender de Firestore
+      let name = firebaseUser.displayName || "Usuario";
+      let role = firebaseUser.email.endsWith("@levelup.ddns.net")
+        ? "admin"
+        : "customer";
+
+      // 3️⃣ Intentar obtener datos más precisos desde Firestore (opcional)
+      try {
+        console.time("FIRESTORE_GET_USER");
+        const userDocRef = doc(db, "users", firebaseUser.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          const data = userDoc.data();
+          if (data.name) name = data.name;
+          if (data.role) role = data.role;
+        }
+        console.timeEnd("FIRESTORE_GET_USER");
+      } catch (error) {
+        console.timeEnd("FIRESTORE_GET_USER");
+        console.warn(
+          "No se pudo obtener el documento de usuario en Firestore:",
+          error
+        );
       }
 
-      login(userForAuth);
+      // 4️⃣ Construir objeto para tu contexto
+      const userForAuth = {
+        id: firebaseUser.uid,
+        name,
+        email: firebaseUser.email,
+        role,
+      };
 
-      setTimeout(() => {
-        if (user.role === 'admin') {
-          navigate('/paneladministrador');
-        } else {
-          navigate('/');
-        }
-      }, 1500);
-    } else {
-      showToast("Credenciales incorrectas. Verifica tu email y contraseña.");
+      console.log("LOGIN - userForAuth final:", userForAuth);
+
+      // 5️⃣ Guardar en contexto de auth (con Recordarme)
+      login(userForAuth, rememberMe);
+      showToast(`¡Bienvenido de nuevo, ${userForAuth.name}!`);
+
+      // 6️⃣ Redirigir inmediatamente según rol
+      if (userForAuth.role === "admin") {
+        navigate("/paneladministrador", { replace: true });
+      } else {
+        // usa "/cuenta" o "/" según tu flujo
+        navigate("/cuenta", { replace: true });
+      }
+    } catch (error) {
+      console.error("Error al iniciar sesión con Firebase (Auth):", error);
+
+      if (
+        error.code === "auth/user-not-found" ||
+        error.code === "auth/wrong-password"
+      ) {
+        showToast("Credenciales incorrectas. Verifica tu email y contraseña.");
+      } else if (error.code === "auth/too-many-requests") {
+        showToast(
+          "Demasiados intentos fallidos. Intenta nuevamente más tarde."
+        );
+      } else {
+        showToast("Ocurrió un error al iniciar sesión. Intenta nuevamente.");
+      }
+    } finally {
+      setLoading(false);
+      console.timeEnd("LOGIN_FLOW"); // cierre global del flujo
     }
   };
 
@@ -141,6 +191,8 @@ const Login = () => {
                         className="form-check-input"
                         type="checkbox"
                         id="rememberMe"
+                        checked={rememberMe}
+                        onChange={() => setRememberMe(!rememberMe)}
                       />
                       <label className="form-check-label" htmlFor="rememberMe">
                         Recordarme
@@ -151,8 +203,19 @@ const Login = () => {
                     </a>
                   </div>
 
-                  <button className="btn btn-auth w-100 mb-3" type="submit">
-                    <i className="fa-solid fa-right-to-bracket me-1"></i> Ingresar
+                  <button
+                    className="btn btn-auth w-100 mb-3"
+                    type="submit"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <span>Ingresando...</span>
+                    ) : (
+                      <>
+                        <i className="fa-solid fa-right-to-bracket me-1"></i>{" "}
+                        Ingresar
+                      </>
+                    )}
                   </button>
 
                   <p className="text-center mb-0">
