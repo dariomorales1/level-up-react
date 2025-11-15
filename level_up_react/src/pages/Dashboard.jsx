@@ -1,75 +1,99 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+// src/pages/Dashboard.jsx
+import SideBar from '../components/SideBar';
+import '../styles/pages/panelAdministrador.css';
 import '../styles/pages/dashboardStyles.css';
+import { useApp } from '../context/AppContext';
+import { useNavigate } from 'react-router-dom';
 
-const Dashboard = () => {
+export default function Dashboard() {
+  const { user } = useApp();
+  const isAdmin = user?.role === 'ADMIN';
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
-
-  const handleLogout = () => {
-    localStorage.removeItem('currentUser');
-    navigate('/');
-  };
 
   return (
-    <div className="page">
-      <main>
-        <div className="row">
-          {/* Sidebar */}
-          <div className="col-2 sidebar-container">
-            <div className="sideBar">
-              <a className="sidebarbtn" onClick={() => navigate('/crear')}>
-                <strong>Crear Producto</strong>
-              </a>
-              <a className="sidebarbtn" onClick={() => navigate('/listar')}>
-                <strong>Ver Productos</strong>
-              </a>
-              <a className="sidebarbtn" onClick={() => navigate('/actualizar')}>
-                <strong>Actualizar Producto</strong>
-              </a>
-              <a className="sidebarbtn" onClick={() => navigate('/eliminar')}>
-                <strong>Borrar Producto</strong>
-              </a>
-            </div>
-          </div>
+    <div className="panel-administrador">
+      <div className="management-layout">
+        <SideBar />
 
-          {/* Contenido principal */}
-          <div className="col-10 dashboard-main">
-            <div className="dashboard-header">
-              <h1 className="titulo">Panel de Administración</h1>
-              <p>Bienvenido, <strong>{user.name || 'Usuario'}</strong></p>
+        <main className="management-main">
+          <div className="perfil-container">
+            <div className="perfil-header">
+              <h1>Dashboard</h1>
+              <p>
+                Bienvenido, <strong>{user?.name || 'Usuario'}</strong>
+              </p>
             </div>
-            
+
             <div className="dashboard-cards">
-              <div className="dashboard-card" onClick={() => navigate('/crear')}>
-                <i className="fa-solid fa-plus"></i>
-                <h3>Crear Producto</h3>
-                <p>Agregar nuevos productos al catálogo</p>
-              </div>
 
-              <div className="dashboard-card" onClick={() => navigate('/listar')}>
-                <i className="fa-solid fa-list"></i>
-                <h3>Ver Productos</h3>
-                <p>Listar y buscar productos existentes</p>
-              </div>
+              {isAdmin && (
+                <>
+                  <div
+                    className="dashboard-card"
+                    onClick={() => navigate('/cuenta')}
+                  >
+                    <i className="fa-solid fa-user"></i>
+                    <h3>Mi Perfil</h3>
+                    <p>Administra tu información personal.</p>
+                  </div>
 
-              <div className="dashboard-card" onClick={() => navigate('/actualizar')}>
-                <i className="fa-solid fa-pen-to-square"></i>
-                <h3>Actualizar Producto</h3>
-                <p>Modificar información de productos</p>
-              </div>
+                  <div
+                    className="dashboard-card"
+                    onClick={() => navigate('/admin/productos')}
+                  >
+                    <i className="fa-solid fa-box"></i>
+                    <h3>Productos</h3>
+                    <p>Listado, creación y administración de productos.</p>
+                  </div>
 
-              <div className="dashboard-card" onClick={() => navigate('/eliminar')}>
-                <i className="fa-solid fa-trash"></i>
-                <h3>Eliminar Producto</h3>
-                <p>Remover productos del catálogo</p>
-              </div>
+                  <div
+                    className="dashboard-card"
+                    onClick={() => navigate('/admin/usuarios')}
+                  >
+                    <i className="fa-solid fa-users"></i>
+                    <h3>Usuarios</h3>
+                    <p>Gestión de cuentas de usuarios del sistema.</p>
+                  </div>
+                </>
+              )}
+
+              {/* SI ES USER */}
+              {!isAdmin && (
+                <>
+                  {/* PERFIL */}
+                  <div className="dashboard-card" onClick={() => navigate('/cuenta')}>
+                    <i className="fa-solid fa-user"></i>
+                    <h3>Mi Perfil</h3>
+                    <p>Administra tus datos personales.</p>
+                  </div>
+
+                  {/* HISTORIAL */}
+                  <div className="dashboard-card" onClick={() => navigate('/historial')}>
+                    <i className="fa-solid fa-clock-rotate-left"></i>
+                    <h3>Historial de Compras</h3>
+                    <p>Revisa tus pedidos anteriores.</p>
+                  </div>
+
+                  {/* DIRECCIONES */}
+                  <div className="dashboard-card" onClick={() => navigate('/direcciones')}>
+                    <i className="fa-solid fa-location-dot"></i>
+                    <h3>Mis Direcciones</h3>
+                    <p>Gestiona tus direcciones de envío.</p>
+                  </div>
+
+                  {/* IR A LA TIENDA */}
+                  <div className="dashboard-card" onClick={() => navigate('/catalogo')}>
+                    <i className="fa-solid fa-store"></i>
+                    <h3>Seguir Comprando</h3>
+                    <p>Volver al catálogo principal.</p>
+                  </div>
+                </>
+              )}
+
             </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
-};
-
-export default Dashboard;
+}

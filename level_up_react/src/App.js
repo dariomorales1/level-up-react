@@ -15,8 +15,17 @@ import './App.css';
 import Header from './components/header';
 import Footer from './components/footer';
 import ScrollToTop from './components/ScrollToTop';
-import PanelAdministrador from './pages/PanelAdministrador';
+import AdminProductos from './pages/AdminProductos';    
 import CrearProducto from './pages/CrearProducto';
+import Direcciones from './pages/Direcciones';
+import HistorialCompras from './pages/HistorialCompras';
+import Dashboard from './pages/Dashboard';
+import AdminProductosHome from './pages/AdminProductosHome';
+import AdminUsuariosHome from './pages/AdminUsuariosHome';
+import AdminUsuariosListado from './pages/AdminUsuariosListado';
+import AdminUsuariosCrear from './pages/AdminUsuariosCrear';
+import AdminUsuariosActualizar from './pages/AdminUsuariosActualizar';
+import AdminUsuariosEliminar from './pages/AdminUsuariosEliminar';
 
 function App() {
     return (
@@ -35,8 +44,17 @@ function App() {
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/cuenta" element={<Cuenta />} />
-                        <Route path="/paneladministrador" element={<PanelAdministrador />} />
-                        <Route path="/crearproducto" element={<CrearProducto />} />
+                        <Route path="/PanelAdministrador" element={<AdminProductos />} />
+                        <Route path="/CrearProducto" element={<CrearProducto />} />
+                        <Route path="/direcciones" element={<Direcciones />} />
+                        <Route path="/historial" element={<HistorialCompras />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/adminUsuariosListado" element={<AdminUsuariosListado />} />
+                        <Route path="/adminUsuariosCrear" element={<AdminUsuariosCrear />} />
+                        <Route path="/adminUsuariosActualizar" element={<AdminUsuariosActualizar />} />
+                        <Route path="/adminUsuariosEliminar" element={<AdminUsuariosEliminar />} />
+                        <Route path="/admin/productos" element={<AdminProductosHome />} />
+                        <Route path="/admin/usuarios" element={<AdminUsuariosHome />} />
                     </Routes>
                 <Footer />
             </Router>

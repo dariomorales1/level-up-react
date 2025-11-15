@@ -1,0 +1,37 @@
+.admin-usuarios-crear-main {
+  background-color: #0f0f0f;
+  color: #e5e7eb;
+}
+
+.admin-usuarios-crear-container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.admin-usuarios-crear-header h1 {
+  font-size: 1.8rem;
+  margin-bottom: 4px;
+}
+
+.admin-usuarios-crear-header p {
+  color: #9ca3af;
+  margin-bottom: 16px;
+}
+
+.admin-usuarios-crear-card {
+  margin-top: 4px;
+}
+
+.select-input {
+  background: #0b1220;
+  border: 1px solid #1f2937;
+  color: #e5e7eb;
+  padding: 10px 12px;
+  border-radius: 10px;
+  outline: none;
+}
+
+.select-input:focus {
+  border-color: #00ff00;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}

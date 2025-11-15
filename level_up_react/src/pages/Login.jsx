@@ -3,7 +3,6 @@ import "../styles/pages/registroStyles.css";
 import showToast from "../components/toast";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-
 import { auth, db } from "../firebase/config";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -35,7 +34,6 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Metrica global del flujo de login
     console.time("LOGIN_FLOW");
 
     if (!formData.email || !formData.password) {
@@ -70,13 +68,37 @@ const Login = () => {
 
       const firebaseUser = userCredential.user;
 
-      // 2️⃣ Valores base (rápidos) sin depender de Firestore
-      let name = firebaseUser.displayName || "Usuario";
-      let role = firebaseUser.email.endsWith("@levelup.ddns.net")
-        ? "admin"
-        : "customer";
+      // 2️⃣ Obtener token de Firebase
+      console.time("FIREBASE_ID_TOKEN");
+      const firebaseIdToken = await firebaseUser.getIdToken();
+      console.timeEnd("FIREBASE_ID_TOKEN");
 
-      // 3️⃣ Intentar obtener datos más precisos desde Firestore (opcional)
+      // 3️⃣ 🔥 ENVIAR TOKEN A BACKEND PARA GENERAR JWT
+      console.time("BACKEND_AUTH");
+      const backendResponse = await fetch('http://levelup.ddns.net:8080/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firebaseIdToken: firebaseIdToken
+        })
+      });
+
+      if (!backendResponse.ok) {
+        const errorText = await backendResponse.text();
+        console.error("Error del backend:", errorText);
+        throw new Error(`Error en autenticación con backend: ${backendResponse.status}`);
+      }
+
+      const backendAuth = await backendResponse.json();
+      console.timeEnd("BACKEND_AUTH");
+
+      console.log("✅ Backend response COMPLETA:", backendAuth);
+
+      // 4️⃣ Obtener datos adicionales del usuario (opcional)
+      let name = firebaseUser.displayName || "Usuario";
+
       try {
         console.time("FIRESTORE_GET_USER");
         const userDocRef = doc(db, "users", firebaseUser.uid);
@@ -85,40 +107,41 @@ const Login = () => {
         if (userDoc.exists()) {
           const data = userDoc.data();
           if (data.name) name = data.name;
-          if (data.role) role = data.role;
         }
         console.timeEnd("FIRESTORE_GET_USER");
       } catch (error) {
         console.timeEnd("FIRESTORE_GET_USER");
-        console.warn(
-          "No se pudo obtener el documento de usuario en Firestore:",
-          error
-        );
+        console.warn("No se pudo obtener documento de usuario en Firestore:", error);
       }
 
-      // 4️⃣ Construir objeto para tu contexto
+      // 5️⃣ Construir objeto para contexto (USANDO DATOS DEL BACKEND)
       const userForAuth = {
         id: firebaseUser.uid,
         name,
         email: firebaseUser.email,
-        role,
+        rol: backendAuth.rol,
+        accessToken: backendAuth.accessToken,
+        refreshToken: backendAuth.refreshToken
       };
 
       console.log("LOGIN - userForAuth final:", userForAuth);
+      console.log("ROL del backend:", backendAuth.rol);
 
-      // 5️⃣ Guardar en contexto de auth (con Recordarme)
-      login(userForAuth, rememberMe);
+      // 6️⃣ Guardar en contexto de auth
+      await login(userForAuth, rememberMe);
       showToast(`¡Bienvenido de nuevo, ${userForAuth.name}!`);
 
-      // 6️⃣ Redirigir inmediatamente según rol
-      if (userForAuth.role === "admin") {
-        navigate("/paneladministrador", { replace: true });
+      // 7️⃣ Redirigir según rol DEL BACKEND (usar directamente backendAuth.rol)
+      if (backendAuth.rol === "ADMIN") {
+        console.log("🔄 Redirigiendo a panel de administrador");
+        navigate("/cuenta", { replace: true });
       } else {
-        // usa "/cuenta" o "/" según tu flujo
+        console.log("🔄 Redirigiendo a cuenta de usuario");
         navigate("/cuenta", { replace: true });
       }
+
     } catch (error) {
-      console.error("Error al iniciar sesión con Firebase (Auth):", error);
+      console.error("Error en el flujo de login:", error);
 
       if (
         error.code === "auth/user-not-found" ||
@@ -126,15 +149,15 @@ const Login = () => {
       ) {
         showToast("Credenciales incorrectas. Verifica tu email y contraseña.");
       } else if (error.code === "auth/too-many-requests") {
-        showToast(
-          "Demasiados intentos fallidos. Intenta nuevamente más tarde."
-        );
+        showToast("Demasiados intentos fallidos. Intenta nuevamente más tarde.");
+      } else if (error.message.includes("backend")) {
+        showToast("Error en el servidor. Intenta nuevamente.");
       } else {
         showToast("Ocurrió un error al iniciar sesión. Intenta nuevamente.");
       }
     } finally {
       setLoading(false);
-      console.timeEnd("LOGIN_FLOW"); // cierre global del flujo
+      console.timeEnd("LOGIN_FLOW");
     }
   };
 

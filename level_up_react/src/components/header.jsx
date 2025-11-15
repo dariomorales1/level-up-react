@@ -10,95 +10,122 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
 
 export default function Header() {
-    const [isCartOpen, setIsCartOpen] = useState(false);
-    const { cart } = useApp();
-    const { user, logout, isAuthenticated } = useAuth();
-    const navigate = useNavigate();
-    const location = useLocation();
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const { cart } = useApp();
+  const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    console.log('Header - user:', user);
-    console.log('Header - isAuthenticated:', isAuthenticated);
+  const cartItems = cart?.items || [];
+  const cartItemsCount = cartItems.reduce(
+    (total, item) => total + (item?.quantity || 0),
+    0
+  );
 
-    const cartItems = cart?.items || [];
-    const cartItemsCount = cartItems.reduce((total, item) => total + (item?.quantity || 0), 0);
-    
-    const isManagementPage = location.pathname === '/cuenta';
+  // ❗ Páginas "de gestión" SOLO para ADMIN (panel de productos)
+  const adminManagementPrefixes = [
+    '/PanelAdministrador',
+    '/CrearProducto',
+    '/actualizar', // ajusta al nombre real de tu ruta de edición
+  ];
 
-    const openCart = () => setIsCartOpen(true);
-    const closeCart = () => setIsCartOpen(false);
+  const isManagementPage = adminManagementPrefixes.some((prefix) =>
+    location.pathname.startsWith(prefix)
+  );
 
-    const handleLogout = () => {
-        console.log('Logging out...');
-        logout();
-        navigate('/');
-        closeCart();
-    };
+  const openCart = () => setIsCartOpen(true);
+  const closeCart = () => setIsCartOpen(false);
 
-    return (
-        <>
-            <header className="headerPpal">
-                <nav className="navbarPpal">
-                    <div className="navbarFirstContainer">
-                        <a className="navbar-brand logoName" href="/">
-                            <img src={image} alt='logo' width='40px' />
-                            Level-Up
-                        </a>
-                    </div>
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    closeCart();
+  };
 
-                    <div className="navBarButtons">
-                        {/* Ocultar navegación principal en gestión de productos */}
-                        {!isManagementPage && (
-                            <div className="navBarButtonsContainer">
-                                <NavButton text="Inicio" to="/"/>
-                                <NavButton text="Catalogo" to="/catalogo"/>
-                                <NavButton text="Blog" to="/blog"/>
-                            </div>
-                        )}
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    navigate('/');
+  };
 
-                        <div className="navBarButtonsContainer navBarButtonsContainer--right">
-                            {/* Ocultar carrito en gestión de productos */}
-                            {!isManagementPage && (
-                                <button className="btnCarrito" onClick={openCart}>
-                                    <FontAwesomeIcon icon={faCartShopping} className='carritoIcon' />
-                                    {cartItemsCount > 0 && (
-                                        <span className="cartBadge">{cartItemsCount}</span>
-                                    )}
-                                </button>
-                            )}
+  return (
+    <>
+      <header className="headerPpal">
+        <nav className="navbarPpal">
+          <div className="navbarFirstContainer">
+            <a
+              className="navbar-brand logoName"
+              href="/"
+              onClick={handleLogoClick}
+            >
+              <img src={image} alt="logo" width="40px" />
+              Level-Up
+            </a>
+          </div>
 
-                            {/* Mostrar botones según autenticación - user puede ser null */}
-                            {isAuthenticated && user ? (
-                                <>
-                                    {!isManagementPage && (
-                                        <NavButton 
-                                            text={user.name ? `Hola, ${user.name}` : "Cuenta"} 
-                                            to="/cuenta" 
-                                            className="btnAgregarHeader"
-                                        />
-                                    )}
-                                    <button 
-                                        className="btnHeader" 
-                                        onClick={handleLogout}
-                                    >
-                                        Cerrar sesión
-                                    </button>
-                                </>
-                            ) : (
-                                <>
-                                    {!isManagementPage && (
-                                        <>
-                                            <NavButton text="Ingresar" to="/login" className="btnHeader"/>
-                                            <NavButton text="Registrarse" to="/register" className="btnAgregarHeader"/>
-                                        </>
-                                    )}
-                                </>
-                            )}
-                        </div>
-                    </div>
-                </nav>
-            </header>
+          <div className="navBarButtons">
+            {/* 🔹 Solo ocultamos navegación principal en páginas de gestión ADMIN */}
+            {!isManagementPage && (
+              <div className="navBarButtonsContainer">
+                <NavButton text="Inicio" to="/" />
+                <NavButton text="Catalogo" to="/catalogo" />
+                <NavButton text="Blog" to="/blog" />
+              </div>
+            )}
 
-            <CartDrawer isOpen={isCartOpen} onClose={closeCart} />
-        </>
-    );
+            <div className="navBarButtonsContainer navBarButtonsContainer--right">
+              {/* 🔹 Igual con el carrito: se oculta solo en admin */}
+              {!isManagementPage && (
+                <button className="btnCarrito" onClick={openCart}>
+                  <FontAwesomeIcon
+                    icon={faCartShopping}
+                    className="carritoIcon"
+                  />
+                  {cartItemsCount > 0 && (
+                    <span className="cartBadge">{cartItemsCount}</span>
+                  )}
+                </button>
+              )}
+
+              {/* 🔹 Botones según autenticación */}
+              {isAuthenticated && user ? (
+                <>
+                  {/* El botón "Cuenta" también se oculta solo en páginas admin, 
+                      en /cuenta, /historial, /direcciones, /dashboard SÍ se muestra */}
+                  {!isManagementPage && (
+                    <NavButton
+                      text={user.name ? `Hola, ${user.name}` : 'Cuenta'}
+                      to="/cuenta"
+                      className="btnAgregarHeader"
+                    />
+                  )}
+                  <button className="btnHeader" onClick={handleLogout}>
+                    Cerrar sesión
+                  </button>
+                </>
+              ) : (
+                <>
+                  {!isManagementPage && (
+                    <>
+                      <NavButton
+                        text="Ingresar"
+                        to="/login"
+                        className="btnHeader"
+                      />
+                      <NavButton
+                        text="Registrarse"
+                        to="/register"
+                        className="btnAgregarHeader"
+                      />
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </nav>
+      </header>
+
+      <CartDrawer isOpen={isCartOpen} onClose={closeCart} />
+    </>
+  );
 }

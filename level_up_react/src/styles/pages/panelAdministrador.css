@@ -12,7 +12,8 @@
 .management-main {
     flex: 1;
     padding: 2rem;
-    background-color: white;
+    background-color: #0f0f0f;  /* 🎨 Panel oscuro uniforme */
+    color: #e5e7eb;             /* Texto claro */
 }
 
 @media (max-width: 768px) {

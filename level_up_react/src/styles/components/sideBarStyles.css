@@ -256,4 +256,80 @@
         padding: 0.4rem 0.8rem;
         font-size: 0.8rem;
     }
+    
+}
+
+/* Bloque que contiene el padre + hijos */
+.submenu-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* El item padre del submenu */
+.menu-item-parent {
+  cursor: pointer;
+}
+
+/* Header del item padre con flecha a la derecha */
+.menu-parent-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Flechita de abrir/cerrar */
+.submenu-arrow {
+  font-size: 1rem;
+  transition: transform 0.2s ease;
+  color: #9ca3af;
+}
+
+.submenu-arrow.open {
+  transform: rotate(180deg);
+}
+
+/* Contenedor de los hijos del submenu */
+.submenu {
+  margin-left: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Cada item hijo */
+.submenu-item {
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submenu-item:hover {
+  background: rgba(37, 99, 235, 0.2);
+  border-color: #0066ff;
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(0, 102, 255, 0.25);
+}
+
+.submenu-item.active {
+  background: rgba(0, 102, 255, 0.3);
+  border-color: #0066ff;
+  box-shadow: 0 4px 16px rgba(0, 102, 255, 0.35);
+}
+
+/* Textos de los hijos */
+.submenu-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+.submenu-description {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: #9ca3af;
 }

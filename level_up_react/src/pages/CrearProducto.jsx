@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import SideBar from '../components/SideBar';
 import '../styles/pages/crearProducto.css';
+import '../styles/pages/panelAdministrador.css';
 
 const CrearProducto = ({ onSave, onCancel }) => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     Código: '',
     Nombre: '',
@@ -24,7 +29,7 @@ const CrearProducto = ({ onSave, onCancel }) => {
     }));
   };
 
-  //formatea String a number y en moneda CLP
+  // formatea String a number y en moneda CLP
   const formatPrice = (value) => {
     if (value === undefined || value === null || value === '') return '';
     const digits = String(value).replace(/\D/g, '');
@@ -68,180 +73,221 @@ const CrearProducto = ({ onSave, onCancel }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    //Validaciones básicas
+    // Validaciones básicas
     if (!formData.Código || !formData.Nombre || !formData.Precio) {
       alert('Por favor complete los campos obligatorios');
       return;
     }
 
-    //Filtrar especificaciones vacías
-    const filteredSpecs = formData.Especificaciones.filter(spec => spec.trim() !== '');
-    
-    onSave({
+    // Filtrar especificaciones vacías
+    const filteredSpecs = formData.Especificaciones.filter(
+      spec => spec.trim() !== ''
+    );
+
+    const newProduct = {
       ...formData,
-      Especificaciones: filteredSpecs.length > 0 ? filteredSpecs : ['Sin especificaciones']
-    });
+      Especificaciones:
+        filteredSpecs.length > 0 ? filteredSpecs : ['Sin especificaciones']
+    };
+
+    // Si viene onSave por props lo usamos, sino solo logeamos
+    if (typeof onSave === 'function') {
+      onSave(newProduct);
+    } else {
+      console.log('Producto creado (sin onSave):', newProduct);
+    }
+
+    alert('Producto creado exitosamente');
+
+    // Después de guardar, volvemos al panel / lista de productos
+    navigate('/PanelAdministrador');
+  };
+
+  const handleCancelClick = () => {
+    if (typeof onCancel === 'function') {
+      onCancel();
+    } else {
+      navigate('/PanelAdministrador');
+    }
   };
 
   return (
-    <div className="create-product-container">
-      <h2>Crear Nuevo Producto</h2>
-      
-      <form onSubmit={handleSubmit} className="product-form">
-        <div className="form-row">
-          <div className="form-group">
-            <label>Código *</label>
-            <input
-              type="text"
-              name="Código"
-              value={formData.Código}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label>Nombre *</label>
-            <input
-              type="text"
-              name="Nombre"
-              value={formData.Nombre}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-        </div>
+    <div className="panel-administrador">
+      <div className="management-layout">
+        {/* SideBar fijo a la izquierda */}
+        <SideBar />
 
-        <div className="form-row">
-          <div className="form-group">
-            <label>Precio *</label>
-            <input
-              type="text"
-              name="Precio"
-              value={formData.Precio}
-              onChange={handlePriceChange}
-              placeholder="29.990 CLP"
-              required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label>Stock *</label>
-            <input
-              type="number"
-              name="Stock"
-              value={formData.Stock}
-              onChange={handleInputChange}
-              min="1"
-              required
-            />
-          </div>
-        </div>
+        {/* Contenido principal con el formulario */}
+        <main className="management-main">
+          <div className="create-product-container">
+            <h2>Crear Nuevo Producto</h2>
+            
+            <form onSubmit={handleSubmit} className="product-form">
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Código *</label>
+                  <input
+                    type="text"
+                    name="Código"
+                    value={formData.Código}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label>Nombre *</label>
+                  <input
+                    type="text"
+                    name="Nombre"
+                    value={formData.Nombre}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+              </div>
 
-        <div className="form-group">
-          <label>Categoría *</label>
-          <select
-            name="Categoría"
-            value={formData.Categoría}
-            onChange={handleInputChange}
-            required
-          >
-            <option value="">Seleccione una categoría</option>
-            <option value="Juegos de Mesa">Juegos de Mesa</option>
-            <option value="Accesorios">Accesorios</option>
-            <option value="Consolas">Consolas</option>
-            <option value="Computadores Gamers">Computadores Gamers</option>
-            <option value="Sillas Gamers">Sillas Gamers</option>
-            <option value="Mouse">Mouse</option>
-            <option value="Mousepad">Mousepad</option>
-            <option value="Poleras Personalizadas">Poleras Personalizadas</option>
-            <option value="Polerones Gamers Personalizados">Polerones Gamers Personalizados</option>
-          </select>
-        </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Precio *</label>
+                  <input
+                    type="text"
+                    name="Precio"
+                    value={formData.Precio}
+                    onChange={handlePriceChange}
+                    placeholder="29.990 CLP"
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label>Stock *</label>
+                  <input
+                    type="number"
+                    name="Stock"
+                    value={formData.Stock}
+                    onChange={handleInputChange}
+                    min="1"
+                    required
+                  />
+                </div>
+              </div>
 
-        <div className="form-group">
-          <label>Descripción Corta *</label>
-          <textarea
-            name="Descripción Corta"
-            value={formData['Descripción Corta']}
-            onChange={handleInputChange}
-            rows="3"
-            required
-          />
-        </div>
+              <div className="form-group">
+                <label>Categoría *</label>
+                <select
+                  name="Categoría"
+                  value={formData.Categoría}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Seleccione una categoría</option>
+                  <option value="Juegos de Mesa">Juegos de Mesa</option>
+                  <option value="Accesorios">Accesorios</option>
+                  <option value="Consolas">Consolas</option>
+                  <option value="Computadores Gamers">Computadores Gamers</option>
+                  <option value="Sillas Gamers">Sillas Gamers</option>
+                  <option value="Mouse">Mouse</option>
+                  <option value="Mousepad">Mousepad</option>
+                  <option value="Poleras Personalizadas">Poleras Personalizadas</option>
+                  <option value="Polerones Gamers Personalizados">
+                    Polerones Gamers Personalizados
+                  </option>
+                </select>
+              </div>
 
-        <div className="form-group">
-          <label>Descripción Larga</label>
-          <textarea
-            name="Descripción Larga"
-            value={formData['Descripción Larga']}
-            onChange={handleInputChange}
-            rows="5"
-          />
-        </div>
+              <div className="form-group">
+                <label>Descripción Corta *</label>
+                <textarea
+                  name="Descripción Corta"
+                  value={formData['Descripción Corta']}
+                  onChange={handleInputChange}
+                  rows="3"
+                  required
+                />
+              </div>
 
-        <div className="form-group">
-          <label>URL de la imagen</label>
-          <input
-            type="text"
-            name="imgLink"
-            value={formData.imgLink}
-            onChange={handleInputChange}
-            placeholder="assets/img/products/categoria/producto.jpg"
-          />
-        </div>
+              <div className="form-group">
+                <label>Descripción Larga</label>
+                <textarea
+                  name="Descripción Larga"
+                  value={formData['Descripción Larga']}
+                  onChange={handleInputChange}
+                  rows="5"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Puntuación (0-10)</label>
-          <input
-            type="number"
-            name="Puntuacion"
-            value={formData.Puntuacion}
-            onChange={handleInputChange}
-            min="0"
-            max="10"
-          />
-        </div>
+              <div className="form-group">
+                <label>URL de la imagen</label>
+                <input
+                  type="text"
+                  name="imgLink"
+                  value={formData.imgLink}
+                  onChange={handleInputChange}
+                  placeholder="assets/img/products/categoria/producto.jpg"
+                />
+              </div>
 
-        <div className="form-group">
-          <label>Especificaciones</label>
-          {formData.Especificaciones.map((spec, index) => (
-            <div key={index} className="specification-item">
-              <input
-                type="text"
-                value={spec}
-                onChange={(e) => handleSpecificationChange(index, e.target.value)}
-                placeholder="Especificación del producto"
-              />
-              {formData.Especificaciones.length > 1 && (
+              <div className="form-group">
+                <label>Puntuación (0-10)</label>
+                <input
+                  type="number"
+                  name="Puntuacion"
+                  value={formData.Puntuacion}
+                  onChange={handleInputChange}
+                  min="0"
+                  max="10"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Especificaciones</label>
+                {formData.Especificaciones.map((spec, index) => (
+                  <div key={index} className="specification-item">
+                    <input
+                      type="text"
+                      value={spec}
+                      onChange={(e) =>
+                        handleSpecificationChange(index, e.target.value)
+                      }
+                      placeholder="Especificación del producto"
+                    />
+                    {formData.Especificaciones.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeSpecification(index)}
+                        className="btn-remove"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                ))}
                 <button
                   type="button"
-                  onClick={() => removeSpecification(index)}
-                  className="btn-remove"
+                  onClick={addSpecification}
+                  className="btn-add"
                 >
-                  ✕
+                  + Agregar Especificación
                 </button>
-              )}
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addSpecification}
-            className="btn-add"
-          >
-            + Agregar Especificación
-          </button>
-        </div>
+              </div>
 
-        <div className="form-actions">
-          <button type="submit" className="btn-save">
-            Guardar Producto
-          </button>
-          <button type="button" onClick={onCancel} className="btn-cancel">
-            Cancelar
-          </button>
-        </div>
-      </form>
+              <div className="form-actions">
+                <button type="submit" className="btn-save">
+                  Guardar Producto
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCancelClick}
+                  className="btn-cancel"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </main>
+      </div>
     </div>
   );
 };
