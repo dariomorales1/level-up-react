@@ -2,39 +2,171 @@ import React, { useState } from 'react';
 import SideBar from '../components/SideBar';
 import '../styles/pages/panelAdministrador.css';
 import '../styles/pages/adminUsuariosActualizar.css';
+import { useAuth } from '../hooks/useAuth';
+import showToast from '../components/toast';
 
 const AdminUsuariosActualizar = () => {
   const [email, setEmail] = useState('');
+  const [usuarioEncontrado, setUsuarioEncontrado] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [buscando, setBuscando] = useState(false);
+  const { obtenerUsuarios, actualizarUsuario } = useAuth();
+
   const [form, setForm] = useState({
     nombre: '',
+    email: '',             // ← se edita pero lo dejamos disabled
+    fechaNacimiento: '',   // ← NUEVO CAMPO en el form
     rol: 'USER',
-    estado: 'Activo',
+    activo: true,
   });
 
-  const handleSearch = (e) => {
+  // Buscar usuario por email en la lista de usuarios
+  const handleSearch = async (e) => {
     e.preventDefault();
+    
     if (!email) {
-      alert('Ingresa un email para buscar.');
+      showToast('Ingresa un email para buscar.', 'error');
       return;
     }
-    // Simula que encuentra un usuario:
-    setForm({
-      nombre: 'Usuario de ejemplo',
-      rol: 'USER',
-      estado: 'Activo',
-    });
-    alert('Usuario cargado (simulado).');
+
+    try {
+      setBuscando(true);
+      setUsuarioEncontrado(null);
+      
+      // Obtener todos los usuarios
+      const usuarios = await obtenerUsuarios();
+      
+      // Buscar por email
+      const usuario = usuarios.find(
+        u => u.email.toLowerCase() === email.toLowerCase()
+      );
+      
+      if (!usuario) {
+        showToast('No se encontró ningún usuario con ese email.', 'error');
+        return;
+      }
+
+      // Normalizar fechaNacimiento a formato YYYY-MM-DD si viene con tiempo
+      let fechaNacimiento = '';
+      if (usuario.fechaNacimiento) {
+        try {
+          // Si ya viene como 'YYYY-MM-DD', esto igual funciona
+          const date = new Date(usuario.fechaNacimiento);
+          if (!isNaN(date.getTime())) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            fechaNacimiento = `${year}-${month}-${day}`;
+          } else {
+            // Si no se pudo parsear, intenta usar solo los primeros 10 caracteres
+            fechaNacimiento = String(usuario.fechaNacimiento).slice(0, 10);
+          }
+        } catch {
+          fechaNacimiento = String(usuario.fechaNacimiento).slice(0, 10);
+        }
+      }
+
+      setUsuarioEncontrado(usuario);
+      setForm({
+        nombre: usuario.nombre || '',
+        email: usuario.email || '',
+        fechaNacimiento: fechaNacimiento || '',
+        rol: usuario.rol || 'USER',
+        activo:
+          usuario.activo !== undefined && usuario.activo !== null
+            ? usuario.activo
+            : true,
+      });
+      
+      showToast('Usuario encontrado correctamente.', 'success');
+      
+    } catch (error) {
+      console.error('Error buscando usuario:', error);
+      showToast('Error al buscar usuario: ' + error.message, 'error');
+    } finally {
+      setBuscando(false);
+    }
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setForm((f) => ({ 
+      ...f, 
+      [name]: type === 'checkbox' ? checked : value 
+    }));
   };
 
-  const handleUpdate = (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    console.log('Actualizar usuario:', { email, ...form });
-    alert('Usuario actualizado (simulado). Luego conectas a tu API.');
+    
+    if (!usuarioEncontrado) {
+      showToast('Primero debes buscar un usuario.', 'error');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Preparar datos para actualizar según UsuarioRequest
+      const datosActualizacion = {
+        nombre: form.nombre,
+        email: form.email, // lo mostramos pero no lo dejamos editar (disabled)
+        fechaNacimiento: form.fechaNacimiento || '2000-01-01',
+        avatarUrl: usuarioEncontrado.avatarUrl || '',
+        rol: form.rol,
+        activo: form.activo,
+      };
+
+      console.log('Enviando datos de actualización:', datosActualizacion);
+
+      const usuarioActualizado = await actualizarUsuario(
+        usuarioEncontrado.id,
+        datosActualizacion
+      );
+      
+      setUsuarioEncontrado(usuarioActualizado);
+      showToast('Usuario actualizado correctamente.', 'success');
+      
+    } catch (error) {
+      console.error('Error actualizando usuario:', error);
+      showToast('Error al actualizar usuario: ' + error.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const limpiarBusqueda = () => {
+    setEmail('');
+    setUsuarioEncontrado(null);
+    setForm({
+      nombre: '',
+      email: '',
+      fechaNacimiento: '',
+      rol: 'USER',
+      activo: true,
+    });
+  };
+
+  // FECHA MÁXIMA: Hace exactamente 18 años desde HOY
+  const getMaxDate = () => {
+    const today = new Date();
+    const maxDate = new Date(
+      today.getFullYear() - 18,
+      today.getMonth(),
+      today.getDate()
+    );
+    return maxDate.toISOString().split('T')[0];
+  };
+
+  // FECHA MÍNIMA: Hace 100 años desde HOY
+  const getMinDate = () => {
+    const today = new Date();
+    const minDate = new Date(
+      today.getFullYear() - 100,
+      today.getMonth(),
+      today.getDate()
+    );
+    return minDate.toISOString().split('T')[0];
   };
 
   return (
@@ -58,62 +190,147 @@ const AdminUsuariosActualizar = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="usuario@mail.com"
+                    disabled={buscando}
                   />
                 </div>
                 <div className="acciones">
-                  <button type="submit" className="btn btn-primary">
-                    Buscar usuario
+                  <button 
+                    type="submit" 
+                    className="btn btn-primary"
+                    disabled={buscando}
+                  >
+                    {buscando ? 'Buscando...' : 'Buscar usuario'}
                   </button>
+                  {usuarioEncontrado && (
+                    <button 
+                      type="button" 
+                      className="btn btn-secondary"
+                      onClick={limpiarBusqueda}
+                    >
+                      Limpiar
+                    </button>
+                  )}
                 </div>
               </form>
 
-              <hr className="divider" />
+              {usuarioEncontrado && (
+                <>
+                  <hr className="divider" />
 
-              <form onSubmit={handleUpdate}>
-                <div className="input-group">
-                  <label>Nombre</label>
-                  <input
-                    name="nombre"
-                    value={form.nombre}
-                    onChange={handleChange}
-                    placeholder="Nombre del usuario"
-                  />
-                </div>
-
-                <div className="grid-two">
-                  <div className="input-group">
-                    <label>Rol</label>
-                    <select
-                      name="rol"
-                      value={form.rol}
-                      onChange={handleChange}
-                      className="select-input"
+                  {/* Resumen del usuario encontrado */}
+                  <div
+                    className="usuario-info"
+                    style={{
+                      background: '#1e293b',
+                      padding: '1rem',
+                      borderRadius: '8px',
+                      marginBottom: '1.5rem',
+                      border: '1px solid #334155',
+                    }}
+                  >
+                    <h3
+                      style={{
+                        color: '#e5e7eb',
+                        marginBottom: '0.5rem',
+                      }}
                     >
-                      <option value="USER">Usuario</option>
-                      <option value="ADMIN">Administrador</option>
-                    </select>
+                      Usuario encontrado:
+                    </h3>
+                    <p style={{ color: '#9ca3af', margin: '0.25rem 0' }}>
+                      <strong>ID:</strong>{' '}
+                      {usuarioEncontrado.id
+                        ? usuarioEncontrado.id.substring(0, 12) + '...'
+                        : 'N/A'}
+                    </p>
+                    <p style={{ color: '#9ca3af', margin: '0.25rem 0' }}>
+                      <strong>Email:</strong> {usuarioEncontrado.email}
+                    </p>
+                    <p style={{ color: '#9ca3af', margin: '0.25rem 0' }}>
+                      <strong>Registro:</strong>{' '}
+                      {usuarioEncontrado.creadoEn
+                        ? new Date(
+                            usuarioEncontrado.creadoEn
+                          ).toLocaleDateString('es-CL')
+                        : 'N/A'}
+                    </p>
                   </div>
 
-                  <div className="input-group">
-                    <label>Estado</label>
-                    <select
-                      name="estado"
-                      value={form.estado}
-                      onChange={handleChange}
-                      className="select-input"
-                    >
-                      <option value="Activo">Activo</option>
-                      <option value="Inactivo">Inactivo</option>
-                    </select>
-                  </div>
-                </div>
+                  {/* Formulario de edición */}
+                  <form onSubmit={handleUpdate}>
+                    <div className="input-group">
+                      <label>Nombre</label>
+                      <input
+                        name="nombre"
+                        value={form.nombre}
+                        onChange={handleChange}
+                        placeholder="Nombre del usuario"
+                        required
+                      />
+                    </div>
 
-                <div className="acciones">
-                  <button type="submit" className="btn btn-success">
-                    Guardar cambios
-                  </button>
-                </div>
-              </form>
+                    <div className="input-group">
+                      <label>Email</label>
+                      <input
+                        name="email"
+                        type="email"
+                        value={form.email}
+                        onChange={handleChange}
+                        placeholder="Email del usuario"
+                        required
+                        disabled
+                      />
+                    </div>
+
+                    <div className="input-group">
+                      <label>Fecha de nacimiento</label>
+                      <input
+                        name="fechaNacimiento"
+                        type="date"
+                        min={getMinDate()}
+                        max={getMaxDate()}
+                        value={form.fechaNacimiento}
+                        onChange={handleChange}
+                      />
+                    </div>
+
+                    <div className="grid-two">
+                      <div className="input-group">
+                        <label>Rol</label>
+                        <select
+                          name="rol"
+                          value={form.rol}
+                          onChange={handleChange}
+                          className="select-input"
+                        >
+                          <option value="USER">Usuario</option>
+                          <option value="ADMIN">Administrador</option>
+                        </select>
+                      </div>
+
+                      <div className="input-group">
+                        <label>Estado</label>
+                        <input
+                          name="estado"
+                          value={form.activo ? 'Activo' : 'Inactivo'}
+                          onChange={handleChange}
+                          placeholder="Estado del usuario"
+                          disabled
+                        />
+                      </div>
+                    </div>
+
+                    <div className="acciones">
+                      <button 
+                        type="submit" 
+                        className="btn btn-success"
+                        disabled={loading}
+                      >
+                        {loading ? 'Actualizando...' : 'Guardar cambios'}
+                      </button>
+                    </div>
+                  </form>
+                </>
+              )}
             </section>
           </div>
         </main>

@@ -94,7 +94,7 @@ export default function Header() {
                   {!isManagementPage && (
                     <NavButton
                       text={user.name ? `Hola, ${user.name}` : 'Cuenta'}
-                      to="/cuenta"
+                      to="/dashboard"
                       className="btnAgregarHeader"
                     />
                   )}

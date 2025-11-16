@@ -23,9 +23,9 @@ import Dashboard from './pages/Dashboard';
 import AdminProductosHome from './pages/AdminProductosHome';
 import AdminUsuariosHome from './pages/AdminUsuariosHome';
 import AdminUsuariosListado from './pages/AdminUsuariosListado';
-import AdminUsuariosCrear from './pages/AdminUsuariosCrear';
 import AdminUsuariosActualizar from './pages/AdminUsuariosActualizar';
 import AdminUsuariosEliminar from './pages/AdminUsuariosEliminar';
+import ForgotPassword from './pages/ForgotPassword';
 
 function App() {
     return (
@@ -50,11 +50,11 @@ function App() {
                         <Route path="/historial" element={<HistorialCompras />} />
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/adminUsuariosListado" element={<AdminUsuariosListado />} />
-                        <Route path="/adminUsuariosCrear" element={<AdminUsuariosCrear />} />
                         <Route path="/adminUsuariosActualizar" element={<AdminUsuariosActualizar />} />
                         <Route path="/adminUsuariosEliminar" element={<AdminUsuariosEliminar />} />
                         <Route path="/admin/productos" element={<AdminProductosHome />} />
                         <Route path="/admin/usuarios" element={<AdminUsuariosHome />} />
+                        <Route path="/forgot-password" element={<ForgotPassword />} />
                     </Routes>
                 <Footer />
             </Router>

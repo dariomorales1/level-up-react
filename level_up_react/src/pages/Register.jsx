@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/pages/registroStyles.css";
 import showToast from "../components/toast";
-import { useAuth } from "../hooks/useAuth";
 
-import { auth, db } from "../firebase/config";
+import { auth } from "../firebase/config";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -20,7 +18,6 @@ export default function Register() {
   const [isRegistering, setIsRegistering] = useState(false);
 
   const navigate = useNavigate();
-  const { login } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,34 +46,41 @@ export default function Register() {
     const monthDiff = today.getMonth() - birthDate.getMonth();
     const dayDiff = today.getDate() - birthDate.getDate();
     
-    // Si el mes actual es menor al mes de nacimiento, o es el mismo mes pero el día actual es menor al día de nacimiento
     if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
       return age - 1 >= 18;
     }
     return age >= 18;
   };
 
-  // FUNCIÓN PARA GUARDAR USUARIO EN POSTGRESQL
-  const saveUserToPostgreSQL = async (userData, role) => {
+  // FUNCIÓN PARA GUARDAR USUARIO EN BD (endpoint público)
+  const saveUserToDatabase = async (firebaseUser, userData) => {
     try {
-      const response = await fetch('/api/usuarios/registrar', {
+
+      const rol = userData.email.endsWith("@levelup.ddns.net") ? "ADMIN" : "USER";
+
+      const response = await fetch('http://levelup.ddns.net:8080/users/public/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          usuario: userData,
-          rol: role
-        }),
+          firebaseUid: firebaseUser.uid,
+          email: userData.email,
+          nombre: userData.name,
+          fechaNacimiento: userData.fecha_nacimiento,
+          avatarUrl: 'https://mi-avatar.com/avatar.png',
+          rol:rol
+        })
       });
 
       if (!response.ok) {
-        throw new Error('Error al guardar usuario en la base de datos');
+        const errorText = await response.text();
+        throw new Error(`Error al guardar usuario: ${response.status} - ${errorText}`);
       }
 
       return await response.json();
     } catch (error) {
-      console.error('Error guardando en PostgreSQL:', error);
+      console.error('Error guardando en BD:', error);
       throw error;
     }
   };
@@ -124,7 +128,7 @@ export default function Register() {
     setIsRegistering(true);
 
     try {
-      // Crear usuario en Firebase Auth
+      // 1. Crear usuario en Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         formData.email,
@@ -132,7 +136,7 @@ export default function Register() {
       );
       const firebaseUser = userCredential.user;
 
-      // Actualizar perfil en Firebase
+      // 2. Actualizar perfil en Firebase
       try {
         await updateProfile(firebaseUser, {
           displayName: formData.name,
@@ -141,53 +145,20 @@ export default function Register() {
         console.warn("No se pudo actualizar el displayName:", error);
       }
 
-      // Determinar rol basado en email
-      const role = formData.email.endsWith("@levelup.ddns.net") ? "admin" : "cliente";
+      console.log("✅ Usuario creado en Firebase. UID:", firebaseUser.uid);
 
-      // Preparar datos para PostgreSQL
-      const userDataForPostgreSQL = {
-        id: firebaseUser.uid,
-        email: formData.email,
-        nombre: formData.name,
-        fecha_nacimiento: formData.fecha_nacimiento,
-        activo: true,
-        creado_en: new Date().toISOString(),
-        actualizado_en: new Date().toISOString()
-      };
+      // 3. ✅ CREAR en BD PostgreSQL mediante endpoint público
+      await saveUserToDatabase(firebaseUser, formData);
 
-      try {
-        // Guardar en Firestore (backup o datos adicionales)
-        await setDoc(doc(db, "users", firebaseUser.uid), {
-          name: formData.name,
-          email: formData.email,
-          role,
-          fecha_nacimiento: formData.fecha_nacimiento,
-          createdAt: serverTimestamp(),
-        });
+      console.log("✅ Usuario creado en Firebase y BD PostgreSQL");
 
-        // Guardar en PostgreSQL
-        await saveUserToPostgreSQL(userDataForPostgreSQL, role);
+      // 4. Mostrar mensaje de éxito y redirigir a login
+      showToast("¡Cuenta creada exitosamente! Por favor inicia sesión.");
 
-      } catch (error) {
-        console.warn("Error guardando datos adicionales:", error);
-        // No impide el registro si falla el guardado adicional
-      }
-
-      // Preparar usuario para el contexto de autenticación
-      const userForAuth = {
-        id: firebaseUser.uid,
-        name: formData.name,
-        email: formData.email,
-        role,
-        fecha_nacimiento: formData.fecha_nacimiento
-      };
-
-      login(userForAuth);
-      showToast("¡Cuenta creada exitosamente!");
-
+      // 5. Redirigir a login (NO hacer login automático)
       navigate("/login", { replace: true });
 
-      // Limpiar formulario
+      // 6. Limpiar formulario
       setFormData({
         name: "",
         email: "",
@@ -198,14 +169,21 @@ export default function Register() {
       setAcceptedTerms(false);
 
     } catch (error) {
-      console.error("Error en el registro (Auth):", error);
+      console.error("Error en el registro:", error);
 
+      // Manejo de errores específicos
       if (error.code === "auth/email-already-in-use") {
-        showToast("Este email ya está registrado. Usa otro email o inicia sesión.");
+        showToast("Este email ya está registrado en Firebase. Usa otro email o inicia sesión.");
       } else if (error.code === "auth/weak-password") {
         showToast("La contraseña es demasiado débil.");
       } else if (error.code === "auth/invalid-email") {
         showToast("El formato del email no es válido.");
+      } else if (error.message.includes("El email ya está en uso")) {
+        showToast("Este email ya está registrado en nuestra base de datos.");
+      } else if (error.message.includes("El usuario ya existe en la base de datos")) {
+        showToast("Este usuario ya existe. Por favor inicia sesión.");
+      } else if (error.message.includes("Error al guardar usuario")) {
+        showToast("Error al completar el registro. Por favor, intenta nuevamente.");
       } else {
         showToast("Error al crear la cuenta. Intenta nuevamente.");
       }
@@ -297,7 +275,7 @@ export default function Register() {
                       required
                     />
                     <label className="form-label mt-2">
-                      **Debes ser mayor de edad (18 años) para registrarte
+                      **Debes ser mayor de edad (18 años) para registrarte**
                     </label>
                   </div>
 

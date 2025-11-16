@@ -197,6 +197,72 @@ export const useAuth = () => {
     };
 
     // ===========================================
+    // 🔹 FUNCIONES PARA GESTIÓN DE USUARIOS
+    // ===========================================
+    const obtenerUsuarios = async () => {
+    try {
+        const response = await apiCall('http://levelup.ddns.net:8080/users');
+        
+        if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error obteniendo usuarios:', error);
+        throw error;
+    }
+    };
+
+    const obtenerUsuarioPorId = async (userId) => {
+    try {
+        const response = await apiCall(`http://levelup.ddns.net:8080/users/${userId}`);
+        
+        if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error obteniendo usuario:', error);
+        throw error;
+    }
+    };
+
+    const actualizarUsuario = async (userId, datosUsuario) => {
+        try {
+            const response = await apiCall(`http://levelup.ddns.net:8080/users/${userId}`, {
+            method: 'PUT',
+            body: JSON.stringify(datosUsuario)
+            });
+            
+            if (!response.ok) {
+            throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('Error actualizando usuario:', error);
+            throw error;
+        }
+        };
+
+    const obtenerMiPerfil = async () => {
+    try {
+        const response = await apiCall('http://levelup.ddns.net:8080/users/me');
+        
+        if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error obteniendo perfil:', error);
+        throw error;
+    }
+    };
+
+    // ===========================================
     // 🔹 LOGOUT MEJORADO (limpia tokens también)
     // ===========================================
     const logout = async () => {
@@ -250,12 +316,19 @@ export const useAuth = () => {
 
     const isAuthenticated = !!user;
 
+    
+
     return { 
         user, 
         login, 
         logout, 
         isAuthenticated,
         apiCall,
-        refreshToken
+        refreshToken,
+        obtenerUsuarios,
+        obtenerUsuarioPorId,
+        actualizarUsuario,
+        obtenerMiPerfil
     };
+
 };

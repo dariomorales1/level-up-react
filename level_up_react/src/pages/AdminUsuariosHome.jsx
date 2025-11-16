@@ -35,15 +35,6 @@ export default function AdminUsuariosHome() {
 
               <div
                 className="admin-usuarios-home-card"
-                onClick={() => navigate('/AdminUsuariosCrear')}
-              >
-                <i className="fa-solid fa-user-plus"></i>
-                <h3>Crear usuario</h3>
-                <p>Registrar un nuevo usuario en el sistema.</p>
-              </div>
-
-              <div
-                className="admin-usuarios-home-card"
                 onClick={() => navigate('/AdminUsuariosActualizar')}
               >
                 <i className="fa-solid fa-user-pen"></i>

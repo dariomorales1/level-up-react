@@ -92,12 +92,6 @@ const SideBar = ({ currentView }) => {
           to: '/AdminUsuariosListado',
         },
         {
-          key: 'usuarios-crear',
-          label: 'Crear usuario',
-          description: 'Agregar un nuevo usuario',
-          to: '/AdminUsuariosCrear',
-        },
-        {
           key: 'usuarios-actualizar',
           label: 'Actualizar usuario',
           description: 'Modificar datos de usuarios',

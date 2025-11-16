@@ -134,10 +134,10 @@ const Login = () => {
       // 7️⃣ Redirigir según rol DEL BACKEND (usar directamente backendAuth.rol)
       if (backendAuth.rol === "ADMIN") {
         console.log("🔄 Redirigiendo a panel de administrador");
-        navigate("/cuenta", { replace: true });
+        navigate("/dashboard", { replace: true });
       } else {
-        console.log("🔄 Redirigiendo a cuenta de usuario");
-        navigate("/cuenta", { replace: true });
+        console.log("🔄 Redirigiendo a dashboard de usuario");
+        navigate("/dashboard", { replace: true });
       }
 
     } catch (error) {
@@ -221,7 +221,7 @@ const Login = () => {
                         Recordarme
                       </label>
                     </div>
-                    <a href="#" id="forgotLink" className="auth-link">
+                    <a href="/forgot-password" id="forgotLink" className="auth-link">
                       ¿Olvidaste tu contraseña?
                     </a>
                   </div>
