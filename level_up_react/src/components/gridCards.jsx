@@ -16,12 +16,12 @@ export default function CardsContainer ({ productos = [] }) {
                 items.map((p) => (
 
                 <Card
-                    key={p["Código"] || p.id}
-                    codigo={p["Código"] || p.id}
-                    nombre={p.Nombre}
-                    imgLink={require(`../${p.imgLink}`)}
-                    descripcionCorta={p["Descripción Corta"]}
-                    precio={p.Precio}
+                    key={p.codigo || p.id}
+                    codigo={p.codigo || p.id}
+                    nombre={p.nombre}
+                    imgLink={p.imagenUrl}
+                    descripcionCorta={p.descripcionCorta}
+                    precio={p.precio}
                 />
                 ))
             )}
