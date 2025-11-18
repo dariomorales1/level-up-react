@@ -1,205 +1,114 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import '../styles/pages/actualizarProducto.css';
+import productService from '../services/productService';
 
-const EditProduct = ({ product: propProduct, onSave, onCancel }) => {
-  const location = useLocation();
+const ActualizarProducto = ({ product: propProduct, onSave, onCancel }) => {
   const navigate = useNavigate();
 
-  const productFromState = location && location.state && location.state.product ? location.state.product : null;
-
   const [formData, setFormData] = useState({
-    Código: '',
-    Nombre: '',
-    Precio: '',
-    'Descripción Corta': '',
-    'Descripción Larga': '',
-    Categoría: '',
-    Stock: '',
-    Especificaciones: [''],
-    Puntuacion: '',
-    Comentarios: [''],
-    imgLink: ''
+    codigo: '',
+    nombre: '',
+    precio: '',
+    stock: '',
+    categoria: '',
+    descripcionCorta: '',
+    descripcionLarga: '',
+    especificaciones: [],
+    imagenUrl: ''
   });
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    const product = propProduct || productFromState;
-    if (product) {
+    if (propProduct) {
       setFormData({
-        ...product,
-        Especificaciones: product.Especificaciones || [''],
-        Comentarios: product.Comentarios || ['']
+        codigo: propProduct.codigo,
+        nombre: propProduct.nombre,
+        precio: propProduct.precio,
+        stock: propProduct.stock,
+        categoria: propProduct.categoria,
+        descripcionCorta: propProduct.descripcionCorta,
+        descripcionLarga: propProduct.descripcionLarga,
+        especificaciones: propProduct.especificaciones || [],
+        imagenUrl: propProduct.imagenUrl || ''
       });
     }
-  }, [propProduct, productFromState]);
+  }, [propProduct]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const formatPrice = (value) => {
-    if (value === undefined || value === null || value === '') return '';
-    const digits = String(value).replace(/\D/g, '');
-    if (!digits) return '';
-    const num = parseInt(digits, 10) || 0;
-    const formatted = new Intl.NumberFormat('de-DE').format(num);
-    return `${formatted} CLP`;
-  };
-
-  const handlePriceChange = (e) => {
-    const raw = e.target.value;
-    const digits = (raw || '').replace(/\D/g, '');
-    const formatted = formatPrice(digits);
-    setFormData(prev => ({ ...prev, Precio: formatted }));
-  };
-
-  const handleSpecificationChange = (index, value) => {
-    const newSpecs = [...formData.Especificaciones];
+  const handleSpecChange = (index, value) => {
+    const newSpecs = [...formData.especificaciones];
     newSpecs[index] = value;
+    setFormData(prev => ({ ...prev, especificaciones: newSpecs }));
+  };
+
+  const addSpec = () => {
+    setFormData(prev => ({ ...prev, especificaciones: [...prev.especificaciones, ''] }));
+  };
+
+  const removeSpec = (index) => {
     setFormData(prev => ({
       ...prev,
-      Especificaciones: newSpecs
+      especificaciones: prev.especificaciones.filter((_, i) => i !== index)
     }));
   };
 
-  const addSpecification = () => {
-    setFormData(prev => ({
-      ...prev,
-      Especificaciones: [...prev.Especificaciones, '']
-    }));
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    await productService.updateProduct(formData.codigo, formData);
 
-  const removeSpecification = (index) => {
-    const newSpecs = formData.Especificaciones.filter((_, i) => i !== index);
-    setFormData(prev => ({
-      ...prev,
-      Especificaciones: newSpecs
-    }));
-  };
+    alert('Producto actualizado exitosamente.');
 
-  const handleCommentChange = (index, value) => {
-    const newComments = [...formData.Comentarios];
-    newComments[index] = value;
-    setFormData(prev => ({
-      ...prev,
-      Comentarios: newComments
-    }));
-  };
-
-  const addComment = () => {
-    setFormData(prev => ({
-      ...prev,
-      Comentarios: [...prev.Comentarios, '']
-    }));
-  };
-
-  const removeComment = (index) => {
-    const newComments = formData.Comentarios.filter((_, i) => i !== index);
-    setFormData(prev => ({
-      ...prev,
-      Comentarios: newComments
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if (!formData.Código || !formData.Nombre || !formData.Precio) {
-      alert('Por favor complete los campos obligatorios');
-      return;
-    }
-
-    //Filtro especificaciones y comentarios vacios
-    const filteredSpecs = formData.Especificaciones.filter(spec => spec.trim() !== '');
-    const filteredComments = formData.Comentarios.filter(comment => comment.trim() !== '');
-    
-    const updated = {
-      ...formData,
-      Especificaciones: filteredSpecs.length > 0 ? filteredSpecs : ['Sin especificaciones'],
-      Comentarios: filteredComments.length > 0 ? filteredComments : ['Sin comentarios']
-    };
-
-    if (typeof onSave === 'function') {
-      onSave(updated);
-    } else {
-      alert('Producto actualizado (simulado).');
-      navigate('/listar');
-    }
-  };
-
-  const product = propProduct || productFromState;
-  if (!product) {
-    return <div>Cargando...</div>;
+    // No llamar a onSave si no lo necesitas
+    navigate('/admin/productos'); // Redirige al listado
+  } catch (error) {
+    alert('Error al actualizar producto: ' + (error.response?.data?.message || error.message));
+  } finally {
+    setLoading(false);
   }
+};
+
+  if (!propProduct) return <div>Cargando producto...</div>;
 
   return (
     <div className="edit-product-container">
-      <h2>Editar Producto: {product.Nombre}</h2>
-      
+      <h2>Editar Producto: {formData.nombre}</h2>
       <form onSubmit={handleSubmit} className="product-form">
-        <div className="form-row">
-          <div className="form-group">
-            <label>Código *</label>
-            <input
-              type="text"
-              name="Código"
-              value={formData.Código}
-              onChange={handleInputChange}
-              required
-              disabled
-            />
-          </div>
-          
-          <div className="form-group">
-            <label>Nombre *</label>
-            <input
-              type="text"
-              name="Nombre"
-              value={formData.Nombre}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
+        {/* Código */}
+        <div className="form-group">
+          <label>Código *</label>
+          <input type="text" name="codigo" value={formData.codigo} disabled />
         </div>
 
+        {/* Nombre */}
+        <div className="form-group">
+          <label>Nombre *</label>
+          <input type="text" name="nombre" value={formData.nombre} onChange={handleInputChange} required />
+        </div>
+
+        {/* Precio y Stock */}
         <div className="form-row">
           <div className="form-group">
             <label>Precio *</label>
-            <input
-              type="text"
-              name="Precio"
-              value={formData.Precio}
-              onChange={handlePriceChange}
-              required
-            />
+            <input type="number" name="precio" value={formData.precio} onChange={handleInputChange} required />
           </div>
-          
           <div className="form-group">
             <label>Stock *</label>
-            <input
-              type="number"
-              name="Stock"
-              value={formData.Stock}
-              onChange={handleInputChange}
-              min="1"
-              max="999999"
-              required
-            />
+            <input type="number" name="stock" value={formData.stock} onChange={handleInputChange} required />
           </div>
         </div>
 
+        {/* Categoría */}
         <div className="form-group">
           <label>Categoría *</label>
-          <select
-            name="Categoría"
-            value={formData.Categoría}
-            onChange={handleInputChange}
-            required
-          >
+          <select name="categoria" value={formData.categoria} onChange={handleInputChange} required>
             <option value="Juegos de Mesa">Juegos de Mesa</option>
             <option value="Accesorios">Accesorios</option>
             <option value="Consolas">Consolas</option>
@@ -212,108 +121,40 @@ const EditProduct = ({ product: propProduct, onSave, onCancel }) => {
           </select>
         </div>
 
+        {/* Descripciones */}
         <div className="form-group">
           <label>Descripción Corta *</label>
-          <textarea
-            name="Descripción Corta"
-            value={formData['Descripción Corta']}
-            onChange={handleInputChange}
-            rows="3"
-            required
-          />
+          <textarea name="descripcionCorta" value={formData.descripcionCorta} onChange={handleInputChange} rows="3" required />
         </div>
-
         <div className="form-group">
           <label>Descripción Larga</label>
-          <textarea
-            name="Descripción Larga"
-            value={formData['Descripción Larga']}
-            onChange={handleInputChange}
-            rows="5"
-          />
+          <textarea name="descripcionLarga" value={formData.descripcionLarga} onChange={handleInputChange} rows="5" />
         </div>
 
+        {/* Imagen */}
         <div className="form-group">
-          <label>URL de la imagen</label>
-          <input
-            type="text"
-            name="imgLink"
-            value={formData.imgLink}
-            onChange={handleInputChange}
-          />
+          <label>URL Imagen</label>
+          <input type="text" name="imagenUrl" value={formData.imagenUrl} onChange={handleInputChange} />
         </div>
 
-        <div className="form-group">
-          <label>Puntuación (0-10)</label>
-          <input
-            type="number"
-            name="Puntuacion"
-            value={formData.Puntuacion}
-            onChange={handleInputChange}
-            min="0"
-            max="10"
-          />
-        </div>
-
+        {/* Especificaciones */}
         <div className="form-group">
           <label>Especificaciones</label>
-          {formData.Especificaciones.map((spec, index) => (
+          {formData.especificaciones.map((spec, index) => (
             <div key={index} className="specification-item">
-              <input
-                type="text"
-                value={spec}
-                onChange={(e) => handleSpecificationChange(index, e.target.value)}
-              />
-              <button
-                type="button"
-                onClick={() => removeSpecification(index)}
-                className="btn-remove"
-              >
-                ✕
-              </button>
+              <input type="text" value={spec} onChange={(e) => handleSpecChange(index, e.target.value)} />
+              <button type="button" className="btn-remove" onClick={() => removeSpec(index)}>✕</button>
             </div>
           ))}
-          <button
-            type="button"
-            onClick={addSpecification}
-            className="btn-add"
-          >
-            + Agregar Especificación
-          </button>
+          <button type="button" className="btn-add" onClick={addSpec}>+ Agregar Especificación</button>
         </div>
 
-        <div className="form-group">
-          <label>Comentarios</label>
-          {formData.Comentarios.map((comment, index) => (
-            <div key={index} className="specification-item">
-              <input
-                type="text"
-                value={comment}
-                onChange={(e) => handleCommentChange(index, e.target.value)}
-              />
-              <button
-                type="button"
-                onClick={() => removeComment(index)}
-                className="btn-remove"
-              >
-                ✕
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addComment}
-            className="btn-add"
-          >
-            + Agregar Comentario
-          </button>
-        </div>
-
+        {/* Botones */}
         <div className="form-actions">
-          <button type="submit" className="btn-save">
-            Guardar Cambios
+          <button type="submit" className="btn-save" disabled={loading}>
+            {loading ? 'Guardando...' : 'Guardar Cambios'}
           </button>
-          <button type="button" onClick={() => { if (typeof onCancel === 'function') { onCancel(); } else { navigate('/listar'); } }} className="btn-cancel">
+          <button type="button" className="btn-cancel" onClick={() => onCancel ? onCancel() : navigate('/admin/productos')}>
             Cancelar
           </button>
         </div>
@@ -322,4 +163,4 @@ const EditProduct = ({ product: propProduct, onSave, onCancel }) => {
   );
 };
 
-export default EditProduct;
+export default ActualizarProducto;

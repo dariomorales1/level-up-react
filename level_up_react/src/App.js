@@ -26,6 +26,7 @@ import AdminUsuariosListado from './pages/AdminUsuariosListado';
 import AdminUsuariosActualizar from './pages/AdminUsuariosActualizar';
 import AdminUsuariosEliminar from './pages/AdminUsuariosEliminar';
 import ForgotPassword from './pages/ForgotPassword';
+import EditProduct from './pages/ActualizarProducto';
 
 function App() {
     return (
@@ -53,6 +54,7 @@ function App() {
                         <Route path="/adminUsuariosActualizar" element={<AdminUsuariosActualizar />} />
                         <Route path="/adminUsuariosEliminar" element={<AdminUsuariosEliminar />} />
                         <Route path="/admin/productos" element={<AdminProductosHome />} />
+                        <Route path="/admin/productos/edit" element={<EditProduct/>} />
                         <Route path="/admin/usuarios" element={<AdminUsuariosHome />} />
                         <Route path="/forgot-password" element={<ForgotPassword />} />
                     </Routes>
