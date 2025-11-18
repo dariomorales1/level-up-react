@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SideBar from '../components/SideBar';
+import productService from '../services/productService';
 import '../styles/pages/crearProducto.css';
 import '../styles/pages/panelAdministrador.css';
 
@@ -16,8 +17,6 @@ const CrearProducto = ({ onSave, onCancel }) => {
     Categoría: '',
     Stock: '',
     Especificaciones: [''],
-    Puntuacion: '',
-    Comentarios: [''],
     imgLink: ''
   });
 
@@ -29,14 +28,12 @@ const CrearProducto = ({ onSave, onCancel }) => {
     }));
   };
 
-  // formatea String a number y en moneda CLP
   const formatPrice = (value) => {
-    if (value === undefined || value === null || value === '') return '';
+    if (!value) return '';
     const digits = String(value).replace(/\D/g, '');
     if (!digits) return '';
     const num = parseInt(digits, 10) || 0;
-    const formatted = new Intl.NumberFormat('de-DE').format(num);
-    return `${formatted} CLP`;
+    return `${new Intl.NumberFormat('de-DE').format(num)} CLP`;
   };
 
   const handlePriceChange = (e) => {
@@ -49,10 +46,7 @@ const CrearProducto = ({ onSave, onCancel }) => {
   const handleSpecificationChange = (index, value) => {
     const newSpecs = [...formData.Especificaciones];
     newSpecs[index] = value;
-    setFormData(prev => ({
-      ...prev,
-      Especificaciones: newSpecs
-    }));
+    setFormData(prev => ({ ...prev, Especificaciones: newSpecs }));
   };
 
   const addSpecification = () => {
@@ -64,43 +58,44 @@ const CrearProducto = ({ onSave, onCancel }) => {
 
   const removeSpecification = (index) => {
     const newSpecs = formData.Especificaciones.filter((_, i) => i !== index);
-    setFormData(prev => ({
-      ...prev,
-      Especificaciones: newSpecs
-    }));
+    setFormData(prev => ({ ...prev, Especificaciones: newSpecs }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validaciones básicas
+
     if (!formData.Código || !formData.Nombre || !formData.Precio) {
       alert('Por favor complete los campos obligatorios');
       return;
     }
 
-    // Filtrar especificaciones vacías
-    const filteredSpecs = formData.Especificaciones.filter(
-      spec => spec.trim() !== ''
+    const precioNumerico = parseInt(
+      String(formData.Precio).replace(/\D/g, '')
     );
 
     const newProduct = {
-      ...formData,
-      Especificaciones:
-        filteredSpecs.length > 0 ? filteredSpecs : ['Sin especificaciones']
+      codigo: formData.Código,
+      nombre: formData.Nombre,
+      descripcionCorta: formData["Descripción Corta"],
+      descripcionLarga: formData["Descripción Larga"],
+      categoria: formData.Categoría,
+      precio: precioNumerico,
+      stock: parseInt(formData.Stock, 10),
+      imagenUrl: formData.imgLink,
+      especificaciones: formData.Especificaciones
+        .filter(s => s.trim() !== '')
+        .map(s => ({ specification: s }))
     };
 
-    // Si viene onSave por props lo usamos, sino solo logeamos
-    if (typeof onSave === 'function') {
-      onSave(newProduct);
-    } else {
-      console.log('Producto creado (sin onSave):', newProduct);
+    try {
+      await productService.addProduct(newProduct);
+      alert("Producto guardado correctamente");
+      navigate("/PanelAdministrador");
+    } catch (err) {
+      console.log("Producto enviado al backend:", newProduct);
+      console.error("❌ Error al crear producto:", err);
+      alert("Error al crear el producto");
     }
-
-    alert('Producto creado exitosamente');
-
-    // Después de guardar, volvemos al panel / lista de productos
-    navigate('/PanelAdministrador');
   };
 
   const handleCancelClick = () => {
@@ -114,10 +109,8 @@ const CrearProducto = ({ onSave, onCancel }) => {
   return (
     <div className="panel-administrador">
       <div className="management-layout">
-        {/* SideBar fijo a la izquierda */}
         <SideBar />
 
-        {/* Contenido principal con el formulario */}
         <main className="management-main">
           <div className="create-product-container">
             <h2>Crear Nuevo Producto</h2>
@@ -208,12 +201,13 @@ const CrearProducto = ({ onSave, onCancel }) => {
               </div>
 
               <div className="form-group">
-                <label>Descripción Larga</label>
+                <label>Descripción Larga (max: 255)</label>
                 <textarea
                   name="Descripción Larga"
                   value={formData['Descripción Larga']}
                   onChange={handleInputChange}
                   rows="5"
+                  maxLength={255}
                 />
               </div>
 
@@ -224,19 +218,7 @@ const CrearProducto = ({ onSave, onCancel }) => {
                   name="imgLink"
                   value={formData.imgLink}
                   onChange={handleInputChange}
-                  placeholder="assets/img/products/categoria/producto.jpg"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Puntuación (0-10)</label>
-                <input
-                  type="number"
-                  name="Puntuacion"
-                  value={formData.Puntuacion}
-                  onChange={handleInputChange}
-                  min="0"
-                  max="10"
+                  placeholder="producto.jpg"
                 />
               </div>
 

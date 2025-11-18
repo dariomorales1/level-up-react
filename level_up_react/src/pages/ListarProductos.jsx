@@ -1,155 +1,70 @@
-import React, { useState, useEffect } from 'react';
-import listaProductos from '../assets/listaProductos.js';
+import React, { useState } from 'react';
 import '../styles/pages/listarProductos.css';
 
-const ProductList = ({ products: initialProducts, onEdit, onDelete }) => {
-  const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
+const ListarProductos = ({ products, onEdit, onDelete }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
 
-  // Cargar productos iniciales (desde props o lista por defecto)
-  useEffect(() => {
-    const source =
-      initialProducts && initialProducts.length
-        ? initialProducts
-        : listaProductos;
-
-    setProducts(source);
-    setFilteredProducts(source);
-  }, [initialProducts]);
-
-  // Filtrado por texto y categoría
-  useEffect(() => {
-    let filtered = products;
-
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(
-        (product) =>
-          product.Nombre.toLowerCase().includes(term) ||
-          product.Código.toLowerCase().includes(term)
-      );
-    }
-
-    if (selectedCategory) {
-      filtered = filtered.filter(
-        (product) => product.Categoría === selectedCategory
-      );
-    }
-
-    setFilteredProducts(filtered);
-  }, [searchTerm, selectedCategory, products]);
-
-  const categories = [...new Set(products.map((p) => p.Categoría))];
-
-  const handleDelete = (codigo) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar este producto?')) {
-      if (typeof onDelete === 'function') {
-        onDelete(codigo); // Se encarga el padre (AdminProductosPage)
-      }
-      const updatedProducts = products.filter(
-        (product) => product.Código !== codigo
-      );
-      setProducts(updatedProducts);
-    }
-  };
+  const filteredProducts = products.filter((product) => {
+    const matchesName = product.nombre.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = categoryFilter ? product.categoria === categoryFilter : true;
+    return matchesName && matchesCategory;
+  });
 
   return (
     <div className="product-list-container">
       <div className="filters">
         <input
           type="text"
-          placeholder="Buscar por nombre o código..."
+          placeholder="Buscar por nombre..."
+          className="search-input"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-input"
         />
-
         <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
           className="category-select"
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
         >
           <option value="">Todas las categorías</option>
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
+          <option value="Juegos de Mesa">Juegos de Mesa</option>
+          <option value="Accesorios">Accesorios</option>
+          <option value="Consolas">Consolas</option>
+          <option value="Computadores Gamers">Computadores Gamers</option>
+          <option value="Sillas Gamers">Sillas Gamers</option>
+          <option value="Mouse">Mouse</option>
+          <option value="Mousepad">Mousepad</option>
+          <option value="Poleras Personalizadas">Poleras Personalizadas</option>
+          <option value="Polerones Gamers Personalizados">Polerones Gamers Personalizados</option>
         </select>
       </div>
 
-      <div className="products-grid">
-        {filteredProducts.map((product) => {
-          let imgSrc = null;
-
-          if (product.imgLink) {
-            try {
-              const required = require(`../${product.imgLink}`);
-              imgSrc = required && required.default ? required.default : required;
-            } catch (err) {
-              imgSrc = null;
-            }
-          }
-
-          const handleImgError = (e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src =
-              'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="%23f3f3f3"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="%23666" font-family="Arial, Helvetica, sans-serif" font-size="18">Imagen no disponible</text></svg>';
-          };
-
-          return (
-            <div key={product.Código} className="product-card">
+      {filteredProducts.length === 0 ? (
+        <div className="no-products">No hay productos que coincidan</div>
+      ) : (
+        <div className="products-grid">
+          {filteredProducts.map((product) => (
+            <div key={product.codigo} className="product-card">
               <div className="product-image">
-                <img
-                  src={imgSrc || ''}
-                  alt={product.Nombre}
-                  onError={handleImgError}
-                />
+                <img src={product.imagenUrl || '/placeholder.png'} alt={product.nombre} />
               </div>
-
               <div className="product-info">
-                <h3>{product.Nombre}</h3>
-                <p className="product-code">Código: {product.Código}</p>
-                <p className="product-category">{product.Categoría}</p>
-                <p className="product-price">{product.Precio}</p>
-                <p className="product-stock">Stock: {product.Stock}</p>
-                <p className="product-rating">
-                  Puntuación: {product.Puntuacion}/10
-                </p>
-
+                <h3>{product.nombre}</h3>
+                <div className="product-code">Código: {product.codigo}</div>
+                <div className="product-category">Categoría: {product.categoria}</div>
+                <div className="product-stock">Stock: {product.stock}</div>
+                <div className="product-price">{product.precio}</div>
                 <div className="product-actions">
-                  <button
-                    onClick={() => {
-                      if (typeof onEdit === 'function') {
-                        onEdit(product); // importante: que el padre reciba el producto
-                      }
-                    }}
-                    className="btn-edit"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => handleDelete(product.Código)}
-                    className="btn-delete"
-                  >
-                    Eliminar
-                  </button>
+                  <button className="btn-edit" onClick={() => onEdit(product)}>Editar</button>
+                  <button className="btn-delete" onClick={() => onDelete(product.codigo)}>Eliminar</button>
                 </div>
               </div>
             </div>
-          );
-        })}
-      </div>
-
-      {filteredProducts.length === 0 && (
-        <div className="no-products">
-          <p>No se encontraron productos</p>
+          ))}
         </div>
       )}
     </div>
   );
 };
 
-export default ProductList;
+export default ListarProductos;
