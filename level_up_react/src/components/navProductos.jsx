@@ -9,7 +9,7 @@ export default function NavbarProductos ({ onCategoryChange }) {
 
     const handleShowAll = (e) => { 
         e.preventDefault();
-        onCategoryChange(null);
+        onCategoryChange('todos');
     };
 
     return (
