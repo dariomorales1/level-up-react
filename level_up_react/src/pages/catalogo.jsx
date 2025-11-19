@@ -157,23 +157,10 @@ export default function Catalogo() {
               </h1>
               <h4 className='titulo2'>
                 {selectedCategory ? `${selectedCategory}` : 'Todos los Productos'}
-                <small className="text-muted ms-2">
-                  ({filteredProducts.length} productos)
-                </small>
               </h4>
               <hr />
               <NavbarProductos onCategoryChange={handleCategoryChange} />
               <CardsContainer productos={filteredProducts} />
-              
-              {/* Botón de recarga para debugging */}
-              <div className="text-center mt-4">
-                <button 
-                  className="btn btn-outline-secondary btn-sm"
-                  onClick={handleProductsReload}
-                >
-                  Actualizar Productos
-                </button>
-              </div>
             </div>
             <div className="col-2"></div>
           </div>

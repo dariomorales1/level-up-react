@@ -1,142 +1,248 @@
+/* Header principal fijo arriba */
 .headerPpal {
-    background-color: var(--colorGrisOscuro);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 100;
+  background-color: var(--colorGrisOscuro);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 100;
 }
 
+/* Contenedor interno del header */
 .navbarPpal {
-    width: 100%;
-    padding: 10px 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-direction: row;
-    justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+  padding: 10px 20px;
+  margin: 0 auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .navbarFirstContainer {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 
-
+/* Logo + nombre */
 .logoName {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-encabezado);
-    font-weight: bold;
-    font-size: 20px;
-    color: var(--colorBlanco);
-    transition: 
-        0.3s ease color;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-encabezado);
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--colorBlanco);
+  transition: 0.3s ease color;
 }
 
 .logoName:hover {
-    color: var(--colorBlanco);
+  color: var(--colorBlanco);
 }
 
-
+/* Contenedor principal de botones (nav + acciones) */
 .navBarButtons {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    justify-content: space-between;
-    font-family: var(--font-principal);
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-principal);
 }
 
+/* Subcontenedores: izquierda (links) y derecha (carrito + auth) */
 .navBarButtonsContainer {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-    justify-content: center;
-    align-items: center;
-}
-
-.btnCarrito {
-    position: relative;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px 10px;
-    color: var(--colorBlanco);
-    transition: color 0.3s ease;
-}
-
-.carritoIcon {
-    color: var(--colorVerde);
-    font-size: 25px;
-}
-
-@media (max-width: 580px) {
-    .navBarButtonsContainer {
-        flex-direction: column;
-        gap: 10px;  
-    }
-
-    .btnAgregarHeader {
-        width: 100%; 
-        text-align: center;
-    }
-
-    .logoName {
-        font-size: 0;
-    }
-}
-
-.btnHeader {
-    margin: 0 auto;
-    margin-bottom: 0;
-    border: 1px solid var(--colorVerde);
-    padding: 5px 10px;
-    border-radius: 5px;
-    text-decoration: none;
-    background-image: linear-gradient(45deg, var(--colorVerde) 50%, transparent 200%);
-    background-position: 100%;
-    background-size: 400%;
-    color: var(--colorGrisOscuro);
-    font-weight: bold;
-    transition: 
-        background 0.2s ease-in-out,
-        color 0.2s ease-in-out;
-}
-
-.btnHeader:hover {
-    background-position: 0;
-    color: #000;
-}
-
-.navBarButtons {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.navBarButtonsRight {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-    justify-content: flex-end;
-    align-items: center;
-    margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
 }
 
 .navBarButtonsContainer--right {
-    margin-left: auto;
+  margin-left: auto;
 }
 
+/* Carrito */
+.btnCarrito {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+  color: var(--colorBlanco);
+  transition: color 0.3s ease;
+}
 
+.carritoIcon {
+  color: var(--colorVerde);
+  font-size: 25px;
+}
+
+.cartBadge {
+  position: absolute;
+  top: -2px;
+  right: 2px;
+  background: var(--colorVerde);
+  color: #000;
+  border-radius: 999px;
+  padding: 0 6px;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+/* Botón de acciones (Ingresar / Cerrar sesión) */
+.btnHeader {
+  margin: 0 auto;
+  margin-bottom: 0;
+  border: 1px solid var(--colorVerde);
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-decoration: none;
+  background-image: linear-gradient(
+    45deg,
+    var(--colorVerde) 50%,
+    transparent 200%
+  );
+  background-position: 100%;
+  background-size: 400%;
+  color: var(--colorGrisOscuro);
+  font-weight: bold;
+  transition:
+    background 0.2s ease-in-out,
+    color 0.2s ease-in-out;
+}
+
+.btnHeader:hover {
+  background-position: 0;
+  color: #000;
+}
+
+/* ================================================================= */
+/*                    HAMBURGUESA / MENÚ MÓVIL                       */
+/* ================================================================= */
+
+.menuToggle {
+  display: none; /* visible solo en móvil */
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid var(--colorVerde);
+  background: transparent;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.menuToggle span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--colorBlanco);
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+/* Animación cuando está abierto */
+.menuToggle--open span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.menuToggle--open span:nth-child(2) {
+  opacity: 0;
+}
+
+.menuToggle--open span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* ================================================================= */
+/*                            RESPONSIVE                             */
+/* ================================================================= */
+
+@media (max-width: 768px) {
+  /* Logo un poco más compacto */
+  .logoName {
+    font-size: 16px;
+  }
+
+  /* Mostrar hamburguesa en móvil */
+  .menuToggle {
+    display: inline-flex;
+  }
+
+  /* Menú principal se vuelve desplegable */
+  .navBarButtons {
+    position: fixed;
+    top: 60px; /* debajo del header */
+    left: 0;
+    right: 0;
+    background-color: var(--colorGrisOscuro);
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0.75rem 1rem 1rem;
+    gap: 0.5rem;
+    border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+    display: none; /* oculto por defecto */
+    z-index: 90;
+  }
+
+  .navBarButtons--open {
+    display: flex;
+  }
+
+  .navBarButtonsContainer,
+  .navBarButtonsContainer--right {
+    width: 100%;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  /* Botones ocupan ancho completo en móvil */
+  .btnHeader,
+  .btnAgregarHeader,
+  .btnCarrito {
+    width: 100%;
+    text-align: left;
+    justify-content: flex-start;
+  }
+
+  .btnCarrito {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .cartBadge {
+    position: static;
+    background: var(--colorVerde);
+    color: #000;
+    border-radius: 999px;
+    padding: 0 8px;
+    font-size: 0.75rem;
+  }
+}
+
+/* Ajuste extra para pantallas muy pequeñas */
+@media (max-width: 580px) {
+  .logoName {
+    font-size: 0; /* solo ícono en pantallas muy chicas */
+  }
+
+  .logoName img {
+    margin-right: 0;
+  }
+}

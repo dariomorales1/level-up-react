@@ -11,6 +11,8 @@ import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
 
 export default function Header() {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const { cart } = useApp();
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -33,19 +35,28 @@ export default function Header() {
     location.pathname.startsWith(prefix)
   );
 
-  const openCart = () => setIsCartOpen(true);
+  const openCart = () => {
+    setIsCartOpen(true);
+    setIsMenuOpen(false); // cerrar menú móvil al abrir carrito
+  };
+
   const closeCart = () => setIsCartOpen(false);
 
   const handleLogout = () => {
     logout();
     navigate('/');
     closeCart();
+    setIsMenuOpen(false);
   };
 
   const handleLogoClick = (e) => {
     e.preventDefault();
     navigate('/');
+    setIsMenuOpen(false);
   };
+
+  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
+  const closeMenu = () => setIsMenuOpen(false);
 
   return (
     <>
@@ -62,13 +73,35 @@ export default function Header() {
             </a>
           </div>
 
-          <div className="navBarButtons">
+          {/* Botón hamburguesa (solo se ve en móvil vía CSS) */}
+          <button
+            className={`menuToggle ${isMenuOpen ? 'menuToggle--open' : ''}`}
+            onClick={toggleMenu}
+            aria-label="Abrir menú"
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+
+          {/* Menú principal (desktop + móvil desplegable) */}
+          <div
+            className={`navBarButtons ${
+              isMenuOpen ? 'navBarButtons--open' : ''
+            }`}
+          >
             {/* 🔹 Solo ocultamos navegación principal en páginas de gestión ADMIN */}
             {!isManagementPage && (
               <div className="navBarButtonsContainer">
-                <NavButton text="Inicio" to="/" />
-                <NavButton text="Catalogo" to="/catalogo" />
-                <NavButton text="Blog" to="/blog" />
+                <div onClick={closeMenu}>
+                  <NavButton text="Inicio" to="/" />
+                </div>
+                <div onClick={closeMenu}>
+                  <NavButton text="Catalogo" to="/catalogo" />
+                </div>
+                <div onClick={closeMenu}>
+                  <NavButton text="Blog" to="/blog" />
+                </div>
               </div>
             )}
 
@@ -89,14 +122,14 @@ export default function Header() {
               {/* 🔹 Botones según autenticación */}
               {isAuthenticated && user ? (
                 <>
-                  {/* El botón "Cuenta" también se oculta solo en páginas admin, 
-                      en /cuenta, /historial, /direcciones, /dashboard SÍ se muestra */}
                   {!isManagementPage && (
-                    <NavButton
-                      text={user.name ? `Hola, ${user.name}` : 'Cuenta'}
-                      to="/dashboard"
-                      className="btnAgregarHeader"
-                    />
+                    <div onClick={closeMenu}>
+                      <NavButton
+                        text={user.name ? `Hola, ${user.name}` : 'Cuenta'}
+                        to="/dashboard"
+                        className="btnAgregarHeader"
+                      />
+                    </div>
                   )}
                   <button className="btnHeader" onClick={handleLogout}>
                     Cerrar sesión
@@ -106,16 +139,20 @@ export default function Header() {
                 <>
                   {!isManagementPage && (
                     <>
-                      <NavButton
-                        text="Ingresar"
-                        to="/login"
-                        className="btnHeader"
-                      />
-                      <NavButton
-                        text="Registrarse"
-                        to="/register"
-                        className="btnAgregarHeader"
-                      />
+                      <div onClick={closeMenu}>
+                        <NavButton
+                          text="Ingresar"
+                          to="/login"
+                          className="btnHeader"
+                        />
+                      </div>
+                      <div onClick={closeMenu}>
+                        <NavButton
+                          text="Registrarse"
+                          to="/register"
+                          className="btnAgregarHeader"
+                        />
+                      </div>
                     </>
                   )}
                 </>

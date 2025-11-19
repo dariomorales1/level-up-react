@@ -6,22 +6,6 @@ import '../styles/pages/panelAdministrador.css';
 const BASE_URL = 'http://levelup.ddns.net:8080/users';
 const TOKEN_KEY = 'accessToken';
 
-/**
- * Cuenta.jsx
- *
- * - GET /users/me  -> carga datos del usuario actual
- * - GET /users/me/direcciones -> carga direcciones y selecciona la primera registrada (más antigua)
- * - PUT /users/{id} -> actualizar usuario (solo nombre y fechaNacimiento en la UI; backend recibe avatarUrl si cambias)
- *
- * Avatar:
- * - Si el usuario selecciona un archivo, construimos la URL pública esperada:
- *   http://localhost:8000/storage/v1/object/public/levelup_files/fotoPerfil/{userId}/Foto_Perfil.jpg
- * - NO se sube el binario al storage desde este componente porque se requieren credenciales/headers.
- *   Si quieres que el frontend haga upload directo, necesitamos un presigned URL o una API key (no seguro exponerla).
- *
- * Nota: ajusta TOKEN_KEY si tu app guarda el JWT con otra clave.
- */
-
 const camposIniciales = {
   nombre: '',
   email: '',
@@ -34,15 +18,14 @@ const camposIniciales = {
 
 export default function Cuenta() {
   const [form, setForm] = useState(camposIniciales);
-  const [avatarFile, setAvatarFile] = useState(null); // archivo seleccionado
+  const [avatarFile, setAvatarFile] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState(null);
-  const [usuarioRaw, setUsuarioRaw] = useState(null); // guardamos response completa para datos como rol/activo
+  const [usuarioRaw, setUsuarioRaw] = useState(null);
   const inputFileRef = useRef(null);
 
-  // ---------- JWT helpers (mismo parse usado en Direcciones) ----------
   const getToken = () => localStorage.getItem(TOKEN_KEY);
 
   const parseJwtPayload = (token) => {
@@ -69,17 +52,15 @@ export default function Cuenta() {
     return nowSec >= Number(exp);
   };
 
-  // extrae userId del token (sub)
   const extractUserIdFromToken = () => {
     const token = getToken();
     if (!token) return null;
     const payload = parseJwtPayload(token);
     if (!payload) return null;
-    // Algunos tokens usan 'sub', otros 'userId' — comprobamos ambos
+
     return payload.sub ?? payload.userId ?? payload.id ?? null;
   };
 
-  // ---------- Fetch inicial ----------
   useEffect(() => {
     const token = getToken();
     if (!token) {
@@ -94,10 +75,8 @@ export default function Cuenta() {
     setUserId(uid);
     cargarUsuario();
     cargarDireccionesYSetPrimera(uid);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ---------- Carga usuario ----------
   const cargarUsuario = async () => {
     setLoading(true);
     setMensaje('');
@@ -122,7 +101,7 @@ export default function Cuenta() {
 
       const user = await res.json();
       setUsuarioRaw(user);
-      // Mapear campos a UI: backend usa 'fechaNacimiento' (LocalDate)
+
       setForm((f) => ({
         ...f,
         nombre: user.nombre ?? '',
@@ -138,7 +117,6 @@ export default function Cuenta() {
     }
   };
 
-  // ---------- Carga direcciones y selecciona la primera ingresada (más antigua) ----------
   const cargarDireccionesYSetPrimera = async (uidFromToken) => {
     setLoading(true);
     setMensaje('');
@@ -149,14 +127,12 @@ export default function Cuenta() {
       });
 
       if (!res.ok) {
-        // no rompemos el formulario si no hay direcciones
         setLoading(false);
         return;
       }
 
       const data = await res.json();
       if (!Array.isArray(data) || data.length === 0) {
-        // no hay direcciones
         setForm((f) => ({
           ...f,
           direccion: '',
@@ -168,8 +144,6 @@ export default function Cuenta() {
         return;
       }
 
-      // Elegir la PRIMERA ingresada en el sistema (más antigua):
-      // Como el backend suele devolver por creadoEn desc, calculamos la más antigua por fecha creadoEn.
       let primera = data[0];
       if (data.length > 1) {
         primera = data.reduce((oldest, cur) => {
@@ -179,26 +153,24 @@ export default function Cuenta() {
         }, data[0]);
       }
 
-      // Mapear a los campos del form (dirección mostrada como readonly)
       setForm((f) => ({
         ...f,
-        direccion: `${primera.calle || ''} ${primera.numero || ''}${primera.depto ? ', ' + primera.depto : ''}`,
+        direccion: `${primera.calle || ''} ${primera.numero || ''}${
+          primera.depto ? ', ' + primera.depto : ''
+        }`,
         comuna: primera.ciudad || '',
         region: primera.region || '',
         pais: primera.pais || '',
       }));
     } catch (err) {
       console.error('cargarDirecciones error', err);
-      // no bloqueamos el form
     } finally {
       setLoading(false);
     }
   };
 
-  // ---------- Handlers del formulario ----------
   const onChange = (e) => {
     const { name, value } = e.target;
-    // solo nombre y fechaNac son editables por requerimiento; aun así permitimos setear si se disparan por mistake
     setForm((f) => ({ ...f, [name]: value }));
   };
 
@@ -211,7 +183,6 @@ export default function Cuenta() {
       return;
     }
 
-    // Validación formato correo (aunque no es editable)
     if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
       setMensaje('Formato de correo no válido.');
       return;
@@ -224,7 +195,6 @@ export default function Cuenta() {
     }
 
     if (!userId) {
-      // fallback: extraer
       const uid = extractUserIdFromToken();
       if (!uid) {
         setMensaje('No se pudo determinar el usuario. Inicia sesión.');
@@ -233,11 +203,8 @@ export default function Cuenta() {
       setUserId(uid);
     }
 
-    // Preparar payload según UsuarioRequest esperado por backend.
-    // Backend en service usa: email, nombre, fechaNacimiento, avatarUrl, rol, activo
-    // Tomamos rol/activo del usuarioRaw si existe; si no, dejamos valores por defecto.
     const payload = {
-      email: form.email, // no editable pero lo incluimos
+      email: form.email,
       nombre: form.nombre,
       fechaNacimiento: form.fechaNac || null,
       avatarUrl: avatarUrl || (usuarioRaw ? usuarioRaw.avatarUrl : null),
@@ -265,7 +232,7 @@ export default function Cuenta() {
       if (res.ok) {
         const updated = await res.json();
         setUsuarioRaw(updated);
-        // actualizar campos visibles
+
         setForm((f) => ({
           ...f,
           nombre: updated.nombre ?? f.nombre,
@@ -287,13 +254,10 @@ export default function Cuenta() {
     }
   };
 
-  // ---------- Avatar handlers ----------
-  // Al seleccionar una imagen local, mostramos preview. No hacemos upload real.
   const onSubirAvatar = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // preview en base64
     const reader = new FileReader();
     reader.onload = () => {
       setAvatarFile(file);
@@ -302,34 +266,113 @@ export default function Cuenta() {
     reader.readAsDataURL(file);
   };
 
-  const limpiarAvatar = () => {
+  // Solo limpia el estado local (ya no lo usamos para borrar en backend)
+  const limpiarAvatarLocal = () => {
     setAvatarFile(null);
     setAvatarUrl('');
     if (inputFileRef.current) inputFileRef.current.value = '';
   };
 
-  // Construye la URL pública esperada en el storage siguiendo tu patrón
-  // Ejemplo: http://localhost:8000/storage/v1/object/public/levelup_files/fotoPerfil/{ID}/Foto_Perfil.jpg
-  const buildStorageAvatarUrl = (uid) => {
-    if (!uid) return '';
-    // usar host/puerto real si difiere
-    return `http://localhost:8000/storage/v1/object/public/levelup_files/fotoPerfil/${uid}/Foto_Perfil.jpg`;
-  };
+  const uploadAvatarToBackend = async () => {
+    setMensaje('');
 
-  // Al confirmar subir imagen al "storage" (opcional): aquí solo actualizamos avatarUrl con la URL esperada.
-  // NOTA: esto NO sube el archivo al storage. Para subirlo, ver seccion al final.
-  const applyAvatarToStorageUrl = () => {
-    if (!userId) {
-      setMensaje('No se conoce el ID del usuario. Guarda perfil primero.');
+    if (!avatarFile) {
+      setMensaje('Primero selecciona una imagen.');
       return;
     }
-    const publicUrl = buildStorageAvatarUrl(userId);
-    setAvatarUrl(publicUrl);
-    setMensaje('URL de avatar actualizada (archivo no subido automáticamente).');
-    setTimeout(() => setMensaje(''), 2000);
+
+    const token = getToken();
+    if (!token || isTokenExpired(token)) {
+      setMensaje('Sesión expirada. Inicia sesión nuevamente.');
+      return;
+    }
+
+    const uid = userId || extractUserIdFromToken();
+    if (!uid) {
+      setMensaje('No se pudo determinar el usuario. Inicia sesión.');
+      return;
+    }
+    setUserId(uid);
+
+    const formData = new FormData();
+    formData.append('file', avatarFile);
+
+    setLoading(true);
+    try {
+      const res = await fetch(`${BASE_URL}/${uid}/avatar`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        setMensaje(err?.message || 'Error al subir avatar.');
+        return;
+      }
+
+      const updatedUser = await res.json();
+      setUsuarioRaw(updatedUser);
+      setAvatarUrl(updatedUser.avatarUrl || '');
+      setMensaje('Avatar actualizado correctamente.');
+    } catch (err) {
+      console.error('uploadAvatarToBackend error', err);
+      setMensaje('Error de red al subir avatar.');
+    } finally {
+      setLoading(false);
+      setTimeout(() => setMensaje(''), 2200);
+    }
   };
 
-  // ---------- Render ----------
+  // 🔴 NUEVO: eliminar avatar en backend + storage y limpiar front
+  const deleteAvatarFromBackend = async () => {
+    setMensaje('');
+
+    const token = getToken();
+    if (!token || isTokenExpired(token)) {
+      setMensaje('Sesión expirada. Inicia sesión nuevamente.');
+      return;
+    }
+
+    const uid = userId || extractUserIdFromToken();
+    if (!uid) {
+      setMensaje('No se pudo determinar el usuario. Inicia sesión.');
+      return;
+    }
+    setUserId(uid);
+
+    setLoading(true);
+    try {
+      const res = await fetch(`${BASE_URL}/${uid}/avatar`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => null);
+        setMensaje(err?.message || 'Error al eliminar avatar.');
+        return;
+      }
+
+      const updatedUser = await res.json();
+      setUsuarioRaw(updatedUser);
+      setAvatarFile(null);
+      setAvatarUrl(updatedUser.avatarUrl || '');
+      if (inputFileRef.current) inputFileRef.current.value = '';
+      setMensaje('Avatar eliminado correctamente.');
+    } catch (err) {
+      console.error('deleteAvatarFromBackend error', err);
+      setMensaje('Error de red al eliminar avatar.');
+    } finally {
+      setLoading(false);
+      setTimeout(() => setMensaje(''), 2200);
+    }
+  };
+
   return (
     <div className="panel-administrador">
       <div className="management-layout">
@@ -344,7 +387,6 @@ export default function Cuenta() {
               </div>
 
               <div className="perfil-grid">
-                {/* Avatar */}
                 <section className="perfil-card">
                   <h2>Avatar</h2>
                   <div className="avatar-wrapper">
@@ -375,19 +417,29 @@ export default function Cuenta() {
                       <button
                         type="button"
                         className="btn btn-success"
-                        onClick={applyAvatarToStorageUrl}
-                        title="Construir y guardar la URL pública del avatar en la base de datos (no sube el archivo)"
+                        onClick={uploadAvatarToBackend}
+                        title="Sube la imagen al storage y guarda la URL en tu perfil"
                         style={{ marginLeft: 8 }}
+                        disabled={loading}
                       >
-                        Usar en perfil (guardar URL)
+                        Subir y guardar en perfil
                       </button>
 
                       {avatarUrl ? (
                         <button
                           type="button"
-                          className="btn btn-ghost"
-                          onClick={limpiarAvatar}
-                          style={{ marginLeft: 8 }}
+                          onClick={deleteAvatarFromBackend}
+                          style={{
+                            marginLeft: 8,
+                            backgroundColor: '#dc2626', // rojo tailwind-ish
+                            color: '#fff',
+                            border: 'none',
+                            padding: '8px 12px',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            opacity: loading ? 0.7 : 1,
+                          }}
+                          disabled={loading}
                         >
                           Quitar
                         </button>
@@ -395,13 +447,11 @@ export default function Cuenta() {
                     </div>
                   </div>
                   <p className="ayuda">
-                    Sube una imagen cuadrada (recomendado 512×512). Si quieres que el archivo
-                    se suba al storage, configura el backend para aceptar el upload o
-                    proporciona un presigned URL.
+                    Sube una imagen cuadrada. La imagen se subirá al
+                    storage del servidor y se usará como tu avatar en Level-Up.
                   </p>
                 </section>
 
-                {/* Datos personales */}
                 <form className="perfil-card" onSubmit={onGuardar}>
                   <h2>Datos personales</h2>
 
@@ -426,7 +476,7 @@ export default function Cuenta() {
                         value={form.email}
                         onChange={onChange}
                         placeholder="micorreo@mail.com"
-                        readOnly // email NO editable según tu requerimiento
+                        readOnly
                       />
                     </div>
                   </div>
@@ -495,7 +545,6 @@ export default function Cuenta() {
                       type="button"
                       className="btn btn-ghost"
                       onClick={() => {
-                        // recargar datos de usuario/direccion
                         cargarUsuario();
                         cargarDireccionesYSetPrimera(userId);
                         setMensaje('Datos recargados');

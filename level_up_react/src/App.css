@@ -1,22 +1,16 @@
-/* Reset y estilos base */
+/* App.css */
+/* Reset global + tipografías + layout base de la app */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
+
+/* Reset global */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-.App {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.main-content {
-  flex: 1;
-  padding-top: 80px;
-}
-
-/* Variables CSS - Mantener consistencia con proyecto original */
+/* Variables CSS globales */
 :root {
   --colorVerde: #00ff00;
   --colorVerdeOscuro: #00aa00;
@@ -24,17 +18,32 @@
   --colorGrisOscuro: #1a1a1a;
   --colorBlanco: #ffffff;
   --colorNegro: #000000;
+
   --font-encabezado: 'Orbitron', sans-serif;
   --font-principal: 'Arial', sans-serif;
   --font-secundaria: 'Arial', sans-serif;
 }
 
-/* Estilos globales */
+/* Estilos globales del body */
 body {
   font-family: var(--font-principal);
   background-color: var(--colorNegro);
   color: var(--colorBlanco);
   line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Contenedor raíz de React */
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Zona principal (debajo del header) */
+.main-content {
+  flex: 1;
+  padding-top: 80px; /* altura aproximada del header */
 }
 
 /* Enlaces globales */
@@ -75,20 +84,7 @@ button {
   margin-bottom: 2rem;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .main-content {
-    padding-top: 70px;
-  }
-}
-
-@media (max-width: 480px) {
-  .main-content {
-    padding-top: 60px;
-  }
-}
-
-/* Loading states */
+/* Estados de carga */
 .loading {
   display: flex;
   justify-content: center;
@@ -124,8 +120,30 @@ button {
   color: #888;
 }
 
+/* Ajuste del main global (si lo usas como wrapper) */
 main {
-  padding-top: 90px;
-  margin-bottom: 0px;
+  padding-top: 90px; /* un poco más que .main-content */
+  margin-bottom: 0;
 }
 
+/* ====================== Responsividad ====================== */
+
+@media (max-width: 768px) {
+  .main-content {
+    padding-top: 70px;
+  }
+
+  main {
+    padding-top: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding-top: 60px;
+  }
+
+  main {
+    padding-top: 70px;
+  }
+}
