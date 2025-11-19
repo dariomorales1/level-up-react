@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../styles/pages/registroStyles.css";
+import "../styles/pages/loginStyles.css";
 import showToast from "../components/toast";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -166,90 +166,86 @@ const Login = () => {
       <div id="headerPpal"></div>
 
       <main>
-        <div className="container-xxl auth">
-          <div className="row justify-content-center g-4">
-            <div className="col-12 col-md-8 col-lg-6">
-              <div className="auth-card">
-                <div className="auth-card__header">
-                  <h1 className="titulo mb-0">Ingresar</h1>
-                </div>
-
-                <form id="Formulario_Login" onSubmit={handleSubmit}>
-                  <div className="mb-3">
-                    <label htmlFor="Email_login" className="form-label">
-                      Correo electrónico
-                    </label>
-                    <input
-                      id="Email_login"
-                      name="email"
-                      type="email"
-                      className="form-control"
-                      placeholder="tucorreo@ejemplo.com"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-
-                  <div className="mb-2 position-relative">
-                    <label htmlFor="Password_login" className="form-label">
-                      Contraseña
-                    </label>
-                    <input
-                      id="Password_login"
-                      name="password"
-                      type="password"
-                      className="form-control pe-5"
-                      placeholder="••••••••"
-                      minLength="6"
-                      value={formData.password}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-
-                  <div className="d-flex justify-content-between align-items-center mb-3">
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="rememberMe"
-                        checked={rememberMe}
-                        onChange={() => setRememberMe(!rememberMe)}
-                      />
-                      <label className="form-check-label" htmlFor="rememberMe">
-                        Recordarme
-                      </label>
-                    </div>
-                    <a href="/forgot-password" id="forgotLink" className="auth-link">
-                      ¿Olvidaste tu contraseña?
-                    </a>
-                  </div>
-
-                  <button
-                    className="btn btn-auth w-100 mb-3"
-                    type="submit"
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <span>Ingresando...</span>
-                    ) : (
-                      <>
-                        <i className="fa-solid fa-right-to-bracket me-1"></i>{" "}
-                        Ingresar
-                      </>
-                    )}
-                  </button>
-
-                  <p className="text-center mb-0">
-                    ¿No tienes cuenta?
-                    <a className="auth-link ms-1" href="/register">
-                      Regístrate aquí
-                    </a>
-                  </p>
-                </form>
-              </div>
+        <div className="container.fluid d-flex justify-content-center align-items-center min-vh-100">
+          <div className="auth-card">
+            <div className="auth-card__header">
+              <h1 className="titulo mb-0">Ingresar</h1>
             </div>
+
+            <form id="Formulario_Login" onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label htmlFor="Email_login" className="form-label">
+                  Correo electrónico
+                </label>
+                <input
+                  id="Email_login"
+                  name="email"
+                  type="email"
+                  className="form-control"
+                  placeholder="tucorreo@ejemplo.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="mb-2 position-relative">
+                <label htmlFor="Password_login" className="form-label">
+                  Contraseña
+                </label>
+                <input
+                  id="Password_login"
+                  name="password"
+                  type="password"
+                  className="form-control pe-5"
+                  placeholder="••••••••"
+                  minLength="6"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="rememberMe"
+                    checked={rememberMe}
+                    onChange={() => setRememberMe(!rememberMe)}
+                  />
+                  <label className="form-check-label" htmlFor="rememberMe">
+                    Recordarme
+                  </label>
+                </div>
+                <a href="/forgot-password" id="forgotLink" className="auth-link">
+                  ¿Olvidaste tu contraseña?
+                </a>
+              </div>
+
+              <button
+                className="btn btn-auth w-100 mb-3"
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? (
+                  <span>Ingresando...</span>
+                ) : (
+                  <>
+                    <i className="fa-solid fa-right-to-bracket me-1"></i>{" "}
+                    Ingresar
+                  </>
+                )}
+              </button>
+
+              <p className="text-center mb-0">
+                ¿No tienes cuenta?
+                <a className="auth-link ms-1" href="/register">
+                  Regístrate aquí
+                </a>
+              </p>
+            </form>
           </div>
         </div>
       </main>
