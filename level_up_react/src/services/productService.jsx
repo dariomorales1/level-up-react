@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080/products'; // Ajusta según tu API
+const API_BASE_URL = 'http://levelup.ddns.net:8080/products'; // Ajusta según tu API
 
 // Configurar axios con timeout
 const axiosInstance = axios.create({
