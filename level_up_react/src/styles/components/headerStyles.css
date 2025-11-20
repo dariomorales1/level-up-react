@@ -1,248 +1,200 @@
-/* Header principal fijo arriba */
+/* ================= HEADER PRINCIPAL ================= */
+
 .headerPpal {
   background-color: var(--colorGrisOscuro);
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
   position: fixed;
   width: 100%;
   top: 0;
   z-index: 100;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.25);
 }
 
-/* Contenedor interno del header */
 .navbarPpal {
   width: 100%;
   max-width: 1200px;
   padding: 10px 20px;
   margin: 0 auto;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
-  flex-direction: row;
   justify-content: space-between;
 }
 
-.navbarFirstContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-}
+/* ================= LOGO ================= */
 
-/* Logo + nombre */
 .logoName {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
   font-family: var(--font-encabezado);
   font-weight: bold;
   font-size: 20px;
   color: var(--colorBlanco);
-  transition: 0.3s ease color;
+  cursor: pointer;
+  text-decoration: none;
 }
+.logoName img { display: inline-block; vertical-align: middle; }
+.logoText { display: inline-block; }
 
-.logoName:hover {
-  color: var(--colorBlanco);
-}
+/* ================= MENU DESKTOP ================= */
 
-/* Contenedor principal de botones (nav + acciones) */
-.navBarButtons {
+.menuDesktop {
   display: flex;
-  flex-direction: row;
-  width: 100%;
-  justify-content: space-between;
   align-items: center;
-  font-family: var(--font-principal);
+  justify-content: center;
+  flex: 1;
 }
-
-/* Subcontenedores: izquierda (links) y derecha (carrito + auth) */
 .navBarButtonsContainer {
   display: flex;
-  flex-direction: row;
-  gap: 5px;
-  justify-content: center;
+  gap: 14px;
   align-items: center;
 }
 
-.navBarButtonsContainer--right {
-  margin-left: auto;
+/* ================= ICONS RIGHT ================= */
+
+.iconsRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Carrito */
-.btnCarrito {
-  position: relative;
+/* ================= BOTÓN CUENTA ================= */
+
+.accountButton {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 5px 10px;
-  color: var(--colorBlanco);
-  transition: color 0.3s ease;
-}
-
-.carritoIcon {
   color: var(--colorVerde);
-  font-size: 25px;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  border-radius: 8px;
 }
+.accountButton:focus { outline: 2px solid rgba(0,255,0,0.12); }
+.accountIcon { color: var(--colorVerde); transition: color .15s ease; }
+
+/* ================= CARRITO FUERA DEL MENÚ ================= */
+
+.carritoOutside {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+.carritoOutside:focus { outline: 2px solid rgba(0,255,0,0.12); }
+
+.carritoIcon { font-size: 22px; color: var(--colorVerde); }
 
 .cartBadge {
-  position: absolute;
-  top: -2px;
-  right: 2px;
+  display: inline-block;
+  margin-left: 6px;
   background: var(--colorVerde);
   color: #000;
   border-radius: 999px;
   padding: 0 6px;
-  font-size: 0.7rem;
-  font-weight: bold;
+  font-size: 0.75rem;
+  font-weight: 700;
 }
 
-/* Botón de acciones (Ingresar / Cerrar sesión) */
-.btnHeader {
-  margin: 0 auto;
-  margin-bottom: 0;
-  border: 1px solid var(--colorVerde);
-  padding: 5px 10px;
-  border-radius: 5px;
-  text-decoration: none;
-  background-image: linear-gradient(
-    45deg,
-    var(--colorVerde) 50%,
-    transparent 200%
-  );
-  background-position: 100%;
-  background-size: 400%;
-  color: var(--colorGrisOscuro);
-  font-weight: bold;
-  transition:
-    background 0.2s ease-in-out,
-    color 0.2s ease-in-out;
-}
-
-.btnHeader:hover {
-  background-position: 0;
-  color: #000;
-}
-
-/* ================================================================= */
-/*                    HAMBURGUESA / MENÚ MÓVIL                       */
-/* ================================================================= */
+/* ================= HAMBURGUESA ================= */
 
 .menuToggle {
-  display: none; /* visible solo en móvil */
+  display: none; /* visible solo en mobile */
+  background: none;
+  border: 1px solid var(--colorVerde);
+  color: var(--colorVerde);
   width: 40px;
   height: 40px;
   border-radius: 999px;
-  border: 1px solid var(--colorVerde);
-  background: transparent;
+  cursor: pointer;
   align-items: center;
   justify-content: center;
+}
+
+/* ================= BOTONES BASE ================= */
+
+.btnHeader {
+  border: 1px solid var(--colorVerde);
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--colorBlanco);
+  font-weight: bold;
+}
+
+.btnHeader:hover { background: var(--colorVerde); color: #000; }
+
+.btnAgregarHeader {
+  border: 1px solid var(--colorVerde);
+  padding: 6px 10px;
+  border-radius: 6px;
+  background-image: linear-gradient(45deg, var(--colorVerde) 50%, transparent 200%);
+  background-size: 400%;
+  background-position: 100%;
+  color: var(--colorGrisOscuro);
+  font-weight: bold;
+}
+.btnAgregarHeader:hover { background-position: 0; color: #000; }
+
+/* small helper for mobile menu buttons */
+.menuMobileBtn { width: 100%; text-align: left; }
+
+/* ================= MENU MOBILE (DROPDOWN VERTICAL) ================= */
+
+.menuMobile {
+  display: none; /* visible solo en mobile */
+  position: absolute;
+  top: 64px; /* justo debajo del header */
+  left: 0;
+  right: 0;
+  background: var(--colorGrisOscuro);
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0,255,0,0.08);
+  z-index: 95;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+
+.menuMobileInner {
+  display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 0;
-  cursor: pointer;
+  gap: 10px;
 }
 
-.menuToggle span {
+/* modifier when open (class toggled by JSX) */
+.menuMobile--open {
   display: block;
-  width: 18px;
-  height: 2px;
-  background: var(--colorBlanco);
-  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-/* Animación cuando está abierto */
-.menuToggle--open span:nth-child(1) {
-  transform: translateY(6px) rotate(45deg);
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 760px) {
+  /* desktop menu hidden, mobile visible */
+  .menuDesktop { display: none; }
+
+  .menuToggle { display: flex; }
+
+  .menuMobile { display: none; } /* default hidden; open class shows it */
+  .menuMobile--open { display: block; }
+
+  /* adjust icons order so they fit */
+  .iconsRight { gap: 6px; }
 }
 
-.menuToggle--open span:nth-child(2) {
-  opacity: 0;
+/* keep desktop layout otherwise */
+@media (min-width: 761px) {
+  .menuMobile { display: none !important; }
+  .menuToggle { display: none !important; }
 }
 
-.menuToggle--open span:nth-child(3) {
-  transform: translateY(-6px) rotate(-45deg);
-}
-
-/* ================================================================= */
-/*                            RESPONSIVE                             */
-/* ================================================================= */
-
-@media (max-width: 768px) {
-  /* Logo un poco más compacto */
-  .logoName {
-    font-size: 16px;
-  }
-
-  /* Mostrar hamburguesa en móvil */
-  .menuToggle {
-    display: inline-flex;
-  }
-
-  /* Menú principal se vuelve desplegable */
-  .navBarButtons {
-    position: fixed;
-    top: 60px; /* debajo del header */
-    left: 0;
-    right: 0;
-    background-color: var(--colorGrisOscuro);
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    padding: 0.75rem 1rem 1rem;
-    gap: 0.5rem;
-    border-bottom: 1px solid rgba(0, 255, 0, 0.3);
-    display: none; /* oculto por defecto */
-    z-index: 90;
-  }
-
-  .navBarButtons--open {
-    display: flex;
-  }
-
-  .navBarButtonsContainer,
-  .navBarButtonsContainer--right {
-    width: 100%;
-    justify-content: flex-start;
-    align-items: stretch;
-    gap: 0.5rem;
-  }
-
-  /* Botones ocupan ancho completo en móvil */
-  .btnHeader,
-  .btnAgregarHeader,
-  .btnCarrito {
-    width: 100%;
-    text-align: left;
-    justify-content: flex-start;
-  }
-
-  .btnCarrito {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .cartBadge {
-    position: static;
-    background: var(--colorVerde);
-    color: #000;
-    border-radius: 999px;
-    padding: 0 8px;
-    font-size: 0.75rem;
-  }
-}
-
-/* Ajuste extra para pantallas muy pequeñas */
-@media (max-width: 580px) {
-  .logoName {
-    font-size: 0; /* solo ícono en pantallas muy chicas */
-  }
-
-  .logoName img {
-    margin-right: 0;
-  }
+/* tiny screens: compact logo */
+@media (max-width: 420px) {
+  .logoText { display: none; }
 }

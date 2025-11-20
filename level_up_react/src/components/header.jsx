@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useAuth } from '../hooks/useAuth';
@@ -7,157 +7,164 @@ import CartDrawer from './carrito';
 import '../styles/components/headerStyles.css';
 import image from '../assets/icons/icono.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
+import { faCartShopping, faUser, faBars } from '@fortawesome/free-solid-svg-icons';
 
 export default function Header() {
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  const mobileMenuRef = useRef(null);
 
   const { cart } = useApp();
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const cartItems = cart?.items || [];
-  const cartItemsCount = cartItems.reduce(
+  const cartItemsCount = cart?.items?.reduce(
     (total, item) => total + (item?.quantity || 0),
     0
-  );
+  ) || 0;
 
-  // ❗ Páginas "de gestión" SOLO para ADMIN (panel de productos)
   const adminManagementPrefixes = [
     '/PanelAdministrador',
     '/CrearProducto',
-    '/actualizar', // ajusta al nombre real de tu ruta de edición
+    '/actualizar'
   ];
 
-  const isManagementPage = adminManagementPrefixes.some((prefix) =>
+  const isManagementPage = adminManagementPrefixes.some(prefix =>
     location.pathname.startsWith(prefix)
   );
 
   const openCart = () => {
     setIsCartOpen(true);
-    setIsMenuOpen(false); // cerrar menú móvil al abrir carrito
+    setIsMobileOpen(false);
   };
 
   const closeCart = () => setIsCartOpen(false);
 
+  const toggleMobileMenu = () => {
+    setIsMobileOpen(prev => !prev);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileOpen(false);
+  };
+
   const handleLogout = () => {
     logout();
     navigate('/');
+    closeMobileMenu();
     closeCart();
-    setIsMenuOpen(false);
   };
 
-  const handleLogoClick = (e) => {
-    e.preventDefault();
-    navigate('/');
-    setIsMenuOpen(false);
+  const handleAccountClick = () => {
+    closeMobileMenu();
+    navigate(isAuthenticated ? '/dashboard' : '/login');
   };
 
-  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
-  const closeMenu = () => setIsMenuOpen(false);
+  // Cerrar menú móvil al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (
+        isMobileOpen &&
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(e.target)
+      ) {
+        setIsMobileOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isMobileOpen]);
+
+  useEffect(() => {
+    // Cierra el menú móvil automáticamente al cambiar de ruta
+    setIsMobileOpen(false);
+  }, [location.pathname]);
 
   return (
     <>
-      <header className="headerPpal">
-        <nav className="navbarPpal">
+      <header className="headerPpal" role="banner">
+        <nav className="navbarPpal" role="navigation" aria-label="Main navigation">
+          {/* Left: Logo */}
           <div className="navbarFirstContainer">
-            <a
-              className="navbar-brand logoName"
-              href="/"
-              onClick={handleLogoClick}
-            >
-              <img src={image} alt="logo" width="40px" />
-              Level-Up
+            <a className="navbar-brand logoName" href="/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>
+              <img src={image} alt="Level-Up logo" width="40" />
+              <span className="logoText">Level-Up</span>
             </a>
           </div>
 
-          {/* Botón hamburguesa (solo se ve en móvil vía CSS) */}
-          <button
-            className={`menuToggle ${isMenuOpen ? 'menuToggle--open' : ''}`}
-            onClick={toggleMenu}
-            aria-label="Abrir menú"
-          >
-            <span />
-            <span />
-            <span />
-          </button>
-
-          {/* Menú principal (desktop + móvil desplegable) */}
-          <div
-            className={`navBarButtons ${
-              isMenuOpen ? 'navBarButtons--open' : ''
-            }`}
-          >
-            {/* 🔹 Solo ocultamos navegación principal en páginas de gestión ADMIN */}
+          {/* Center: Desktop Menu */}
+          <div className="menuDesktop">
             {!isManagementPage && (
               <div className="navBarButtonsContainer">
-                <div onClick={closeMenu}>
-                  <NavButton text="Inicio" to="/" />
-                </div>
-                <div onClick={closeMenu}>
-                  <NavButton text="Catalogo" to="/catalogo" />
-                </div>
-                <div onClick={closeMenu}>
-                  <NavButton text="Blog" to="/blog" />
-                </div>
+                <NavButton text="Inicio" to="/" />
+                <NavButton text="Catalogo" to="/catalogo" />
+                <NavButton text="Blog" to="/blog" />
               </div>
             )}
+          </div>
 
-            <div className="navBarButtonsContainer navBarButtonsContainer--right">
-              {/* 🔹 Igual con el carrito: se oculta solo en admin */}
-              {!isManagementPage && (
-                <button className="btnCarrito" onClick={openCart}>
-                  <FontAwesomeIcon
-                    icon={faCartShopping}
-                    className="carritoIcon"
-                  />
-                  {cartItemsCount > 0 && (
-                    <span className="cartBadge">{cartItemsCount}</span>
-                  )}
-                </button>
-              )}
+          {/* Right: Icons (Account, Cart, Mobile toggle) */}
+          <div className="iconsRight">
+            <button
+              className="accountButton"
+              onClick={handleAccountClick}
+              aria-label="Cuenta"
+              title={isAuthenticated ? (user?.name ? `Ir a ${user.name}` : 'Ir a cuenta') : 'Ingresar'}
+            >
+              <FontAwesomeIcon icon={faUser} className="accountIcon" />
+            </button>
 
-              {/* 🔹 Botones según autenticación */}
-              {isAuthenticated && user ? (
-                <>
-                  {!isManagementPage && (
-                    <div onClick={closeMenu}>
-                      <NavButton
-                        text={user.name ? `Hola, ${user.name}` : 'Cuenta'}
-                        to="/dashboard"
-                        className="btnAgregarHeader"
-                      />
-                    </div>
-                  )}
-                  <button className="btnHeader" onClick={handleLogout}>
+            {!isManagementPage && (
+              <button
+                className="btnCarrito carritoOutside"
+                onClick={openCart}
+                aria-label="Abrir carrito"
+                title="Carrito"
+              >
+                <FontAwesomeIcon icon={faCartShopping} className="carritoIcon" />
+                {cartItemsCount > 0 && <span className="cartBadge">{cartItemsCount}</span>}
+              </button>
+            )}
+
+            {/* Mobile hamburger — only visible in mobile via CSS */}
+            <button
+              className="menuToggle"
+              onClick={toggleMobileMenu}
+              aria-expanded={isMobileOpen}
+              aria-label="Abrir menú"
+              title="Menú"
+            >
+              <FontAwesomeIcon icon={faBars} />
+            </button>
+          </div>
+
+          {/* Mobile dropdown (visible only on mobile by CSS). Clicking links closes it. */}
+          <div
+            ref={mobileMenuRef}
+            className={`menuMobile ${isMobileOpen ? 'menuMobile--open' : ''}`}
+            aria-hidden={!isMobileOpen}
+          >
+            {!isManagementPage && (
+              <div className="menuMobileInner">
+                <NavButton text="Inicio" to="/" onClick={closeMobileMenu} />
+                <NavButton text="Catalogo" to="/catalogo" onClick={closeMobileMenu} />
+                <NavButton text="Blog" to="/blog" onClick={closeMobileMenu} />
+                {/* Auth actions in mobile menu */}
+                {isAuthenticated ? (
+                  <button className="btnAgregarHeader menuMobileBtn" onClick={() => { handleLogout(); }}>
                     Cerrar sesión
                   </button>
-                </>
-              ) : (
-                <>
-                  {!isManagementPage && (
-                    <>
-                      <div onClick={closeMenu}>
-                        <NavButton
-                          text="Ingresar"
-                          to="/login"
-                          className="btnHeader"
-                        />
-                      </div>
-                      <div onClick={closeMenu}>
-                        <NavButton
-                          text="Registrarse"
-                          to="/register"
-                          className="btnAgregarHeader"
-                        />
-                      </div>
-                    </>
-                  )}
-                </>
-              )}
-            </div>
+                ) : (
+                  <>
+                    <NavButton text="Ingresar" to="/login" className="btnHeader menuMobileBtn" onClick={closeMobileMenu} />
+                    <NavButton text="Registrarse" to="/register" className="btnAgregarHeader menuMobileBtn" onClick={closeMobileMenu} />
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </nav>
       </header>
