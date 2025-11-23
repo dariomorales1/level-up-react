@@ -49,6 +49,13 @@
 }
 .navBarButtonsContainer {
   display: flex;
+  align-items: center;
+  width: 90%;
+  justify-content: space-between;
+}
+
+.buttonsLeft {
+  display: flex;
   gap: 14px;
   align-items: center;
 }

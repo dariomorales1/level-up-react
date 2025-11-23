@@ -99,9 +99,21 @@ export default function Header() {
           <div className="menuDesktop">
             {!isManagementPage && (
               <div className="navBarButtonsContainer">
-                <NavButton text="Inicio" to="/" />
-                <NavButton text="Catalogo" to="/catalogo" />
-                <NavButton text="Blog" to="/blog" />
+                <div className="buttonsLeft">
+                  <NavButton text="Inicio" to="/" />
+                  <NavButton text="Catalogo" to="/catalogo" />
+                  <NavButton text="Blog" to="/blog" />
+                </div>
+                <div className="buttonsRight">
+                  {isAuthenticated ? (
+                    <button className="btnAgregar menuMobileBtn" onClick={() => { handleLogout(); }}>
+                      Cerrar sesión
+                    </button>
+                  ) : (
+                    <>
+                    </>
+                )}
+                </div>
               </div>
             )}
           </div>
