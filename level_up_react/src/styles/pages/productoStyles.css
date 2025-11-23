@@ -1,100 +1,518 @@
 main {
-    padding-top: 80px;
+  padding-top: 80px;
 }
 
 .productDetalle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    background-color: var(--colorGrisOscuro);
-    padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: var(--colorGrisOscuro);
+  padding: 20px;
 }
 
-.cardDetalle {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    align-items: center;
-    justify-content: center;
-}
+/* ================= HEADER: TÍTULO + BOTÓN VOLVER ================= */
 
-.cardDetalle img {
-    width: 100%;
-    height: auto;
-    max-height: 400px;
-    object-fit: contain;
-    background-color: white;
-}
-
-.productInfo {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    color: var(--colorBlanco);
+.product-header,
+.productHeaderRow {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
 .productName {
-    font-size: 2.5rem;
-    text-align: start;
-    width: 100%;
+  font-size: 2.5rem;
+  text-align: start;
+  width: 100%;
+  margin: 0;
 }
 
+/* Botón volver (versión moderna) */
+.btn-volver-producto,
+.btnVolver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 15px;
+  border-radius: 60%;
+  border: none;
+  background: var(--colorVerde);
+  color: var(--colorNegro);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.btn-volver-producto span:last-child {
+  /* texto "Volver" oculto para dejar sólo el ícono redondo */
+  display: none;
+}
+
+.btn-volver-producto:hover,
+.btnVolver:hover {
+  background: #2ecc71;
+  transform: scale(1.05);
+}
+
+/* Si quieres llevar el botón totalmente a la derecha */
+.btnVolverDerecha {
+  margin-left: auto;
+}
+
+/* Ícono dentro del botón volver */
+.btn-volver-icon {
+  font-size: 1.1rem;
+}
+
+/* ================= CARD PRINCIPAL: IMAGEN + INFO ================= */
+
+.cardDetalle {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.product-image-wrapper {
+  width: 100%;
+}
+
+/* Imagen – estilo mejorado */
+.product-image,
+.cardDetalle img {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: contain;
+
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 3px solid var(--colorVerde);
+  outline: 2px solid var(--colorNegro);
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.product-image:hover,
+.cardDetalle img:hover {
+  transform: scale(1.01);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* ================= INFO DEL PRODUCTO ================= */
+
+.productInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  color: var(--colorBlanco);
+}
+
+.description {
+  margin-bottom: 8px;
+}
+
+/* Bloque de rating (estrellas + texto) */
+.rating-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rating-stars {
+  display: inline-flex;
+  align-items: center;
+}
+
+.rating-text {
+  font-size: 0.9rem;
+  color: #d0d0d0;
+}
+
+.rating-text.sin-resenas {
+  font-style: italic;
+  color: #b0b0b0;
+}
+
+/* Compra */
 .compra {
-    display: flex;
-    gap: 20px;
-    width: 100%;
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  align-items: center;
 }
 
 .precio {
-    color: var(--colorVerde);
-    margin: auto 0;
+  color: var(--colorVerde);
+  margin: auto 0;
 }
 
+/* 👇 IMPORTANTE: NO definimos .btnAgregar aquí
+   para que use el estilo global original que ya tenías */
+
+
+/* ================= SEPARADOR ================= */
 
 hr {
-    border: none;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--colorVerde), transparent);
-    width: 100%;
+  border: none;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--colorVerde),
+    transparent
+  );
+  width: 100%;
 }
+
+/* ================= DETALLES: ESPECIFICACIONES + RESEÑAS ================= */
 
 .detalles {
-    display: flex;
-    justify-content: center;
-    gap: 50px;
-    width: 100%;
-    color: var(--colorBlanco);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 50px;
+  width: 100%;
+  color: var(--colorBlanco);
+  flex-wrap: wrap;
+  margin-top: 10px;
 }
 
-.especificaciones, .comentarios {
-    border: 1px solid var(--colorVerde);
-    width: 45%;
-    text-align: center  ;
-    height: fit-content;
+.detalles-col {
+  flex: 1;
+  min-width: 280px;
 }
 
-.especificaciones thead, .comentarios thead {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.1rem;
-    background-color: var(--colorVerde);
-    color: var(--colorNegro);
+/* Panel genérico (caja con borde) */
+.panel {
+  border-radius: 14px;
+  border: 1px solid var(--colorVerde);
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 12px 14px;
 }
 
-.especificaciones tr, .comentarios tr {
-    border-bottom: 1px solid var(--colorVerde);
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
 }
 
-tbody {
-    display: flex;
+.panel-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* === ESPECIFICACIONES === */
+
+.especificaciones,
+.comentarios {
+  border: 1px solid var(--colorVerde);
+  width: 45%;
+  text-align: center;
+  height: fit-content;
+}
+
+.especificaciones thead,
+.comentarios thead {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.1rem;
+  background-color: var(--colorVerde);
+  color: var(--colorNegro);
+}
+
+.especificaciones tr,
+.comentarios tr {
+  border-bottom: 1px solid var(--colorVerde);
+}
+
+/* tabla nueva de especificaciones */
+.especificaciones-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.especificaciones-table tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.especificaciones-table td {
+  padding: 6px 4px;
+  font-size: 0.9rem;
+}
+
+.line {
+  text-align: left;
+}
+
+.sin-datos {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: #bbbbbb;
+}
+
+/* ================= RESEÑAS ================= */
+
+.resenas-panel {
+}
+
+.resenas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.resena-item {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background-color: rgba(10, 10, 10, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.resena-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #e0e0e0;
+}
+
+.resena-score {
+  font-weight: 600;
+  color: var(--colorVerde);
+}
+
+.resena-user {
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.resena-comentario {
+  font-size: 0.9rem;
+  margin: 3px 0 0 0;
+}
+
+/* Acciones de reseña */
+.resena-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.btn-resena {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.btn-resena .btn-resena-icon {
+  font-size: 0.9rem;
+}
+
+.btn-resena.edit {
+  color: #4caf50;
+}
+
+.btn-resena.delete {
+  color: #ff5252;
+}
+
+.btn-resena:hover {
+  background: rgba(255, 255, 255, 0.09);
+  transform: translateY(-1px);
+}
+
+/* ================= FORMULARIO DE RESEÑAS ================= */
+
+.resena-form-wrapper {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 10px;
+  margin-top: 4px;
+}
+
+.resena-form-title {
+  margin: 0 0 6px 0;
+  font-size: 0.95rem;
+}
+
+.resena-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.resena-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.resena-form-row label {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.resena-select,
+.resena-textarea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 8px;
+  background-color: rgba(15, 15, 15, 0.9);
+  color: var(--colorBlanco);
+  font-size: 0.9rem;
+}
+
+.resena-select:focus,
+.resena-textarea:focus {
+  outline: none;
+  border-color: var(--colorVerde);
+  box-shadow: 0 0 0 2px rgba(0, 255, 128, 0.25);
+}
+
+.resena-textarea {
+  resize: vertical;
+  min-height: 80px;
+  max-height: 220px;
+}
+
+.char-counter {
+  text-align: right;
+  font-size: 0.8rem;
+  color: #c0c0c0;
+}
+
+.char-counter.exceeded {
+  color: #ff6b6b;
+}
+
+/* Botones formulario reseña */
+.resena-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btn-resena-cancelar {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: var(--colorBlanco);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-resena-cancelar:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.btn-resena-submit {
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: none;
+  background-color: var(--colorVerde);
+  color: var(--colorNegro);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease,
+    box-shadow 0.15s ease;
+}
+
+.btn-resena-submit:hover:not(:disabled) {
+  background-color: #27ae60;
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(39, 174, 96, 0.6);
+}
+
+.btn-resena-submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Mensaje para usuarios no logueados + botón login */
+.resena-login-hint {
+  font-size: 0.85rem;
+  color: #cccccc;
+  margin: 4px 0 0 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-login-resena {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: none;
+  background-color: var(--colorVerde);
+  color: var(--colorNegro);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease,
+    box-shadow 0.15s ease;
+}
+
+.btn-login-resena:hover {
+  background-color: #27ae60;
+  transform: translateY(-1px);
+  box-shadow: 0 0 8px rgba(39, 174, 96, 0.6);
+}
+
+/* ================= ESTADOS ESPECIALES ================= */
+
+.producto-loading {
+  padding: 60px 0;
+  text-align: center;
+  color: var(--colorBlanco);
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 992px) {
+  .cardDetalle {
+    grid-template-columns: 1fr;
+  }
+
+  .productName {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .product-header,
+  .productHeaderRow {
     flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-volver-producto,
+  .btnVolver {
+    align-self: flex-end;
+  }
 }
-
-
-
-
-
-
-

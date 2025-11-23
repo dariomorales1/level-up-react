@@ -1,6 +1,7 @@
+// src/services/productService.jsx
 import axios from 'axios';
 
-const API_BASE_URL = 'http://levelup.ddns.net:8080/products'; // Ajusta según tu API
+const API_BASE_URL = 'http://levelup.ddns.net:8080/products';
 
 // Configurar axios con timeout
 const axiosInstance = axios.create({
@@ -17,8 +18,18 @@ const productService = {
     try {
       console.log('Obteniendo productos desde:', API_BASE_URL);
       const response = await axiosInstance.get('/');
-      console.log('Productos obtenidos:', response.data);
-      return response.data;
+      console.log('Productos obtenidos (raw):', response.data);
+
+      // El backend ya devuelve JSON correcto (lista de productos)
+      if (Array.isArray(response.data)) {
+        return response.data;
+      }
+
+      console.warn(
+        '⚠ getAllProducts: la respuesta no es un array, devolviendo []',
+        response.data
+      );
+      return [];
     } catch (error) {
       console.error('Error fetching products:', error.response || error.message);
       throw new Error(`Error al cargar productos: ${error.message}`);
@@ -29,6 +40,7 @@ const productService = {
   getProductByCode: async (productCode) => {
     try {
       const response = await axiosInstance.get(`/${productCode}`);
+      console.log('🧩 getProductByCode - producto:', response.data);
       return response.data;
     } catch (error) {
       console.error('Error fetching product:', error.response || error.message);
@@ -60,7 +72,6 @@ const productService = {
   updateProduct: async (codigo, productData) => {
     try {
       const response = await axios.put(`${API_BASE_URL}/${codigo}`, productData);
-      // Retornamos el producto actualizado o solo el mensaje
       return response.data;
     } catch (error) {
       console.error('Error updating product:', error.response || error);
@@ -90,7 +101,7 @@ const productService = {
     }
   },
 
-  // 🔴 NUEVO: subir imagen de producto a Supabase vía backend
+  // Subir imagen de producto a Supabase vía backend
   uploadProductImage: async (codigo, file, categoria, nombreProducto) => {
     try {
       const formData = new FormData();
@@ -103,7 +114,6 @@ const productService = {
         formData,
         {
           headers: {
-            // OJO: para multipart dejamos que axios ponga el boundary
             'Content-Type': 'multipart/form-data',
           },
           timeout: 10000,
@@ -117,6 +127,58 @@ const productService = {
         error.response || error.message
       );
       throw new Error(`Error al subir imagen de producto: ${error.message}`);
+    }
+  },
+
+  // ================== RESEÑAS ==================
+
+  // Crear reseña
+  addResena: async (productCode, { comentario, puntuacion, usuarioId }) => {
+    try {
+      const body = {
+        comentario,
+        puntuacion, // int 1–10
+        usuarioId,
+      };
+      const response = await axiosInstance.post(
+        `/${encodeURIComponent(productCode)}/resenas`,
+        body
+      );
+      return response.data; // Resena creada
+    } catch (error) {
+      console.error('Error al crear reseña:', error.response || error.message);
+      throw new Error(`Error al crear reseña: ${error.message}`);
+    }
+  },
+
+  // Actualizar reseña
+  updateResena: async (productCode, resenaId, { comentario, puntuacion }) => {
+    try {
+      const body = {
+        comentario,
+        puntuacion,
+      };
+      const response = await axiosInstance.put(
+        `/${encodeURIComponent(productCode)}/resenas/${resenaId}`,
+        body
+      );
+      return response.data; // Resena actualizada
+    } catch (error) {
+      console.error('Error al actualizar reseña:', error.response || error.message);
+      throw new Error(`Error al actualizar reseña: ${error.message}`);
+    }
+  },
+
+  // Eliminar reseña
+  deleteResena: async (productCode, resenaId) => {
+    try {
+      const response = await axiosInstance.delete(
+        `/${encodeURIComponent(productCode)}/resenas/${resenaId}`
+      );
+      return response.data; // MessageResponse
+    } catch (error) {
+      console.error('Error al eliminar reseña:', error.response || error.message);
+      throw new Error(`Error al eliminar reseña: ${error.message}`);
     }
   },
 };

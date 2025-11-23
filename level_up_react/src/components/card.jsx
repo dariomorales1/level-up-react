@@ -39,7 +39,7 @@ export default function Card ({codigo, nombre, imgLink, descripcionCorta, precio
                 <div className="card-body cardContainer">
                     <h5 className="card-title">{nombre}</h5>
                     <p className="card-text">{descripcionCorta}</p>
-                    <p className="precio"><strong>Precio: $</strong>{precio}</p>
+                    <p className="precio"><strong>Precio: $</strong>{precio.toLocaleString('es-CL')}</p>
                 </div>
             </div>
             <div className="cardFooter">

@@ -7,7 +7,7 @@ import CartDrawer from './carrito';
 import '../styles/components/headerStyles.css';
 import image from '../assets/icons/icono.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCartShopping, faUser, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faCartShopping, faUser, faBars, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
 export default function Header() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -116,6 +116,18 @@ export default function Header() {
             >
               <FontAwesomeIcon icon={faUser} className="accountIcon" />
             </button>
+
+            {/* Agregar botón de logout en desktop cuando el usuario está autenticado */}
+            {isAuthenticated && (
+              <button
+                className="logoutButton"
+                onClick={handleLogout}
+                aria-label="Cerrar sesión"
+                title="Cerrar sesión"
+              >
+                <FontAwesomeIcon icon={faSignOutAlt} />
+              </button>
+            )}
 
             {!isManagementPage && (
               <button

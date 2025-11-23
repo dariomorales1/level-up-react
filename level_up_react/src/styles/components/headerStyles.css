@@ -198,3 +198,43 @@
 @media (max-width: 420px) {
   .logoText { display: none; }
 }
+
+/* Estilos para el botón de logout en desktop */
+.logoutButton {
+  background: none;
+  border: none;
+  color: var(--color-text);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.logoutButton:hover {
+  background-color: var(--color-primary);
+  color: rgb(10, 182, 33);
+  transform: scale(1.05);
+}
+
+.logoutButton:active {
+  transform: scale(0.95);
+}
+
+/* Asegurar que los botones tengan espaciado consistente */
+.iconsRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Responsive: Ocultar logout en móvil (ya está en el menú móvil) */
+@media (max-width: 768px) {
+  .logoutButton {
+    display: none;
+  }
+}
