@@ -116,3 +116,13 @@
     font-size: 12px;
 }
 
+
+/* Estilos para la información de stock */
+.stock-info {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  margin: 10px 0;
+  text-align: center;
+  border: 1px solid;
+}
