@@ -6,7 +6,7 @@ import renderEstrellas from '../components/stars';
 import showToast from '../components/toast';
 import '../styles/pages/productoStyles.css';
 
-const MAX_LETRAS = 1000; // Cambiado de MAX_WORDS a MAX_LETRAS
+const MAX_LETRAS = 1000;
 
 const Producto = () => {
   const [searchParams] = useSearchParams();
@@ -93,11 +93,18 @@ const Producto = () => {
     e.stopPropagation();
     if (!producto) return;
 
+    // Verificar stock disponible
+    if (producto.stock <= 0) {
+      showToast('Producto sin stock disponible', 'error');
+      return;
+    }
+
     const productForCart = {
       id: producto.codigo,
       name: producto.nombre,
       price: producto.precio,
       image: producto.imagenUrl,
+      stock: producto.stock, // Incluir stock en el producto del carrito
     };
 
     console.log('🛒 Card - Adding product to cart:', productForCart);
@@ -211,6 +218,28 @@ const Producto = () => {
     }
   };
 
+  // Función para determinar el estilo del stock
+  const getStockStyle = () => {
+    if (producto.stock <= 0) {
+      return 'stock-agotado';
+    } else if (producto.stock <= 10) {
+      return 'stock-bajo';
+    } else {
+      return 'stock-disponible';
+    }
+  };
+
+  // Función para obtener el texto del stock
+  const getStockText = () => {
+    if (producto.stock <= 0) {
+      return 'Sin stock';
+    } else if (producto.stock <= 10) {
+      return `Últimas ${producto.stock} unidades`;
+    } else {
+      return `Stock: ${producto.stock} unidades`;
+    }
+  };
+
   if (loading) {
     return (
       <main>
@@ -291,8 +320,17 @@ const Producto = () => {
                       <strong>Precio: $</strong>
                       {producto.precio.toLocaleString('es-CL')}
                     </p>
-                    <button className="btnAgregar" onClick={AddToCart}>
-                      Añadir al carrito
+                    
+                    <div className={`stock-info ${getStockStyle()}`}>
+                      {getStockText()}
+                    </div>
+
+                    <button 
+                      className={`btnAgregar ${producto.stock <= 0 ? 'btn-agotado' : ''}`} 
+                      onClick={AddToCart}
+                      disabled={producto.stock <= 0}
+                    >
+                      {producto.stock <= 0 ? 'Sin stock' : 'Añadir al carrito'}
                     </button>
                   </section>
                 </div>

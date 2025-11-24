@@ -28,6 +28,7 @@ export default function CardsContainer({ productos }) {
                     p["Descripción Corta"] ||
                     p.descripcion ||
                     "Producto sin descripción";
+                const stock = p.stock != null ? p.stock : p.Stock != null ? p.Stock : 0;
 
                 return (
                     <Card
@@ -37,6 +38,7 @@ export default function CardsContainer({ productos }) {
                         imgLink={img}
                         descripcionCorta={descripcionCorta}
                         precio={precio}
+                        stock={stock}
                     />
                 );
             })}

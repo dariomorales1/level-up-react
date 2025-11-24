@@ -43,6 +43,7 @@ export default function Card({ codigo, nombre, imgLink, descripcionCorta, precio
                     <h5 className="card-title">{nombre}</h5>
                     <p className="card-text">{descripcionCorta}</p>
                     <p className="precio"><strong>Precio: $</strong>{precio.toLocaleString('es-CL')}</p>
+                    <div className="stock-info">Stock: {stock}</div>
                 </div>
             </div>
             <div className="cardFooter">
