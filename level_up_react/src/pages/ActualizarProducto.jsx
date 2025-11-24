@@ -30,8 +30,12 @@ const ActualizarProducto = ({ product: propProduct, onSave, onCancel }) => {
         categoria: propProduct.categoria,
         descripcionCorta: propProduct.descripcionCorta,
         descripcionLarga: propProduct.descripcionLarga,
-        especificaciones: propProduct.especificaciones || [],
-        imagenUrl: propProduct.imagenUrl || ''
+        imagenUrl: propProduct.imagenUrl || '',
+        // 🔥 Convertimos a objetos siempre
+        especificaciones: (propProduct.especificaciones || []).map((s) => ({
+          id: s.id ?? null,
+          specification: s.specification ?? s
+        }))
       });
     }
   }, [propProduct]);
@@ -43,12 +47,15 @@ const ActualizarProducto = ({ product: propProduct, onSave, onCancel }) => {
 
   const handleSpecChange = (index, value) => {
     const newSpecs = [...formData.especificaciones];
-    newSpecs[index] = value;
+    newSpecs[index].specification = value;
     setFormData(prev => ({ ...prev, especificaciones: newSpecs }));
   };
 
   const addSpec = () => {
-    setFormData(prev => ({ ...prev, especificaciones: [...prev.especificaciones, ''] }));
+    setFormData(prev => ({
+      ...prev,
+      especificaciones: [...prev.especificaciones, { id: null, specification: '' }]
+    }));
   };
 
   const removeSpec = (index) => {
@@ -59,28 +66,38 @@ const ActualizarProducto = ({ product: propProduct, onSave, onCancel }) => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  try {
-    await productService.updateProduct(formData.codigo, formData);
+    e.preventDefault();
+    setLoading(true);
 
-    alert('Producto actualizado exitosamente.');
+    try {
+      const cleanProduct = {
+        ...formData,
+        especificaciones: formData.especificaciones.map((s) => ({
+          id: s.id ?? null,
+          specification: s.specification
+        }))
+      };
 
-    // No llamar a onSave si no lo necesitas
-    navigate('/admin/productos'); // Redirige al listado
-  } catch (error) {
-    alert('Error al actualizar producto: ' + (error.response?.data?.message || error.message));
-  } finally {
-    setLoading(false);
-  }
-};
+      await productService.updateProduct(formData.codigo, cleanProduct);
+
+      alert('Producto actualizado exitosamente.');
+      navigate('/admin/productos');
+
+    } catch (error) {
+      alert('Error al actualizar producto: ' + (error.response?.data?.message || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!propProduct) return <div>Cargando producto...</div>;
 
   return (
     <div className="edit-product-container">
       <h2>Editar Producto: {formData.nombre}</h2>
+
       <form onSubmit={handleSubmit} className="product-form">
+
         {/* Código */}
         <div className="form-group">
           <label>Código *</label>
@@ -93,12 +110,13 @@ const ActualizarProducto = ({ product: propProduct, onSave, onCancel }) => {
           <input type="text" name="nombre" value={formData.nombre} onChange={handleInputChange} required />
         </div>
 
-        {/* Precio y Stock */}
+        {/* Precio / Stock */}
         <div className="form-row">
           <div className="form-group">
             <label>Precio *</label>
             <input type="number" name="precio" value={formData.precio} onChange={handleInputChange} required />
           </div>
+
           <div className="form-group">
             <label>Stock *</label>
             <input type="number" name="stock" value={formData.stock} onChange={handleInputChange} required />
@@ -126,6 +144,7 @@ const ActualizarProducto = ({ product: propProduct, onSave, onCancel }) => {
           <label>Descripción Corta *</label>
           <textarea name="descripcionCorta" value={formData.descripcionCorta} onChange={handleInputChange} rows="3" required />
         </div>
+
         <div className="form-group">
           <label>Descripción Larga</label>
           <textarea name="descripcionLarga" value={formData.descripcionLarga} onChange={handleInputChange} rows="5" />
@@ -140,24 +159,44 @@ const ActualizarProducto = ({ product: propProduct, onSave, onCancel }) => {
         {/* Especificaciones */}
         <div className="form-group">
           <label>Especificaciones</label>
+
           {formData.especificaciones.map((spec, index) => (
             <div key={index} className="specification-item">
-              <input type="text" value={spec} onChange={(e) => handleSpecChange(index, e.target.value)} />
-              <button type="button" className="btn-remove" onClick={() => removeSpec(index)}>✕</button>
+              <input
+                type="text"
+                value={spec.specification}
+                onChange={(e) => handleSpecChange(index, e.target.value)}
+              />
+              <button
+                type="button"
+                className="btn-remove"
+                onClick={() => removeSpec(index)}
+              >
+                ✕
+              </button>
             </div>
           ))}
-          <button type="button" className="btn-add" onClick={addSpec}>+ Agregar Especificación</button>
+
+          <button type="button" className="btn-add" onClick={addSpec}>
+            + Agregar Especificación
+          </button>
         </div>
 
-        {/* Botones */}
+        {/* Acciones */}
         <div className="form-actions">
           <button type="submit" className="btn-save" disabled={loading}>
             {loading ? 'Guardando...' : 'Guardar Cambios'}
           </button>
-          <button type="button" className="btn-cancel" onClick={() => onCancel ? onCancel() : navigate('/admin/productos')}>
+
+          <button
+            type="button"
+            className="btn-cancel"
+            onClick={() => onCancel ? onCancel() : navigate('/admin/productos')}
+          >
             Cancelar
           </button>
         </div>
+
       </form>
     </div>
   );
