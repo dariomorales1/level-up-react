@@ -336,7 +336,183 @@ const Producto = () => {
                 </div>
               </div>
 
-              {/* ... el resto del código permanece igual ... */}
+              <hr />
+
+              <div className="detalles">
+                {/* Columna izquierda: Especificaciones */}
+                <div className="detalles-col">
+                  <div className="panel especificaciones-panel">
+                    <div className="panel-header">
+                      <h3>Especificaciones</h3>
+                    </div>
+                    <table className="especificaciones-table">
+                      <tbody>
+                        {(producto.especificaciones || []).map((espec) => (
+                          <tr key={espec.id}>
+                            <td className="line">
+                              {espec.specification || espec.descripcion}
+                            </td>
+                          </tr>
+                        ))}
+                        {(!producto.especificaciones ||
+                          producto.especificaciones.length === 0) && (
+                          <tr>
+                            <td className="line sin-datos">
+                              Este producto no tiene especificaciones cargadas.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Columna derecha: Reseñas */}
+                <div className="detalles-col">
+                  <div className="panel resenas-panel">
+                    <div className="panel-header">
+                      <h3>Reseñas</h3>
+                    </div>
+
+                    {/* Lista de reseñas */}
+                    <div className="resenas-list">
+                      {producto.resenas && producto.resenas.length > 0 ? (
+                        producto.resenas.map((r) => (
+                          <div key={r.id} className="resena-item">
+                            <div className="resena-header-row">
+                              <span className="resena-score">
+                                ⭐ {r.puntuacion}/10
+                              </span>
+                              <span className="resena-user">
+                                Usuario: {r.usuarioId}
+                              </span>
+                            </div>
+                            <p className="resena-comentario">
+                              {r.comentario}
+                            </p>
+                            {user && r.usuarioId === user.id && (
+                              <div className="resena-actions">
+                                <button
+                                  type="button"
+                                  className="btn-resena edit"
+                                  onClick={() => handleEditarResena(r)}
+                                >
+                                  <span className="btn-resena-icon">✏️</span>
+                                  <span>Editar</span>
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn-resena delete"
+                                  onClick={() => handleEliminarResena(r)}
+                                >
+                                  <span className="btn-resena-icon">🗑️</span>
+                                  <span>Eliminar</span>
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <p className="sin-datos">
+                          Aún no hay reseñas para este producto.
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Formulario de nueva reseña / edición */}
+                    <div className="resena-form-wrapper">
+                      {user ? (
+                        <>
+                          <h4 className="resena-form-title">
+                            {editingResenaId
+                              ? 'Editar tu reseña'
+                              : 'Escribe una reseña'}
+                          </h4>
+                          <form
+                            className="resena-form"
+                            onSubmit={handleSubmitResena}
+                          >
+                            <div className="resena-form-row">
+                              <label htmlFor="puntuacion">
+                                Puntuación (1 a 10)
+                              </label>
+                              <select
+                                id="puntuacion"
+                                value={puntuacion}
+                                onChange={handlePuntuacionChange}
+                                className="resena-select"
+                              >
+                                {Array.from({ length: 10 }, (_, i) => i + 1).map(
+                                  (num) => (
+                                    <option key={num} value={num}>
+                                      {num}
+                                    </option>
+                                  )
+                                )}
+                              </select>
+                            </div>
+
+                            <div className="resena-form-row">
+                              <label htmlFor="comentario">
+                                Comentario (hasta {MAX_LETRAS} letras)
+                              </label>
+                              <textarea
+                                id="comentario"
+                                className="resena-textarea"
+                                value={nuevoComentario}
+                                onChange={handleComentarioChange}
+                                rows={4}
+                                placeholder="Cuéntanos qué te pareció este producto..."
+                              />
+                              <div className="char-counter">
+                                {letrasRestantes} letras restantes
+                              </div>
+                            </div>
+
+                            <div className="resena-form-actions">
+                              {editingResenaId && (
+                                <button
+                                  type="button"
+                                  className="btn-resena-cancelar"
+                                  onClick={() => {
+                                    setEditingResenaId(null);
+                                    setNuevoComentario('');
+                                    setPuntuacion(10);
+                                  }}
+                                >
+                                  Cancelar edición
+                                </button>
+                              )}
+                              <button
+                                type="submit"
+                                className="btn-resena-submit"
+                                disabled={submitting}
+                              >
+                                {submitting
+                                  ? 'Guardando...'
+                                  : editingResenaId
+                                  ? 'Actualizar reseña'
+                                  : 'Publicar reseña'}
+                              </button>
+                            </div>
+                          </form>
+                        </>
+                      ) : (
+                        <p className="resena-login-hint">
+                          Debes iniciar sesión para escribir una reseña.
+                          <button
+                            type="button"
+                            className="btn-login-resena"
+                            onClick={() => navigate('/login')}
+                          >
+                            Inicia sesión
+                          </button>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </section>
           </div>
           <div className="col-1"></div>
