@@ -1,38 +1,23 @@
 import React, { useEffect } from 'react';
-import { useApp } from '../context/AppContext';
+import { useCart } from '../hooks/useCart';
 import '../styles/components/carritoStyles.css';
 import showToast from '../components/toast';
 
-const AddToCart = (e) => {
-  e.stopPropagation();
-  showToast('Proximamente podrás proceder al pago');
-};
-
-/**
- * Convierte un valor de moneda (string o número) a número.
- * Soporta:
- *  - Número directo (ej: 59990)
- *  - String con símbolos/clp (ej: "$59.990 CLP")
- */
-function parseCurrency(currencyValue) {
-  // Nada → 0
-  if (currencyValue == null) return 0;
-
-  // Si ya es número, lo usamos tal cual
-  if (typeof currencyValue === 'number') {
-    return currencyValue;
-  }
-
-  // Si viene como string tipo "59.990 CLP" o "$59.990"
-  const cleaned = String(currencyValue).replace(/[^\d]/g, '');
-  if (!cleaned) return 0;
-
-  return Number(cleaned);
-}
-
 const CartDrawer = ({ isOpen, onClose }) => {
-  const { cart, dispatchCart } = useApp();
-  const cartItems = cart?.items || [];
+  const { 
+    cart, 
+    loading, 
+    updateQuantity, 
+    removeFromCart, 
+    clearCart,
+    items,
+    totalAmount,
+    itemCount,
+    isEmpty,
+    isAuthenticated
+  } = useCart();
+  
+  const cartItems = items || [];
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -44,31 +29,29 @@ const CartDrawer = ({ isOpen, onClose }) => {
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isOpen, onClose]);
 
-  const clearCart = () => {
-    dispatchCart({ type: 'CLEAR_CART' });
-  };
-
-  const removeFromCart = (productId) => {
-    dispatchCart({ type: 'REMOVE_FROM_CART', payload: productId });
-  };
-
-  const updateQuantity = (productId, newQuantity) => {
-    if (newQuantity < 1) {
-      removeFromCart(productId);
+  const handleProceedToCheckout = (e) => {
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      showToast('Debes iniciar sesión para proceder al pago', 'warning');
       return;
     }
-    dispatchCart({
-      type: 'UPDATE_QUANTITY',
-      payload: { id: productId, quantity: newQuantity },
-    });
+    showToast('Próximamente podrás proceder al pago');
+  };
+
+  const handleUpdateQuantity = async (productId, newQuantity) => {
+    await updateQuantity(productId, newQuantity);
+  };
+
+  const handleRemoveFromCart = async (productId) => {
+    await removeFromCart(productId);
+  };
+
+  const handleClearCart = async () => {
+    await clearCart();
   };
 
   /**
    * Calcula subtotal, envío y total del carrito.
-   * Intenta tomar el precio de:
-   *  - item.price
-   *  - item.precio
-   *  - item.product?.precio / item.product?.price (por si guardas un objeto product)
    */
   const calculateTotals = () => {
     if (!Array.isArray(cartItems) || cartItems.length === 0) {
@@ -77,15 +60,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
 
     const subtotal = cartItems.reduce((sum, item) => {
       const quantity = item?.quantity ?? 0;
-
-      const rawPrice =
-        item?.price ??
-        item?.precio ??
-        item?.product?.precio ??
-        item?.product?.price ??
-        0;
-
-      const unitPrice = parseCurrency(rawPrice);
+      const unitPrice = item?.price ?? 0;
       return sum + unitPrice * quantity;
     }, 0);
 
@@ -102,7 +77,9 @@ const CartDrawer = ({ isOpen, onClose }) => {
       <div className="cartContent">
         <div className="cartHeader">
           <h2>
-            <i className="fa-solid fa-cart-shopping"></i> Tu Carrito
+            <i className="fa-solid fa-cart-shopping"></i> Tu Carrito 
+            {itemCount > 0 && ` (${itemCount})`}
+            {!isAuthenticated && <span className="guest-badge">Invitado</span>}
           </h2>
           <button className="closeButton" onClick={onClose}>
             ×
@@ -110,7 +87,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
         </div>
 
         <div className="cartBody">
-          {cartItems.length === 0 ? (
+          {isEmpty ? (
             <div className="emptyCart">
               <i className="fa-solid fa-cart-arrow-down cart-empty-icon"></i>
               <p>Tu carrito está vacío</p>
@@ -119,58 +96,59 @@ const CartDrawer = ({ isOpen, onClose }) => {
               </button>
             </div>
           ) : (
-            cartItems.map((item) => (
-              <div key={item.id} className="cartItem">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="cartItemImage"
-                />
-                <div className="itemDetails">
-                  <div className="itemName">{item.name}</div>
-                  <div className="itemPrice">
-                    $
-                    {parseCurrency(
-                      item.price ??
-                        item.precio ??
-                        item.product?.precio ??
-                        item.product?.price ??
-                        0
-                    ).toLocaleString()}
-                  </div>
-                  <div className="quantityControls">
-                    <button
-                      onClick={() =>
-                        updateQuantity(item.id, (item.quantity || 0) - 1)
-                      }
-                      className="quantityBtn"
-                    >
-                      -
-                    </button>
-                    <span className="quantityNumber">{item.quantity}</span>
-                    <button
-                      onClick={() =>
-                        updateQuantity(item.id, (item.quantity || 0) + 1)
-                      }
-                      className="quantityBtn"
-                    >
-                      +
-                    </button>
-                  </div>
+            <>
+              {!isAuthenticated && (
+                <div className="guestWarning">
+                  <i className="fa-solid fa-info-circle"></i>
+                  <p>Inicia sesión para guardar tu carrito y proceder al pago</p>
                 </div>
-                <button
-                  className="removeButton"
-                  onClick={() => removeFromCart(item.id)}
-                  title="Eliminar producto"
-                >
-                  ×
-                </button>
-              </div>
-            ))
+              )}
+              
+              {cartItems.map((item) => (
+                <div key={item.id} className="cartItem">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="cartItemImage"
+                  />
+                  <div className="itemDetails">
+                    <div className="itemName">{item.name}</div>
+                    <div className="itemPrice">
+                      ${item.price?.toLocaleString()}
+                    </div>
+                    <div className="quantityControls">
+                      <button
+                        onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                        className="quantityBtn"
+                        disabled={loading}
+                      >
+                        -
+                      </button>
+                      <span className="quantityNumber">{item.quantity}</span>
+                      <button
+                        onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                        className="quantityBtn"
+                        disabled={loading}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  <button
+                    className="removeButton"
+                    onClick={() => handleRemoveFromCart(item.id)}
+                    title="Eliminar producto"
+                    disabled={loading}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </>
           )}
         </div>
 
-        {cartItems.length > 0 && (
+        {!isEmpty && (
           <div className="cartFooter">
             <div className="cartTotals">
               <div className="totalRow">
@@ -188,11 +166,21 @@ const CartDrawer = ({ isOpen, onClose }) => {
             </div>
 
             <div className="cartActions">
-              <button className="btnSecondary" onClick={clearCart}>
-                <i className="fa-solid fa-trash"></i> Vaciar Carrito
+              <button 
+                className="btnSecondary" 
+                onClick={handleClearCart}
+                disabled={loading}
+              >
+                <i className="fa-solid fa-trash"></i> 
+                {loading ? 'Vaciando...' : 'Vaciar Carrito'}
               </button>
-              <button className="btnPrimary" onClick={AddToCart}>
-                <i className="fa-solid fa-credit-card"></i> Proceder al Pago
+              <button 
+                className="btnPrimary" 
+                onClick={handleProceedToCheckout}
+                disabled={loading}
+              >
+                <i className="fa-solid fa-credit-card"></i> 
+                {isAuthenticated ? 'Proceder al Pago' : 'Iniciar Sesión para Pagar'}
               </button>
             </div>
           </div>

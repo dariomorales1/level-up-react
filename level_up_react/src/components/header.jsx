@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useAuth } from '../hooks/useAuth';
+import { useCart } from '../context/CartContext'; // NUEVO: Importar useCart
 import NavButton from './navButton';
 import CartDrawer from './carrito';
 import '../styles/components/headerStyles.css';
@@ -15,15 +16,16 @@ export default function Header() {
 
   const mobileMenuRef = useRef(null);
 
-  const { cart } = useApp();
   const { user, logout, isAuthenticated } = useAuth();
+  const { itemCount } = useCart(); // NUEVO: Usar useCart para el contador
   const navigate = useNavigate();
   const location = useLocation();
 
-  const cartItemsCount = cart?.items?.reduce(
-    (total, item) => total + (item?.quantity || 0),
-    0
-  ) || 0;
+  // ELIMINADO: Ya no usamos cart de useApp
+  // const cartItemsCount = cart?.items?.reduce(
+  //   (total, item) => total + (item?.quantity || 0),
+  //   0
+  // ) || 0;
 
   const adminManagementPrefixes = [
     '/PanelAdministrador',
@@ -149,7 +151,8 @@ export default function Header() {
                 title="Carrito"
               >
                 <FontAwesomeIcon icon={faCartShopping} className="carritoIcon" />
-                {cartItemsCount > 0 && <span className="cartBadge">{cartItemsCount}</span>}
+                {/* ACTUALIZADO: Usar itemCount de useCart */}
+                {itemCount > 0 && <span className="cartBadge">{itemCount}</span>}
               </button>
             )}
 
