@@ -5,7 +5,7 @@ const CartContext = createContext(null);
 
 // Provider que envuelve la app y comparte UN SOLO carrito
 export const CartProvider = ({ children }) => {
-  const cart = useCartHook(); // aquí está tu hook grande que ya hicimos
+  const cart = useCartHook(); // aquí está tu hook grande
 
   return (
     <CartContext.Provider value={cart}>

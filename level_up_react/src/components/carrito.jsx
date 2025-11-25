@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { useCart } from '../hooks/useCart';
+// 👇 CAMBIO IMPORTANTE: usar el useCart del CONTEXTO, no del hook directo
+import { useCart } from '../context/CartContext';
 import '../styles/components/carritoStyles.css';
 import showToast from '../components/toast';
 
@@ -16,7 +17,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
     isEmpty,
     isAuthenticated
   } = useCart();
-  
+
   const cartItems = items || [];
 
   useEffect(() => {
@@ -47,12 +48,10 @@ const CartDrawer = ({ isOpen, onClose }) => {
   };
 
   const handleClearCart = async () => {
-    await clearCart();
+    await clearCart(); // 👈 esto ahora limpia el MISMO estado que usa el Header
   };
 
-  /**
-   * Calcula subtotal, envío y total del carrito.
-   */
+  // Calcula subtotal, envío y total del carrito
   const calculateTotals = () => {
     if (!Array.isArray(cartItems) || cartItems.length === 0) {
       return { subtotal: 0, shipping: 0, total: 0 };
@@ -105,7 +104,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
               )}
               
               {cartItems.map((item) => (
-                <div key={item.id} className="cartItem">
+                <div key={item.productId} className="cartItem">
                   <img
                     src={item.image}
                     alt={item.name}
@@ -118,7 +117,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                     </div>
                     <div className="quantityControls">
                       <button
-                        onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                        onClick={() => handleUpdateQuantity(item.productId, item.quantity - 1)}
                         className="quantityBtn"
                         disabled={loading}
                       >
@@ -126,7 +125,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                       </button>
                       <span className="quantityNumber">{item.quantity}</span>
                       <button
-                        onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                        onClick={() => handleUpdateQuantity(item.productId, item.quantity + 1)}
                         className="quantityBtn"
                         disabled={loading}
                       >
@@ -136,7 +135,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                   </div>
                   <button
                     className="removeButton"
-                    onClick={() => handleRemoveFromCart(item.id)}
+                    onClick={() => handleRemoveFromCart(item.productId)}
                     title="Eliminar producto"
                     disabled={loading}
                   >

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useAuth } from '../hooks/useAuth';
-import { useCart } from '../context/CartContext'; // NUEVO: Importar useCart
+import { useCart } from '../context/CartContext';
 import NavButton from './navButton';
 import CartDrawer from './carrito';
 import '../styles/components/headerStyles.css';
@@ -105,16 +105,6 @@ export default function Header() {
                   <NavButton text="Inicio" to="/" />
                   <NavButton text="Catalogo" to="/catalogo" />
                   <NavButton text="Blog" to="/blog" />
-                </div>
-                <div className="buttonsRight">
-                  {isAuthenticated ? (
-                    <button className="btnAgregar menuMobileBtn" onClick={() => { handleLogout(); }}>
-                      Cerrar sesión
-                    </button>
-                  ) : (
-                    <>
-                    </>
-                )}
                 </div>
               </div>
             )}

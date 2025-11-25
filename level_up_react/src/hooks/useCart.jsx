@@ -25,7 +25,6 @@ export const useCart = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [initialized, setInitialized] = useState(false); // 👈 para evitar bucles
 
   const { user, isAuthenticated } = useAuth();
   const userId = user?.id;
@@ -42,153 +41,109 @@ export const useCart = () => {
       return await currentUser.getIdToken();
     }
     return localStorage.getItem('accessToken');
-  }, []); // sin deps para no cambiar identidad
+  }, [user]);
 
-  // ===================== TRANSFORMACIÓN DE DATOS (CLP) =====================
+  // ===================== TRANSFORMACIÓN =====================
 
   const transformCartData = useCallback((cartData) => {
-  if (!cartData || !cartData.items) {
-    return { items: [], totalAmount: 0, updatedAt: null };
-  }
+    if (!cartData || !cartData.items) {
+      return { items: [], totalAmount: 0, updatedAt: null };
+    }
 
-  const transformedItems = cartData.items.map((item) => ({
-    id: item.productId,
-    productId: item.productId,
-    name: item.productName,
-    price: item.unitPrice,                     // CLP directo
-    quantity: item.quantity,
-    // 👇 AQUÍ EL CAMBIO IMPORTANTE
-    image: item.imagenUrl || '/default-product.jpg',
-    subtotal: item.unitPrice * item.quantity   // CLP directo
-  }));
+    const transformedItems = cartData.items.map((item) => ({
+      id: item.productId,
+      productId: item.productId,
+      name: item.productName,
+      price: item.unitPrice,
+      quantity: item.quantity,
+      image: item.imagenUrl || '/default-product.jpg',
+      subtotal: item.unitPrice * item.quantity
+    }));
 
-  return {
-    items: transformedItems,
-    totalAmount: cartData.totalAmount,         // CLP directo
-    updatedAt: cartData.updatedAt
-  };
-}, []);
+    return {
+      items: transformedItems,
+      totalAmount: cartData.totalAmount,
+      updatedAt: cartData.updatedAt
+    };
+  }, []);
 
   // ===================== CARGAR CARRITO =====================
 
-  const loadCart = useCallback(
-    async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const loadCart = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        console.log('🛒 loadCart - Estado:', { isAuthenticated, userId });
+      console.log('🛒 loadCart - Estado:', { isAuthenticated, userId, sessionId });
 
-        if (isAuthenticated && userId) {
-          // ===== Usuario autenticado =====
-          try {
-            const token = await getToken();
-            console.log('🛒 loadCart - Cargando carrito de usuario');
-            const cartData = await cartService.getCart(userId, token);
-            const transformedCart = transformCartData(cartData);
-            setCart(transformedCart);
-            console.log(
-              '✅ loadCart - Carrito de usuario cargado:',
-              transformedCart.items.length,
-              'items'
-            );
-          } catch (err) {
-            if (
-              err.message.includes('Cart not found') ||
-              err.message.includes('404')
-            ) {
-              console.log(
-                '🛒 loadCart - Creando carrito vacío para usuario nuevo'
-              );
-              setCart({ items: [], totalAmount: 0, updatedAt: null });
-            } else {
-              throw err;
-            }
-          }
-        } else {
-          // ===== Usuario guest =====
-          try {
-            const sid = getOrCreateSessionId();
-            if (!sessionId) {
-              setSessionId(sid);
-            }
-            console.log('🛒 loadCart - Cargando carrito guest:', sid);
-            const cartData = await cartService.getGuestCart(sid);
-            const transformedCart = transformCartData(cartData);
-            setCart(transformedCart);
-            console.log(
-              '✅ loadCart - Carrito guest cargado:',
-              transformedCart.items.length,
-              'items'
-            );
-          } catch (err) {
-            if (
-              err.message.includes('Guest cart not found') ||
-              err.message.includes('404')
-            ) {
-              console.log('🛒 loadCart - Creando carrito guest vacío');
-              setCart({ items: [], totalAmount: 0, updatedAt: null });
-            } else {
-              throw err;
-            }
+      if (isAuthenticated && userId) {
+        // Usuario autenticado
+        try {
+          const token = await getToken();
+          const cartData = await cartService.getCart(userId, token);
+          const transformedCart = transformCartData(cartData);
+          setCart(transformedCart);
+        } catch (err) {
+          if (
+            err.message.includes('Cart not found') ||
+            err.message.includes('404')
+          ) {
+            setCart({ items: [], totalAmount: 0, updatedAt: null });
+          } else {
+            throw err;
           }
         }
-      } catch (err) {
-        console.error('❌ loadCart - Error:', err);
-        setError(err.message);
-        showToast('Error al cargar el carrito', 'error');
-      } finally {
-        setLoading(false);
+      } else {
+        // Guest
+        try {
+          const sid = getOrCreateSessionId();
+          if (!sessionId) {
+            setSessionId(sid);
+          }
+          const cartData = await cartService.getGuestCart(sid);
+          const transformedCart = transformCartData(cartData);
+          setCart(transformedCart);
+        } catch (err) {
+          if (
+            err.message.includes('Guest cart not found') ||
+            err.message.includes('404')
+          ) {
+            setCart({ items: [], totalAmount: 0, updatedAt: null });
+          } else {
+            throw err;
+          }
+        }
       }
-    },
-    // 👇 Solo depende de valores primitivos + función estable
-    [userId, isAuthenticated, transformCartData, sessionId]
-  );
+    } catch (err) {
+      console.error('❌ loadCart - Error:', err);
+      setError(err.message);
+      showToast('Error al cargar el carrito', 'error');
+    } finally {
+      setLoading(false);
+    }
+  }, [userId, isAuthenticated, sessionId, getToken, transformCartData]);
 
-  // ===================== AGREGAR AL CARRITO =====================
+  // ===================== AGREGAR =====================
 
   const addToCart = async (product, quantity = 1) => {
     try {
       setLoading(true);
       setError(null);
 
-      console.log('🛒 addToCart - Iniciando:', {
-        isAuthenticated,
-        userId,
-        product: product.id,
-        quantity
-      });
-
       if (isAuthenticated && userId) {
         const token = await getToken();
-        console.log(
-          '🛒 addToCart - Usuario autenticado, token:',
-          token ? '✅' : '❌'
-        );
-
         await cartService.addToCart(userId, product.id, quantity, token);
-        console.log('✅ addToCart - Item agregado al backend');
       } else {
         const sid = getOrCreateSessionId();
         if (!sessionId) setSessionId(sid);
-
-        console.log('🛒 addToCart - Usuario guest, sessionId:', sid);
-
         await cartService.addToGuestCart(sid, product.id, quantity);
-        console.log('✅ addToCart - Item agregado a carrito guest');
       }
 
       await loadCart();
-
       showToast('Producto agregado al carrito', 'success');
       return true;
     } catch (err) {
-      console.error('❌ addToCart - Error:', {
-        message: err.message,
-        isAuthenticated,
-        userId
-      });
-
+      console.error('❌ addToCart - Error:', err);
       setError(err.message);
 
       let errorMessage = 'Error al agregar al carrito';
@@ -200,8 +155,7 @@ export const useCart = () => {
         err.message.includes('401') ||
         err.message.includes('No autorizado')
       ) {
-        errorMessage =
-          'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.';
+        errorMessage = 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.';
       } else if (err.message.includes('400')) {
         errorMessage = 'Error en la solicitud. Verifica los datos.';
       }
@@ -220,8 +174,6 @@ export const useCart = () => {
       setLoading(true);
       setError(null);
 
-      console.log('🛒 updateQuantity - Iniciando:', { productId, newQuantity });
-
       if (isAuthenticated && userId) {
         const token = await getToken();
         await cartService.updateQuantity(userId, productId, newQuantity, token);
@@ -232,8 +184,7 @@ export const useCart = () => {
       }
 
       await loadCart();
-
-      console.log('✅ updateQuantity - Cantidad actualizada');
+      showToast('Cantidad actualizada', 'success');
       return true;
     } catch (err) {
       console.error('❌ updateQuantity - Error:', err);
@@ -252,8 +203,6 @@ export const useCart = () => {
       setLoading(true);
       setError(null);
 
-      console.log('🛒 removeFromCart - Iniciando:', { productId });
-
       if (isAuthenticated && userId) {
         const token = await getToken();
         await cartService.removeFromCart(userId, productId, token);
@@ -264,7 +213,6 @@ export const useCart = () => {
       }
 
       await loadCart();
-
       showToast('Producto eliminado del carrito', 'success');
       return true;
     } catch (err) {
@@ -277,7 +225,7 @@ export const useCart = () => {
     }
   };
 
-  // ===================== VACIAR CARRITO =====================
+  // ===================== VACIAR CARRITO (CLAVE) =====================
 
   const clearCart = async () => {
     try {
@@ -295,7 +243,9 @@ export const useCart = () => {
         await cartService.clearGuestCart(sid);
       }
 
+      // 👉 refrescamos estado local al tiro
       setCart({ items: [], totalAmount: 0, updatedAt: null });
+
       showToast('Carrito vaciado', 'success');
       return true;
     } catch (err) {
@@ -345,6 +295,17 @@ export const useCart = () => {
     migrateGuestCart();
   }, [isAuthenticated, userId, getToken, loadCart]);
 
+  // ===================== EFECTO PRINCIPAL DE CARGA =====================
+
+  useEffect(() => {
+    console.log('🛒 useEffect - loadCart por cambio de auth/session', {
+      isAuthenticated,
+      userId,
+      sessionId
+    });
+    loadCart();
+  }, [isAuthenticated, userId, sessionId, loadCart]);
+
   // ===================== HELPERS =====================
 
   const getTotalItems = useCallback(() => {
@@ -373,16 +334,6 @@ export const useCart = () => {
     );
   }, [cart.items]);
 
-  // ===================== EFECTO PRINCIPAL DE CARGA =====================
-
-  useEffect(() => {
-    console.log('🛒 useEffect - Iniciando carga de carrito, initialized:', initialized);
-    if (!initialized) {
-      setInitialized(true);
-      loadCart();
-    }
-  }, [initialized, loadCart]);
-
   // ===================== LIMPIAR ERROR =====================
 
   useEffect(() => {
@@ -398,32 +349,23 @@ export const useCart = () => {
   // ===================== RETURN =====================
 
   return {
-    // Estado
     cart,
     loading,
     error,
-
-    // Acciones
     addToCart,
     updateQuantity,
     removeFromCart,
     clearCart,
     reloadCart: loadCart,
-
-    // Utilidades
     getTotalItems,
     isInCart,
     getProductQuantity,
     calculateSubtotal,
-
-    // Información del carrito
     items: cart.items,
     totalAmount: cart.totalAmount,
     itemCount: getTotalItems(),
     isEmpty: cart.items.length === 0,
     isAuthenticated,
-
-    // Debug info
     sessionId,
     userId
   };
