@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import { useCart } from '../context/CartContext';
 import productService from '../services/productService';
 import renderEstrellas from '../components/stars';
 import showToast from '../components/toast';
@@ -13,7 +14,12 @@ const Producto = () => {
   const codigo = searchParams.get('codigo');
 
   const navigate = useNavigate();
-  const { dispatchCart, user } = useApp();
+
+  // 👇 Solo usamos user desde AppContext (ya NO dispatchCart)
+  const { user } = useApp();
+
+  // 👇 Carrito global desde CartContext
+  const { addToCart } = useCart();
 
   const [producto, setProducto] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -89,7 +95,8 @@ const Producto = () => {
     setPuntuacion(Number(e.target.value));
   };
 
-  const AddToCart = (e) => {
+  // 👇 AHORA usa addToCart del contexto de carrito
+  const AddToCart = async (e) => {
     e.stopPropagation();
     if (!producto) return;
 
@@ -104,12 +111,15 @@ const Producto = () => {
       name: producto.nombre,
       price: producto.precio,
       image: producto.imagenUrl,
-      stock: producto.stock, // Incluir stock en el producto del carrito
+      stock: producto.stock,
     };
 
-    console.log('🛒 Card - Adding product to cart:', productForCart);
-    dispatchCart({ type: 'ADD_TO_CART', payload: productForCart });
-    showToast(`Se ha ingresado ${producto.nombre} al carrito`);
+    console.log('🛒 Producto.jsx - Adding product to cart:', productForCart);
+
+    const ok = await addToCart(productForCart, 1);
+    if (ok) {
+      showToast(`Se ha ingresado ${producto.nombre} al carrito`, 'success');
+    }
   };
 
   const handleVolver = () => {

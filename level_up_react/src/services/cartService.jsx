@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // CORREGIDO: Base URL sin /carts
-const CART_BASE_URL = 'http://localhost:8080';
+const CART_BASE_URL = 'http://levelup.ddns.net:8080';
 
 const axiosInstance = axios.create({
     baseURL: CART_BASE_URL,

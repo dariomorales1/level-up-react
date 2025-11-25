@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/components/cardStyles.css';
 import showToast from './toast.jsx';
 
-export default function Card({ codigo, nombre, imgLink, descripcionCorta, precio } = {}) {
+export default function Card({ codigo, nombre, imgLink, descripcionCorta, precio, stock } = {}) {
     const { addToCart, loading } = useCart();
     const navigate = useNavigate();
 
