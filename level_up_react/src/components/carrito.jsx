@@ -1,22 +1,24 @@
 import React, { useEffect } from 'react';
-// 👇 CAMBIO IMPORTANTE: usar el useCart del CONTEXTO, no del hook directo
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import '../styles/components/carritoStyles.css';
 import showToast from '../components/toast';
 
 const CartDrawer = ({ isOpen, onClose }) => {
-  const { 
-    cart, 
-    loading, 
-    updateQuantity, 
-    removeFromCart, 
+  const {
+    cart,
+    loading,
+    updateQuantity,
+    removeFromCart,
     clearCart,
     items,
     totalAmount,
     itemCount,
     isEmpty,
-    isAuthenticated
+    isAuthenticated,
   } = useCart();
+
+  const navigate = useNavigate();
 
   const cartItems = items || [];
 
@@ -36,7 +38,14 @@ const CartDrawer = ({ isOpen, onClose }) => {
       showToast('Debes iniciar sesión para proceder al pago', 'warning');
       return;
     }
-    showToast('Próximamente podrás proceder al pago');
+    if (isEmpty) {
+      showToast('Tu carrito está vacío', 'warning');
+      return;
+    }
+
+    // 👇 NO limpiamos carrito, solo navegamos
+    navigate('/checkout');
+    onClose();
   };
 
   const handleUpdateQuantity = async (productId, newQuantity) => {
@@ -48,10 +57,9 @@ const CartDrawer = ({ isOpen, onClose }) => {
   };
 
   const handleClearCart = async () => {
-    await clearCart(); // 👈 esto ahora limpia el MISMO estado que usa el Header
+    await clearCart();
   };
 
-  // Calcula subtotal, envío y total del carrito
   const calculateTotals = () => {
     if (!Array.isArray(cartItems) || cartItems.length === 0) {
       return { subtotal: 0, shipping: 0, total: 0 };
@@ -76,7 +84,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
       <div className="cartContent">
         <div className="cartHeader">
           <h2>
-            <i className="fa-solid fa-cart-shopping"></i> Tu Carrito 
+            <i className="fa-solid fa-cart-shopping"></i> Tu Carrito
             {itemCount > 0 && ` (${itemCount})`}
             {!isAuthenticated && <span className="guest-badge">Invitado</span>}
           </h2>
@@ -102,7 +110,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                   <p>Inicia sesión para guardar tu carrito y proceder al pago</p>
                 </div>
               )}
-              
+
               {cartItems.map((item) => (
                 <div key={item.productId} className="cartItem">
                   <img
@@ -117,7 +125,9 @@ const CartDrawer = ({ isOpen, onClose }) => {
                     </div>
                     <div className="quantityControls">
                       <button
-                        onClick={() => handleUpdateQuantity(item.productId, item.quantity - 1)}
+                        onClick={() =>
+                          handleUpdateQuantity(item.productId, item.quantity - 1)
+                        }
                         className="quantityBtn"
                         disabled={loading}
                       >
@@ -125,7 +135,9 @@ const CartDrawer = ({ isOpen, onClose }) => {
                       </button>
                       <span className="quantityNumber">{item.quantity}</span>
                       <button
-                        onClick={() => handleUpdateQuantity(item.productId, item.quantity + 1)}
+                        onClick={() =>
+                          handleUpdateQuantity(item.productId, item.quantity + 1)
+                        }
                         className="quantityBtn"
                         disabled={loading}
                       >
@@ -165,20 +177,20 @@ const CartDrawer = ({ isOpen, onClose }) => {
             </div>
 
             <div className="cartActions">
-              <button 
-                className="btnSecondary" 
+              <button
+                className="btnSecondary"
                 onClick={handleClearCart}
                 disabled={loading}
               >
-                <i className="fa-solid fa-trash"></i> 
+                <i className="fa-solid fa-trash"></i>
                 {loading ? 'Vaciando...' : 'Vaciar Carrito'}
               </button>
-              <button 
-                className="btnPrimary" 
+              <button
+                className="btnPrimary"
                 onClick={handleProceedToCheckout}
                 disabled={loading}
               >
-                <i className="fa-solid fa-credit-card"></i> 
+                <i className="fa-solid fa-credit-card"></i>
                 {isAuthenticated ? 'Proceder al Pago' : 'Iniciar Sesión para Pagar'}
               </button>
             </div>

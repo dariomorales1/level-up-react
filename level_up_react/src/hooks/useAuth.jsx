@@ -1,30 +1,41 @@
 import { useApp } from '../context/AppContext';
 import { useEffect } from 'react';
-import { getAuth } from "firebase/auth";
+import { getAuth } from 'firebase/auth';
+import axios from 'axios';
+
+const API_BASE_URL = 'http://levelup.ddns.net:8080'; // o http://localhost:8080 en local
+
+// Axios instance para gateway / backend principal
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 export const useAuth = () => {
-  const { user, dispatchUser } = useApp(); // 👈 ya no usamos cart ni dispatchCart
+  const { user, dispatchUser } = useApp();
 
   // ===========================================
   // 🔹 AUTO-LOGIN SOLO SI isAuthenticated = true
   // ===========================================
   useEffect(() => {
-    const saved = localStorage.getItem("authUser");
+    const saved = localStorage.getItem('authUser');
     if (!saved || user) return;
 
     try {
       const parsed = JSON.parse(saved);
 
       if (parsed.isAuthenticated && parsed.user) {
-        console.log("Auto-login desde localStorage:", parsed.user);
+        console.log('Auto-login desde localStorage:', parsed.user);
 
         dispatchUser({
-          type: "LOGIN",
-          payload: parsed.user
+          type: 'LOGIN',
+          payload: parsed.user,
         });
       }
     } catch (e) {
-      console.error("Error parseando authUser de localStorage:", e);
+      console.error('Error parseando authUser de localStorage:', e);
     }
   }, [user, dispatchUser]);
 
@@ -36,17 +47,17 @@ export const useAuth = () => {
     const currentUser = auth.currentUser;
 
     if (!currentUser) {
-      console.warn("No hay usuario autenticado en Firebase");
+      console.warn('No hay usuario autenticado en Firebase');
       return null;
     }
 
     const token = await currentUser.getIdToken(true);
-    console.log("TOKEN_FIREBASE:", token);
+    console.log('TOKEN_FIREBASE:', token);
     return token;
   };
 
   // ===========================================
-  // 🔹 FUNCIÓN PARA LLAMAR A MICROSERVICIOS CON TOKEN
+  // 🔹 apiCall con AXIOS (y refresh en 401)
   // ===========================================
   const apiCall = async (url, options = {}) => {
     const accessToken = localStorage.getItem('accessToken');
@@ -55,65 +66,68 @@ export const useAuth = () => {
       throw new Error('No hay token de acceso disponible');
     }
 
-    const doFetch = (token) => fetch(url, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        ...options.headers,
+    const method = options.method || 'GET';
+    const data = options.body || undefined;
+    const extraHeaders = options.headers || {};
+
+    const doRequest = async (token) => {
+      return api.request({
+        url,
+        method,
+        data,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          ...extraHeaders,
+        },
+      });
+    };
+
+    try {
+      const response = await doRequest(accessToken);
+      return response;
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        console.log('🔄 Token expirado, intentando refresh...');
+        const newToken = await refreshToken();
+        if (!newToken) {
+          throw new Error('Sesión expirada');
+        }
+        const response = await doRequest(newToken);
+        return response;
       }
-    });
-
-    let response = await doFetch(accessToken);
-
-    // Si el token expiró, intentar refresh
-    if (response.status === 401) {
-      console.log("🔄 Token expirado, intentando refresh...");
-      const newToken = await refreshToken();
-
-      if (!newToken) {
-        throw new Error('Sesión expirada');
-      }
-
-      response = await doFetch(newToken);
+      console.error('❌ Error en apiCall:', error);
+      throw error;
     }
-
-    return response;
   };
 
   // ===========================================
-  // 🔹 REFRESH TOKEN
+  // 🔹 REFRESH TOKEN (axios)
   // ===========================================
   const refreshToken = async () => {
     try {
-      const refreshToken = localStorage.getItem('refreshToken');
+      const refreshTokenValue = localStorage.getItem('refreshToken');
 
-      if (!refreshToken) {
-        console.warn("No hay refresh token disponible");
+      if (!refreshTokenValue) {
+        console.warn('No hay refresh token disponible');
         return null;
       }
 
-      const response = await fetch('http://levelup.ddns.net:8080/auth/refresh', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ refreshToken })
+      const response = await api.post('/auth/refresh', {
+        refreshToken: refreshTokenValue,
       });
 
-      if (response.ok) {
-        const data = await response.json();
+      const data = response.data;
+      if (data?.accessToken) {
         localStorage.setItem('accessToken', data.accessToken);
-        console.log("✅ Token refrescado exitosamente");
+        console.log('✅ Token refrescado exitosamente');
         return data.accessToken;
       } else {
-        console.error("❌ Error refrescando token");
-        // Refresh falló, hacer logout
+        console.error('❌ Respuesta inválida al refrescar token');
         logout();
         return null;
       }
     } catch (error) {
-      console.error("❌ Error en refreshToken:", error);
+      console.error('❌ Error en refreshToken:', error);
       logout();
       return null;
     }
@@ -123,11 +137,10 @@ export const useAuth = () => {
   // 🔹 LOGIN (solo maneja usuario y tokens)
   // ===========================================
   const login = async (userData, rememberMe = false) => {
-    console.log("LOGIN ejecutado - rememberMe:", rememberMe);
-    console.log("UserData recibido:", userData);
+    console.log('LOGIN ejecutado - rememberMe:', rememberMe);
+    console.log('UserData recibido:', userData);
 
     try {
-      // 1. Aseguramos estructura consistente del user
       const userWithTokens = {
         id: userData.id,
         name: userData.nombre || userData.name,
@@ -138,7 +151,6 @@ export const useAuth = () => {
         refreshToken: userData.refreshToken,
       };
 
-      // 2. Guardar tokens en localStorage
       if (userData.accessToken) {
         localStorage.setItem('accessToken', userData.accessToken);
       }
@@ -146,24 +158,24 @@ export const useAuth = () => {
         localStorage.setItem('refreshToken', userData.refreshToken);
       }
 
-      // 3. Guardar sesión si rememberMe está activado
       if (rememberMe) {
-        localStorage.setItem("authUser", JSON.stringify({
-          user: userWithTokens,
-          isAuthenticated: true
-        }));
+        localStorage.setItem(
+          'authUser',
+          JSON.stringify({
+            user: userWithTokens,
+            isAuthenticated: true,
+          })
+        );
       } else {
-        // Si no es rememberMe, aseguramos que no quede basura vieja
-        localStorage.removeItem("authUser");
+        localStorage.removeItem('authUser');
       }
 
-      // 4. Actualizar estado global del usuario
-      dispatchUser({ type: "LOGIN", payload: userWithTokens });
+      dispatchUser({ type: 'LOGIN', payload: userWithTokens });
 
-      console.log("✅ Login completo exitoso - Usuario:", userWithTokens);
+      console.log('✅ Login completo exitoso - Usuario:', userWithTokens);
       return true;
     } catch (error) {
-      console.error("❌ Error en login:", error);
+      console.error('❌ Error en login:', error);
       throw error;
     }
   };
@@ -173,13 +185,8 @@ export const useAuth = () => {
   // ===========================================
   const obtenerUsuarios = async () => {
     try {
-      const response = await apiCall('http://levelup.ddns.net:8080/users');
-
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-
-      return await response.json();
+      const response = await apiCall('/users');
+      return response.data;
     } catch (error) {
       console.error('Error obteniendo usuarios:', error);
       throw error;
@@ -188,13 +195,8 @@ export const useAuth = () => {
 
   const obtenerUsuarioPorId = async (userId) => {
     try {
-      const response = await apiCall(`http://levelup.ddns.net:8080/users/${userId}`);
-
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-
-      return await response.json();
+      const response = await apiCall(`/users/${userId}`);
+      return response.data;
     } catch (error) {
       console.error('Error obteniendo usuario:', error);
       throw error;
@@ -203,16 +205,11 @@ export const useAuth = () => {
 
   const actualizarUsuario = async (userId, datosUsuario) => {
     try {
-      const response = await apiCall(`http://levelup.ddns.net:8080/users/${userId}`, {
+      const response = await apiCall(`/users/${userId}`, {
         method: 'PUT',
-        body: JSON.stringify(datosUsuario)
+        body: JSON.stringify(datosUsuario),
       });
-
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-
-      return await response.json();
+      return response.data;
     } catch (error) {
       console.error('Error actualizando usuario:', error);
       throw error;
@@ -221,13 +218,8 @@ export const useAuth = () => {
 
   const obtenerMiPerfil = async () => {
     try {
-      const response = await apiCall('http://levelup.ddns.net:8080/users/me');
-
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-
-      return await response.json();
+      const response = await apiCall('/users/me');
+      return response.data;
     } catch (error) {
       console.error('Error obteniendo perfil:', error);
       throw error;
@@ -235,48 +227,42 @@ export const useAuth = () => {
   };
 
   // ===========================================
-  // 🔹 LOGOUT (limpia usuario y tokens)
+  // 🔹 LOGOUT
   // ===========================================
   const logout = async () => {
     try {
-      // Intentar hacer logout en el backend si hay refresh token
       const refreshTokenValue = localStorage.getItem('refreshToken');
       if (refreshTokenValue) {
-        await fetch('http://levelup.ddns.net:8080/auth/logout', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ refreshToken: refreshTokenValue })
-        }).catch(err => {
-          console.warn("No se pudo notificar logout al backend:", err);
-        });
+        await api
+          .post('/auth/logout', {
+            refreshToken: refreshTokenValue,
+          })
+          .catch((err) => {
+            console.warn('No se pudo notificar logout al backend:', err);
+          });
       }
     } catch (error) {
-      console.warn("Error en logout del backend:", error);
+      console.warn('Error en logout del backend:', error);
     }
 
-    // Limpiar tokens
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
 
-    // Actualizar estado persistente de authUser
-    const saved = localStorage.getItem("authUser");
+    const saved = localStorage.getItem('authUser');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         parsed.isAuthenticated = false;
-        localStorage.setItem("authUser", JSON.stringify(parsed));
+        localStorage.setItem('authUser', JSON.stringify(parsed));
       } catch (e) {
-        console.error("Error actualizando authUser en logout:", e);
-        localStorage.removeItem("authUser");
+        console.error('Error actualizando authUser en logout:', e);
+        localStorage.removeItem('authUser');
       }
     }
 
-    // Limpiar usuario en contexto
-    dispatchUser({ type: "LOGOUT" });
+    dispatchUser({ type: 'LOGOUT' });
 
-    console.log("✅ Logout completo exitoso");
+    console.log('✅ Logout completo exitoso');
   };
 
   const isAuthenticated = !!user;
@@ -291,6 +277,6 @@ export const useAuth = () => {
     obtenerUsuarios,
     obtenerUsuarioPorId,
     actualizarUsuario,
-    obtenerMiPerfil
+    obtenerMiPerfil,
   };
 };

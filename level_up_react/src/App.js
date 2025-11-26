@@ -30,6 +30,7 @@ import AdminUsuariosActualizar from './pages/AdminUsuariosActualizar';
 import AdminUsuariosEliminar from './pages/AdminUsuariosEliminar';
 import ForgotPassword from './pages/ForgotPassword';
 import EditProduct from './pages/ActualizarProducto';
+import CheckoutPage from './pages/CheckoutPage';
 
 function App() {
     return (
@@ -61,6 +62,7 @@ function App() {
             <Route path="/admin/productos/edit" element={<EditProduct />} />
             <Route path="/admin/usuarios" element={<AdminUsuariosHome />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
         </Routes>
 
         <Footer />

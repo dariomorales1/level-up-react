@@ -1,89 +1,76 @@
-import React, { useEffect, useState } from 'react';
-import SideBar from '../components/SideBar';
-import '../styles/pages/panelAdministrador.css';
-import '../styles/pages/cuentaStyles.css';
-import '../styles/pages/historialStyles.css';
+import React, { useEffect, useState } from "react";
+import { useApp } from "../context/AppContext";
+import { useOrders } from "../hooks/useOrders";
 
 const HistorialCompras = () => {
-  const [ordenes, setOrdenes] = useState([]);
+  const { user, userOrders, userPoints } = useApp();
+  const { obtenerOrdenesUsuario, obtenerPuntosUsuario } = useOrders();
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Aquí podrías traer el historial real desde API o localStorage.
-    // De momento dejamos datos de ejemplo.
-    const mock = [
-      {
-        id: 'ORD-001',
-        fecha: '2025-01-05',
-        total: '59.990 CLP',
-        estado: 'Entregado',
-        items: 3,
-      },
-      {
-        id: 'ORD-002',
-        fecha: '2025-01-12',
-        total: '29.990 CLP',
-        estado: 'En tránsito',
-        items: 1,
-      },
-    ];
+    if (!user) return;
 
-    setOrdenes(mock);
-  }, []);
+    const cargarDatos = async () => {
+      try {
+        setLoading(true);
+        await Promise.all([
+          obtenerOrdenesUsuario(user.id),
+          obtenerPuntosUsuario(user.id),
+        ]);
+      } catch (err) {
+        console.error("Error cargando historial de compras:", err);
+        setError("Hubo un problema al cargar tus órdenes.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    cargarDatos();
+  }, [user]);
+
+  if (!user) {
+    return <p className="text-center mt-10">Debes iniciar sesión para ver tu historial.</p>;
+  }
+
+  if (loading) {
+    return <p className="text-center mt-10">Cargando historial...</p>;
+  }
+
+  if (error) {
+    return <p className="text-center mt-10 text-red-500">{error}</p>;
+  }
 
   return (
-    <div className="panel-administrador">
-      <div className="management-layout">
-        <SideBar />
+    <div className="container mx-auto px-4 py-8 max-w-3xl">
+      <h1 className="text-3xl font-bold mb-6 text-center">Historial de Compras</h1>
 
-        <main className="management-main">
-          <div className="historial-page">
-            <div className="perfil-container">
-              <div className="perfil-header">
-                <h1>Historial de compras</h1>
-                <p>Revisa el detalle de tus pedidos anteriores.</p>
-              </div>
-
-              <section className="perfil-card historial-card">
-                {ordenes.length === 0 ? (
-                  <div className="historial-empty">
-                    <p>Aún no tienes compras registradas.</p>
-                    <span>Cuando realices compras, aparecerán aquí.</span>
-                  </div>
-                ) : (
-                  <div className="historial-table-wrapper">
-                    <table className="historial-table">
-                      <thead>
-                        <tr>
-                          <th>N° Orden</th>
-                          <th>Fecha</th>
-                          <th>Items</th>
-                          <th>Total</th>
-                          <th>Estado</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {ordenes.map((orden) => (
-                          <tr key={orden.id}>
-                            <td>{orden.id}</td>
-                            <td>{orden.fecha}</td>
-                            <td>{orden.items}</td>
-                            <td>{orden.total}</td>
-                            <td>
-                              <span className={`estado estado-${orden.estado.replace(' ', '').toLowerCase()}`}>
-                                {orden.estado}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </section>
-            </div>
-          </div>
-        </main>
+      {/* Puntos Totales */}
+      <div className="bg-blue-100 border-l-4 border-blue-500 p-4 mb-6 rounded">
+        <p className="font-semibold text-lg">🎯 Puntos acumulados: {userPoints}</p>
       </div>
+
+      {/* Lista de Órdenes */}
+      {userOrders.length === 0 ? (
+        <p className="text-center text-gray-500">Aún no has realizado ninguna compra.</p>
+      ) : (
+        <div className="space-y-4">
+          {userOrders.map((orden) => (
+            <div
+              key={orden.id}
+              className="border p-4 rounded-lg shadow hover:shadow-md transition"
+            >
+              <p><strong>🧾 ID Orden:</strong> {orden.id}</p>
+              <p><strong>📅 Fecha:</strong> {new Date(orden.createdAt).toLocaleString()}</p>
+              <p><strong>💰 Total:</strong> ${orden.totalAmount}</p>
+              <p><strong>🏷️ Descuento aplicado:</strong> {orden.discountPercent}%</p>
+              <p><strong>💵 Total Final:</strong> ${orden.finalAmount}</p>
+              <p><strong>🎁 Puntos Ganados:</strong> {orden.pointsGranted}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
