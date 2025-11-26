@@ -3,7 +3,6 @@ import React, { createContext, useContext, useReducer, useEffect, useState } fro
 const AppContext = createContext();
 
 // --- USER STATE ---
-
 const userReducer = (state, action) => {
   console.log('UserReducer - Action:', action.type, 'Payload:', action.payload);
   switch (action.type) {
@@ -21,6 +20,10 @@ const userReducer = (state, action) => {
 export const AppProvider = ({ children }) => {
   const [user, dispatchUser] = useReducer(userReducer, null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // 👇 nuevo estado global: órdenes e puntos del usuario
+  const [userOrders, setUserOrders] = useState([]);
+  const [userPoints, setUserPoints] = useState(0);
 
   // Cargar usuario desde localStorage al iniciar
   useEffect(() => {
@@ -56,6 +59,10 @@ export const AppProvider = ({ children }) => {
     user,
     isLoading,
     dispatchUser,
+    userOrders,
+    setUserOrders,
+    userPoints,
+    setUserPoints,
   };
 
   return (
