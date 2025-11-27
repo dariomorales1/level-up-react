@@ -36,7 +36,6 @@ export default function Register() {
   const validatePassword = (password) => password.length >= 6;
   const validatePasswordsMatch = (password, confirmPassword) => password === confirmPassword;
   
-  // VALIDACIÓN: Mayor de edad (18 años)
   const esMayorDeEdad = (fecha) => {
     if (!fecha) return false;
     
@@ -52,7 +51,6 @@ export default function Register() {
     return age >= 18;
   };
 
-  // FUNCIÓN PARA GUARDAR USUARIO EN BD (endpoint público)
   const saveUserToDatabase = async (firebaseUser, userData) => {
     try {
 
@@ -88,7 +86,6 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validaciones básicas
     if (!formData.name || !formData.email || !formData.password || !formData.password2 || !formData.fecha_nacimiento) {
       showToast("Por favor completa todos los campos obligatorios");
       return;
@@ -114,7 +111,6 @@ export default function Register() {
       return;
     }
 
-    // VALIDACIÓN DE MAYORÍA DE EDAD
     if (!esMayorDeEdad(formData.fecha_nacimiento)) {
       showToast("Debes ser mayor de edad (18 años o más) para registrarte");
       return;
@@ -128,7 +124,6 @@ export default function Register() {
     setIsRegistering(true);
 
     try {
-      // 1. Crear usuario en Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         formData.email,
@@ -136,7 +131,6 @@ export default function Register() {
       );
       const firebaseUser = userCredential.user;
 
-      // 2. Actualizar perfil en Firebase
       try {
         await updateProfile(firebaseUser, {
           displayName: formData.name,
@@ -145,20 +139,16 @@ export default function Register() {
         console.warn("No se pudo actualizar el displayName:", error);
       }
 
-      console.log("✅ Usuario creado en Firebase. UID:", firebaseUser.uid);
+      console.log("Usuario creado en Firebase. UID:", firebaseUser.uid);
 
-      // 3. ✅ CREAR en BD PostgreSQL mediante endpoint público
       await saveUserToDatabase(firebaseUser, formData);
 
       console.log("✅ Usuario creado en Firebase y BD PostgreSQL");
 
-      // 4. Mostrar mensaje de éxito y redirigir a login
       showToast("¡Cuenta creada exitosamente! Por favor inicia sesión.");
 
-      // 5. Redirigir a login (NO hacer login automático)
       navigate("/login", { replace: true });
 
-      // 6. Limpiar formulario
       setFormData({
         name: "",
         email: "",
@@ -171,7 +161,6 @@ export default function Register() {
     } catch (error) {
       console.error("Error en el registro:", error);
 
-      // Manejo de errores específicos
       if (error.code === "auth/email-already-in-use") {
         showToast("Este email ya está registrado en Firebase. Usa otro email o inicia sesión.");
       } else if (error.code === "auth/weak-password") {
@@ -191,8 +180,6 @@ export default function Register() {
       setIsRegistering(false);
     }
   };
-
-  // FECHA MÁXIMA: Hace exactamente 18 años desde HOY
   const getMaxDate = () => {
     const today = new Date();
     const maxDate = new Date(
@@ -203,7 +190,6 @@ export default function Register() {
     return maxDate.toISOString().split('T')[0];
   };
 
-  // FECHA MÍNIMA: Hace 100 años desde HOY
   const getMinDate = () => {
     const today = new Date();
     const minDate = new Date(

@@ -9,7 +9,6 @@ const Contacto = () => {
       <hr />
 
       <div className="row g-4 align-items-stretch">
-        {/* === Información de contacto === */}
         <div className="col-12 col-lg-4">
           <aside className="contacto-info h-100">
             <h2 className="contacto-info_titulo">Información de contacto</h2>
@@ -69,7 +68,6 @@ const Contacto = () => {
           </aside>
         </div>
 
-        {/* === Formulario de contacto === */}
         <div className="col-12 col-lg-8">
           <section className="contacto-form h-100">
             <form id="contactoForm" noValidate>

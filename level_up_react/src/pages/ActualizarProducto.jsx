@@ -31,7 +31,6 @@ const ActualizarProducto = ({ product: propProduct, onSave, onCancel }) => {
         descripcionCorta: propProduct.descripcionCorta,
         descripcionLarga: propProduct.descripcionLarga,
         imagenUrl: propProduct.imagenUrl || '',
-        // 🔥 Convertimos a objetos siempre
         especificaciones: (propProduct.especificaciones || []).map((s) => ({
           id: s.id ?? null,
           specification: s.specification ?? s
@@ -98,19 +97,16 @@ const ActualizarProducto = ({ product: propProduct, onSave, onCancel }) => {
 
       <form onSubmit={handleSubmit} className="product-form">
 
-        {/* Código */}
         <div className="form-group">
           <label>Código *</label>
           <input type="text" name="codigo" value={formData.codigo} disabled />
         </div>
 
-        {/* Nombre */}
         <div className="form-group">
           <label>Nombre *</label>
           <input type="text" name="nombre" value={formData.nombre} onChange={handleInputChange} required />
         </div>
 
-        {/* Precio / Stock */}
         <div className="form-row">
           <div className="form-group">
             <label>Precio *</label>
@@ -123,7 +119,6 @@ const ActualizarProducto = ({ product: propProduct, onSave, onCancel }) => {
           </div>
         </div>
 
-        {/* Categoría */}
         <div className="form-group">
           <label>Categoría *</label>
           <select name="categoria" value={formData.categoria} onChange={handleInputChange} required>
@@ -139,7 +134,6 @@ const ActualizarProducto = ({ product: propProduct, onSave, onCancel }) => {
           </select>
         </div>
 
-        {/* Descripciones */}
         <div className="form-group">
           <label>Descripción Corta *</label>
           <textarea name="descripcionCorta" value={formData.descripcionCorta} onChange={handleInputChange} rows="3" required />
@@ -150,13 +144,11 @@ const ActualizarProducto = ({ product: propProduct, onSave, onCancel }) => {
           <textarea name="descripcionLarga" value={formData.descripcionLarga} onChange={handleInputChange} rows="5" />
         </div>
 
-        {/* Imagen */}
         <div className="form-group">
           <label>URL Imagen</label>
           <input type="text" name="imagenUrl" value={formData.imagenUrl} onChange={handleInputChange} />
         </div>
 
-        {/* Especificaciones */}
         <div className="form-group">
           <label>Especificaciones</label>
 
@@ -182,7 +174,6 @@ const ActualizarProducto = ({ product: propProduct, onSave, onCancel }) => {
           </button>
         </div>
 
-        {/* Acciones */}
         <div className="form-actions">
           <button type="submit" className="btn-save" disabled={loading}>
             {loading ? 'Guardando...' : 'Guardar Cambios'}

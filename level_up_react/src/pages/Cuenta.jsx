@@ -266,7 +266,6 @@ export default function Cuenta() {
     reader.readAsDataURL(file);
   };
 
-  // Solo limpia el estado local (ya no lo usamos para borrar en backend)
   const limpiarAvatarLocal = () => {
     setAvatarFile(null);
     setAvatarUrl('');
@@ -326,7 +325,6 @@ export default function Cuenta() {
     }
   };
 
-  // 🔴 NUEVO: eliminar avatar en backend + storage y limpiar front
   const deleteAvatarFromBackend = async () => {
     setMensaje('');
 
@@ -431,7 +429,7 @@ export default function Cuenta() {
                           onClick={deleteAvatarFromBackend}
                           style={{
                             marginLeft: 8,
-                            backgroundColor: '#dc2626', // rojo tailwind-ish
+                            backgroundColor: '#dc2626', 
                             color: '#fff',
                             border: 'none',
                             padding: '8px 12px',

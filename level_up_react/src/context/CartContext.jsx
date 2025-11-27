@@ -3,9 +3,8 @@ import { useCart as useCartHook } from '../hooks/useCart';
 
 const CartContext = createContext(null);
 
-// Provider que envuelve la app y comparte UN SOLO carrito
 export const CartProvider = ({ children }) => {
-  const cart = useCartHook(); // aquí está tu hook grande
+  const cart = useCartHook();
 
   return (
     <CartContext.Provider value={cart}>
@@ -14,7 +13,6 @@ export const CartProvider = ({ children }) => {
   );
 };
 
-// Hook que usarás en los componentes en vez de useCartHook directo
 export const useCart = () => {
   const ctx = useContext(CartContext);
   if (!ctx) {

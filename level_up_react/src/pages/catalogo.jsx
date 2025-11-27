@@ -8,7 +8,7 @@ import '../styles/pages/catalogoStyles.css';
 
 export default function Catalogo() {
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const [products, setProducts] = useState([]); // siempre array
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -21,20 +21,20 @@ export default function Catalogo() {
       setLoading(true);
       setError(null);
 
-      console.log('🔄 Cargando productos desde productService...');
+      console.log('Cargando productos desde productService...');
       const productsData = await productService.getAllProducts();
 
-      console.log('📦 Respuesta bruta de getAllProducts:', productsData);
+      console.log('Respuesta bruta de getAllProducts:', productsData);
 
       if (!Array.isArray(productsData)) {
-        console.error('❌ productsData NO ES ARRAY:', productsData);
+        console.error('productsData NO ES ARRAY:', productsData);
         setProducts([]);
         return;
       }
 
       setProducts(productsData);
     } catch (err) {
-      console.error('❌ Error al cargar productos:', err);
+      console.error('Error al cargar productos:', err);
       setError('Error al cargar los productos: ' + err.message);
     } finally {
       setLoading(false);
@@ -47,7 +47,7 @@ export default function Catalogo() {
 
   const filteredProducts = useMemo(() => {
     if (!Array.isArray(products)) {
-      console.warn('⚠ filteredProducts: products no es un array:', products);
+      console.warn('filteredProducts: products no es un array:', products);
       return [];
     }
 
@@ -141,7 +141,6 @@ export default function Catalogo() {
     );
   }
 
-  // ================= VISTA NORMAL =================
 
   return (
     <div className="page">

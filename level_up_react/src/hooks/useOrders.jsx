@@ -2,8 +2,8 @@ import { useState, useCallback } from 'react';
 import axios from 'axios';
 import { useApp } from '../context/AppContext';
 
-// 👉 Usa el gateway. Si en local usas otra URL, cámbiala aquí.
-const ORDER_API_BASE_URL = 'http://localhost:8080';
+
+const ORDER_API_BASE_URL = 'http://levelup.ddns.net:8080';
 
 const orderApi = axios.create({
   baseURL: ORDER_API_BASE_URL,
@@ -19,9 +19,6 @@ export const useOrders = () => {
   const [esTop5PorPuntos, setEsTop5PorPuntos] = useState(false);
   const [correoInstitucional, setCorreoInstitucional] = useState(false);
 
-  // ==========================
-  // 🔹 Helper: get access token
-  // ==========================
   const getAccessToken = () => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
@@ -30,9 +27,6 @@ export const useOrders = () => {
     return token;
   };
 
-  // ==========================
-  // 🔹 Axios + token
-  // ==========================
   const doAuthRequest = async (config) => {
     const token = getAccessToken();
 
@@ -47,10 +41,6 @@ export const useOrders = () => {
     return orderApi.request(finalConfig);
   };
 
-  // ======================================================
-  // 🔹 OBTENER ÓRDENES DEL USUARIO
-  // GET /orders/user/{userId}
-  // ======================================================
   const obtenerOrdenesUsuario = useCallback(
     async (userId) => {
       if (!userId) {
@@ -75,14 +65,7 @@ export const useOrders = () => {
     [setUserOrders]
   );
 
-  // ======================================================
-  // 🔹 OBTENER PUNTOS + ESTADO TOP5 / CORREO
-  // GET /orders/user/{userId}/points
-  //
-  // Se asume que el backend puede devolver opcionalmente:
-  // { userId, totalPoints, top5ByPoints, hasDuocEmail }
-  // Si no lo hace, los flags quedan en false.
-  // ======================================================
+
   const obtenerPuntosUsuario = useCallback(
     async (userId) => {
       if (!userId) {
@@ -104,13 +87,11 @@ export const useOrders = () => {
 
       localStorage.setItem(`points_${userId}`, String(puntos));
 
-      // Flags opcionales
       const isTop5 = !!data.top5ByPoints;
       const hasDuoc = !!data.hasDuocEmail;
 
       setEsTop5PorPuntos(isTop5);
 
-      // Si el backend no lo envía, lo deducimos del usuario logueado
       if (data.hasDuocEmail !== undefined) {
         setCorreoInstitucional(hasDuoc);
       } else {
@@ -123,9 +104,6 @@ export const useOrders = () => {
     [setUserPoints, user]
   );
 
-  // ======================================================
-  // 🔹 CARGAR ÓRDENES + PUNTOS (para Historial)
-  // ======================================================
   const cargarOrdenesYPoints = useCallback(
     async (userId) => {
       await Promise.all([
@@ -136,9 +114,6 @@ export const useOrders = () => {
     [obtenerOrdenesUsuario, obtenerPuntosUsuario]
   );
 
-  // ======================================================
-  // 🔹 SOLO refrescar puntos/top (para Checkout)
-  // ======================================================
   const refrescarPuntosYTop = useCallback(
     async (userId) => {
       await obtenerPuntosUsuario(userId);
@@ -146,11 +121,6 @@ export const useOrders = () => {
     [obtenerPuntosUsuario]
   );
 
-  // ======================================================
-  // 🔹 CREAR ORDEN DESDE CARRITO
-  // POST /orders/user/{userId}
-  // body: { usePointsDiscount: boolean }
-  // ======================================================
   const crearOrdenDesdeCarrito = useCallback(
     async (userId, payload = { usePointsDiscount: false }) => {
       if (!userId) {
@@ -165,7 +135,6 @@ export const useOrders = () => {
 
       const data = response.data;
 
-      // Después de crear la orden, refrescamos órdenes + puntos
       try {
         await cargarOrdenesYPoints(userId);
       } catch (e) {
@@ -178,12 +147,10 @@ export const useOrders = () => {
   );
 
   return {
-    // datos
     puntosUsuario,
     esTop5PorPuntos,
     correoInstitucional,
 
-    // acciones
     crearOrdenDesdeCarrito,
     obtenerOrdenesUsuario,
     obtenerPuntosUsuario,

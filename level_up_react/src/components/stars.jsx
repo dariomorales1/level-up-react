@@ -1,9 +1,7 @@
-// src/components/stars.js
 import React from 'react';
-import '../styles/components/starsStyles.css'; // si quieres estilos separados
+import '../styles/components/starsStyles.css';
 
 const renderEstrellas = (puntaje = 0) => {
-  // puntaje viene en rango 0–10
   const maxStars = 5;
   const ratingSobre5 = Math.max(0, Math.min(10, puntaje)) / 2; // 0–5
 

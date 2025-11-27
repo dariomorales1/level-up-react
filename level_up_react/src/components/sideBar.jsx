@@ -1,4 +1,3 @@
-// src/components/SideBar.jsx
 import React, { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
@@ -11,7 +10,6 @@ const SideBar = ({ currentView }) => {
 
   const isAdmin = user?.role === 'ADMIN';
 
-  // 🔹 Estado para abrir/cerrar submenus
   const [openSubmenus, setOpenSubmenus] = useState({
     productos: true,
     usuarios: false,
@@ -28,9 +26,6 @@ const SideBar = ({ currentView }) => {
     return location.pathname.startsWith(path);
   };
 
-  // ─────────────────────────────────────
-  // MENÚ ADMIN (con submenus)
-  // ─────────────────────────────────────
   const adminItems = useMemo(
   () => [
     {
@@ -109,9 +104,6 @@ const SideBar = ({ currentView }) => {
   []
 );
 
-  // ─────────────────────────────────────
-  // MENÚ USER (cliente)
-  // ─────────────────────────────────────
   const userItems = [
     {
       type: 'link',

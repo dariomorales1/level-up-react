@@ -24,7 +24,6 @@ const AdminUsuariosListado = () => {
 
       const datos = await response.json();
 
-      // DEBUG CRÍTICO
       console.log('Tipo de datos:', typeof datos);
       console.log('Es array?:', Array.isArray(datos));
       console.log('Número de elementos:', datos.length);
@@ -34,7 +33,6 @@ const AdminUsuariosListado = () => {
       if (Array.isArray(datos)) {
         setUsuarios(datos);
       } else {
-        // Si no es array, convertirlo
         setUsuarios([datos]);
       }
 
@@ -49,7 +47,6 @@ const AdminUsuariosListado = () => {
 
   useEffect(() => {
     cargarUsuarios();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {

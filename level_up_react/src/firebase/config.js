@@ -19,10 +19,8 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 
-// 🔥 Forzar long polling (sin autoDetect)
 export const db = initializeFirestore(app, {
   experimentalForceLongPolling: true,
-  // NO usar experimentalAutoDetectLongPolling aquí
   localCache: persistentLocalCache({
     tabManager: persistentSingleTabManager()
   })

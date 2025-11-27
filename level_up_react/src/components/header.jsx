@@ -21,11 +21,6 @@ export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ELIMINADO: Ya no usamos cart de useApp
-  // const cartItemsCount = cart?.items?.reduce(
-  //   (total, item) => total + (item?.quantity || 0),
-  //   0
-  // ) || 0;
 
   const adminManagementPrefixes = [
     '/PanelAdministrador',
@@ -64,7 +59,6 @@ export default function Header() {
     navigate(isAuthenticated ? '/dashboard' : '/login');
   };
 
-  // Cerrar menú móvil al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -81,7 +75,6 @@ export default function Header() {
   }, [isMobileOpen]);
 
   useEffect(() => {
-    // Cierra el menú móvil automáticamente al cambiar de ruta
     setIsMobileOpen(false);
   }, [location.pathname]);
 
@@ -89,7 +82,6 @@ export default function Header() {
     <>
       <header className="headerPpal" role="banner">
         <nav className="navbarPpal" role="navigation" aria-label="Main navigation">
-          {/* Left: Logo */}
           <div className="navbarFirstContainer">
             <a className="navbar-brand logoName" href="/" onClick={(e) => { e.preventDefault(); navigate('/'); }}>
               <img src={image} alt="Level-Up logo" width="40" />
@@ -97,7 +89,6 @@ export default function Header() {
             </a>
           </div>
 
-          {/* Center: Desktop Menu */}
           <div className="menuDesktop">
             {!isManagementPage && (
               <div className="navBarButtonsContainer">
@@ -110,7 +101,6 @@ export default function Header() {
             )}
           </div>
 
-          {/* Right: Icons (Account, Cart, Mobile toggle) */}
           <div className="iconsRight">
             <button
               className="accountButton"
@@ -121,7 +111,6 @@ export default function Header() {
               <FontAwesomeIcon icon={faUser} className="accountIcon" />
             </button>
 
-            {/* Agregar botón de logout en desktop cuando el usuario está autenticado */}
             {isAuthenticated && (
               <button
                 className="logoutButton"
@@ -141,12 +130,10 @@ export default function Header() {
                 title="Carrito"
               >
                 <FontAwesomeIcon icon={faCartShopping} className="carritoIcon" />
-                {/* ACTUALIZADO: Usar itemCount de useCart */}
                 {itemCount > 0 && <span className="cartBadge">{itemCount}</span>}
               </button>
             )}
 
-            {/* Mobile hamburger — only visible in mobile via CSS */}
             <button
               className="menuToggle"
               onClick={toggleMobileMenu}
@@ -158,7 +145,6 @@ export default function Header() {
             </button>
           </div>
 
-          {/* Mobile dropdown (visible only on mobile by CSS). Clicking links closes it. */}
           <div
             ref={mobileMenuRef}
             className={`menuMobile ${isMobileOpen ? 'menuMobile--open' : ''}`}
@@ -169,7 +155,6 @@ export default function Header() {
                 <NavButton text="Inicio" to="/" onClick={closeMobileMenu} />
                 <NavButton text="Catalogo" to="/catalogo" onClick={closeMobileMenu} />
                 <NavButton text="Blog" to="/blog" onClick={closeMobileMenu} />
-                {/* Auth actions in mobile menu */}
                 {isAuthenticated ? (
                   <button className="btnAgregarHeader menuMobileBtn" onClick={() => { handleLogout(); }}>
                     Cerrar sesión

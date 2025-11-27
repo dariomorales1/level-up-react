@@ -1,4 +1,3 @@
-// src/pages/Dashboard.jsx
 import SideBar from '../components/SideBar';
 import '../styles/pages/panelAdministrador.css';
 import '../styles/pages/dashboardStyles.css';
@@ -57,31 +56,26 @@ export default function Dashboard() {
                 </>
               )}
 
-              {/* SI ES USER */}
               {!isAdmin && (
                 <>
-                  {/* PERFIL */}
                   <div className="dashboard-card" onClick={() => navigate('/cuenta')}>
                     <i className="fa-solid fa-user"></i>
                     <h3>Mi Perfil</h3>
                     <p>Administra tus datos personales.</p>
                   </div>
 
-                  {/* HISTORIAL */}
                   <div className="dashboard-card" onClick={() => navigate('/historial')}>
                     <i className="fa-solid fa-clock-rotate-left"></i>
                     <h3>Historial de Compras</h3>
                     <p>Revisa tus pedidos anteriores.</p>
                   </div>
 
-                  {/* DIRECCIONES */}
                   <div className="dashboard-card" onClick={() => navigate('/direcciones')}>
                     <i className="fa-solid fa-location-dot"></i>
                     <h3>Mis Direcciones</h3>
                     <p>Gestiona tus direcciones de envío.</p>
                   </div>
 
-                  {/* IR A LA TIENDA */}
                   <div className="dashboard-card" onClick={() => navigate('/catalogo')}>
                     <i className="fa-solid fa-store"></i>
                     <h3>Seguir Comprando</h3>

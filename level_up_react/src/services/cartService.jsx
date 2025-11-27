@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// CORREGIDO: Base URL sin /carts
 const CART_BASE_URL = 'http://levelup.ddns.net:8080';
 
 const axiosInstance = axios.create({
@@ -12,23 +11,21 @@ const axiosInstance = axios.create({
 });
 
 const cartService = {
-    // ========= USUARIOS AUTENTICADOS =========
     
     getCart: async (userId, token) => {
         try {
             console.log('🛒 Obteniendo carrito para usuario:', userId);
             console.log('🛒 URL:', `${CART_BASE_URL}/carts/user/${userId}`);
-            
-            // CORREGIDO: Incluir /carts en la ruta
+
             const response = await axiosInstance.get(`/carts/user/${userId}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
-            console.log('✅ Carrito obtenido:', response.data);
+            console.log('Carrito obtenido:', response.data);
             return response.data;
         } catch (error) {
-            console.error('❌ Error fetching cart:', {
+            console.error('Error fetching cart:', {
                 url: `${CART_BASE_URL}/carts/user/${userId}`,
                 status: error.response?.status,
                 data: error.response?.data,
@@ -36,7 +33,7 @@ const cartService = {
             });
             
             if (error.response?.status === 404) {
-                console.log('🛒 Carrito no encontrado, se creará uno vacío');
+                console.log('Carrito no encontrado, se creará uno vacío');
                 throw new Error('Cart not found');
             }
             
@@ -46,10 +43,9 @@ const cartService = {
 
     addToCart: async (userId, productId, quantity, token) => {
         try {
-            console.log('🛒 Agregando al carrito:', { userId, productId, quantity });
-            console.log('🛒 URL:', `${CART_BASE_URL}/carts/user/${userId}/items`);
-            
-            // CORREGIDO: Incluir /carts en la ruta
+            console.log('Agregando al carrito:', { userId, productId, quantity });
+            console.log('URL:', `${CART_BASE_URL}/carts/user/${userId}/items`);
+
             const response = await axiosInstance.post(
                 `/carts/user/${userId}/items`,
                 {
@@ -62,10 +58,10 @@ const cartService = {
                     }
                 }
             );
-            console.log('✅ Item agregado al carrito:', response.data);
+            console.log('Item agregado al carrito:', response.data);
             return response.data;
         } catch (error) {
-            console.error('❌ Error adding to cart:', {
+            console.error('Error adding to cart:', {
                 url: `${CART_BASE_URL}/carts/user/${userId}/items`,
                 status: error.response?.status,
                 data: error.response?.data,
@@ -76,19 +72,16 @@ const cartService = {
         }
     },
 
-    // ========= USUARIOS ANÓNIMOS =========
-
     getGuestCart: async (sessionId) => {
         try {
-            console.log('🛒 Obteniendo carrito guest:', sessionId);
-            console.log('🛒 URL:', `${CART_BASE_URL}/carts/guest/${sessionId}`);
+            console.log('Obteniendo carrito guest:', sessionId);
+            console.log('URL:', `${CART_BASE_URL}/carts/guest/${sessionId}`);
             
-            // CORREGIDO: Incluir /carts en la ruta
             const response = await axiosInstance.get(`/carts/guest/${sessionId}`);
-            console.log('✅ Carrito guest obtenido:', response.data);
+            console.log('Carrito guest obtenido:', response.data);
             return response.data;
         } catch (error) {
-            console.error('❌ Error fetching guest cart:', {
+            console.error('Error fetching guest cart:', {
                 url: `${CART_BASE_URL}/carts/guest/${sessionId}`,
                 status: error.response?.status,
                 data: error.response?.data,
@@ -96,7 +89,7 @@ const cartService = {
             });
             
             if (error.response?.status === 404) {
-                console.log('🛒 Carrito guest no encontrado, se creará uno vacío');
+                console.log('Carrito guest no encontrado, se creará uno vacío');
                 throw new Error('Guest cart not found');
             }
             
@@ -106,10 +99,9 @@ const cartService = {
 
     addToGuestCart: async (sessionId, productId, quantity) => {
         try {
-            console.log('🛒 Agregando a carrito guest:', { sessionId, productId, quantity });
-            console.log('🛒 URL:', `${CART_BASE_URL}/carts/guest/${sessionId}/items`);
+            console.log('Agregando a carrito guest:', { sessionId, productId, quantity });
+            console.log('URL:', `${CART_BASE_URL}/carts/guest/${sessionId}/items`);
             
-            // CORREGIDO: Incluir /carts en la ruta
             const response = await axiosInstance.post(
                 `/carts/guest/${sessionId}/items`,
                 {
@@ -117,10 +109,10 @@ const cartService = {
                     quantity: quantity
                 }
             );
-            console.log('✅ Item agregado a carrito guest:', response.data);
+            console.log('Item agregado a carrito guest:', response.data);
             return response.data;
         } catch (error) {
-            console.error('❌ Error adding to guest cart:', {
+            console.error('Error adding to guest cart:', {
                 url: `${CART_BASE_URL}/carts/guest/${sessionId}/items`,
                 status: error.response?.status,
                 data: error.response?.data,
@@ -132,8 +124,7 @@ const cartService = {
 
     updateQuantity: async (userId, productId, quantity, token) => {
         try {
-            console.log('🛒 Actualizando cantidad:', { userId, productId, quantity });
-            // CORREGIDO: Incluir /carts en la ruta
+            console.log('Actualizando cantidad:', { userId, productId, quantity });
             const response = await axiosInstance.put(
                 `/carts/user/${userId}/items/${productId}?quantity=${quantity}`,
                 {},
@@ -143,25 +134,24 @@ const cartService = {
                     }
                 }
             );
-            console.log('✅ Cantidad actualizada:', response.data);
+            console.log('Cantidad actualizada:', response.data);
             return response.data;
         } catch (error) {
-            console.error('❌ Error updating quantity:', error.response || error.message);
+            console.error('Error updating quantity:', error.response || error.message);
             throw new Error(`Error al actualizar cantidad: ${error.message}`);
         }
     },
 
     updateGuestQuantity: async (sessionId, productId, quantity) => {
         try {
-            console.log('🛒 Actualizando cantidad guest:', { sessionId, productId, quantity });
-            // CORREGIDO: Incluir /carts en la ruta
+            console.log('Actualizando cantidad guest:', { sessionId, productId, quantity });
             const response = await axiosInstance.put(
                 `/carts/guest/${sessionId}/items/${productId}?quantity=${quantity}`
             );
-            console.log('✅ Cantidad guest actualizada:', response.data);
+            console.log('Cantidad guest actualizada:', response.data);
             return response.data;
         } catch (error) {
-            console.error('❌ Error updating guest quantity:', error.response || error.message);
+            console.error('Error updating guest quantity:', error.response || error.message);
             throw new Error(`Error al actualizar cantidad: ${error.message}`);
         }
     },
@@ -169,7 +159,6 @@ const cartService = {
     removeFromCart: async (userId, productId, token) => {
         try {
             console.log('🛒 Eliminando del carrito:', { userId, productId });
-            // CORREGIDO: Incluir /carts en la ruta
             const response = await axiosInstance.delete(
                 `/carts/user/${userId}/items/${productId}`,
                 {
@@ -178,33 +167,31 @@ const cartService = {
                     }
                 }
             );
-            console.log('✅ Item eliminado del carrito');
+            console.log('Item eliminado del carrito');
             return response.data;
         } catch (error) {
-            console.error('❌ Error removing from cart:', error.response || error.message);
+            console.error('Error removing from cart:', error.response || error.message);
             throw new Error(`Error al eliminar del carrito: ${error.message}`);
         }
     },
 
     removeFromGuestCart: async (sessionId, productId) => {
         try {
-            console.log('🛒 Eliminando de carrito guest:', { sessionId, productId });
-            // CORREGIDO: Incluir /carts en la ruta
+            console.log('Eliminando de carrito guest:', { sessionId, productId });
             const response = await axiosInstance.delete(
                 `/carts/guest/${sessionId}/items/${productId}`
             );
-            console.log('✅ Item eliminado de carrito guest');
+            console.log('Item eliminado de carrito guest');
             return response.data;
         } catch (error) {
-            console.error('❌ Error removing from guest cart:', error.response || error.message);
+            console.error('Error removing from guest cart:', error.response || error.message);
             throw new Error(`Error al eliminar del carrito: ${error.message}`);
         }
     },
 
     clearCart: async (userId, token) => {
         try {
-            console.log('🛒 Vaciando carrito para usuario:', userId);
-            // CORREGIDO: Incluir /carts en la ruta
+            console.log('Vaciando carrito para usuario:', userId);
             const response = await axiosInstance.delete(
                 `/carts/user/${userId}/clear`,
                 {
@@ -213,10 +200,10 @@ const cartService = {
                     }
                 }
             );
-            console.log('✅ Carrito vaciado');
+            console.log('Carrito vaciado');
             return response.data;
         } catch (error) {
-            console.error('❌ Error clearing cart:', error.response || error.message);
+            console.error('Error clearing cart:', error.response || error.message);
             throw new Error(`Error al vaciar carrito: ${error.message}`);
         }
     },
@@ -224,20 +211,18 @@ const cartService = {
     clearGuestCart: async (sessionId) => {
         try {
             console.log('🛒 Vaciando carrito guest:', sessionId);
-            // CORREGIDO: Incluir /carts en la ruta
             const response = await axiosInstance.delete(`/carts/guest/${sessionId}/clear`);
-            console.log('✅ Carrito guest vaciado');
+            console.log('Carrito guest vaciado');
             return response.data;
         } catch (error) {
-            console.error('❌ Error clearing guest cart:', error.response || error.message);
+            console.error('Error clearing guest cart:', error.response || error.message);
             throw new Error(`Error al vaciar carrito: ${error.message}`);
         }
     },
 
     migrateGuestToUser: async (sessionId, userId, token) => {
         try {
-            console.log('🛒 Migrando carrito:', { sessionId, userId });
-            // CORREGIDO: Incluir /carts en la ruta
+            console.log('Migrando carrito:', { sessionId, userId });
             const response = await axiosInstance.post(
                 `/carts/migrate/${sessionId}/to/${userId}`,
                 {},
@@ -247,21 +232,20 @@ const cartService = {
                     }
                 }
             );
-            console.log('✅ Carrito migrado:', response.data);
+            console.log('Carrito migrado:', response.data);
             return response.data;
         } catch (error) {
-            console.error('❌ Error migrating cart:', error.response || error.message);
+            console.error('Error migrating cart:', error.response || error.message);
             throw new Error(`Error al migrar carrito: ${error.message}`);
         }
     },
 
     healthCheck: async () => {
         try {
-            // CORREGIDO: Incluir /carts en la ruta
             const response = await axiosInstance.get('/carts/health');
             return response.data;
         } catch (error) {
-            console.error('❌ Health check failed:', error.response || error.message);
+            console.error('Health check failed:', error.response || error.message);
             throw new Error(`Error de health check: ${error.message}`);
         }
     }
