@@ -1,76 +1,170 @@
-import React, { useEffect, useState } from "react";
-import { useApp } from "../context/AppContext";
-import { useOrders } from "../hooks/useOrders";
+import React, { useEffect, useState } from 'react';
+import SideBar from '../components/SideBar';
+import '../styles/pages/panelAdministrador.css';
+import '../styles/pages/cuentaStyles.css';
+import '../styles/pages/historialStyles.css';
+import { useOrders } from '../hooks/useOrders';
+import { useApp } from '../context/AppContext';
+import showToast from '../components/toast';
 
 const HistorialCompras = () => {
   const { user, userOrders, userPoints } = useApp();
-  const { obtenerOrdenesUsuario, obtenerPuntosUsuario } = useOrders();
+  const { cargarOrdenesYPoints } = useOrders();
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!user) return;
-
     const cargarDatos = async () => {
+      if (!user?.id) {
+        setLoading(false);
+        return;
+      }
       try {
-        setLoading(true);
-        await Promise.all([
-          obtenerOrdenesUsuario(user.id),
-          obtenerPuntosUsuario(user.id),
-        ]);
-      } catch (err) {
-        console.error("Error cargando historial de compras:", err);
-        setError("Hubo un problema al cargar tus órdenes.");
+        await cargarOrdenesYPoints(user.id);
+      } catch (error) {
+        console.error('Error cargando historial de compras:', error);
       } finally {
         setLoading(false);
       }
     };
 
     cargarDatos();
-  }, [user]);
-
-  if (!user) {
-    return <p className="text-center mt-10">Debes iniciar sesión para ver tu historial.</p>;
-  }
-
-  if (loading) {
-    return <p className="text-center mt-10">Cargando historial...</p>;
-  }
-
-  if (error) {
-    return <p className="text-center mt-10 text-red-500">{error}</p>;
-  }
+  }, [user, cargarOrdenesYPoints]);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
-      <h1 className="text-3xl font-bold mb-6 text-center">Historial de Compras</h1>
+    <div className="panel-administrador">
+      <div className="management-layout">
+        <SideBar />
 
-      {/* Puntos Totales */}
-      <div className="bg-blue-100 border-l-4 border-blue-500 p-4 mb-6 rounded">
-        <p className="font-semibold text-lg">🎯 Puntos acumulados: {userPoints}</p>
-      </div>
+        <main className="management-main">
+          <div className="historial-page">
+            <div className="perfil-container">
+              <div className="perfil-header">
+                <h1>Historial de compras</h1>
+                <p>Revisa el detalle de tus pedidos anteriores y tus puntos acumulados.</p>
+              </div>
 
-      {/* Lista de Órdenes */}
-      {userOrders.length === 0 ? (
-        <p className="text-center text-gray-500">Aún no has realizado ninguna compra.</p>
-      ) : (
-        <div className="space-y-4">
-          {userOrders.map((orden) => (
-            <div
-              key={orden.id}
-              className="border p-4 rounded-lg shadow hover:shadow-md transition"
-            >
-              <p><strong>🧾 ID Orden:</strong> {orden.id}</p>
-              <p><strong>📅 Fecha:</strong> {new Date(orden.createdAt).toLocaleString()}</p>
-              <p><strong>💰 Total:</strong> ${orden.totalAmount}</p>
-              <p><strong>🏷️ Descuento aplicado:</strong> {orden.discountPercent}%</p>
-              <p><strong>💵 Total Final:</strong> ${orden.finalAmount}</p>
-              <p><strong>🎁 Puntos Ganados:</strong> {orden.pointsGranted}</p>
+              {/* Tarjeta de puntos */}
+              <section className="perfil-card historial-card">
+                <h2>Mis puntos</h2>
+                <p>
+                  Puntos acumulados:{' '}
+                  <strong>{(userPoints ?? 0).toLocaleString('es-CL')}</strong>
+                </p>
+                <p className="historial-points-hint">
+                  Los puntos se usan para habilitar el descuento especial del Top 5.
+                </p>
+              </section>
+
+              {/* Tabla de órdenes */}
+              <section className="perfil-card historial-card">
+                {loading ? (
+                  <div className="historial-empty">
+                    <p>Cargando historial de compras...</p>
+                  </div>
+                ) : !userOrders || userOrders.length === 0 ? (
+                  <div className="historial-empty">
+                    <p>Aún no tienes compras registradas.</p>
+                    <span>Cuando realices compras, aparecerán aquí.</span>
+                  </div>
+                ) : (
+                  <div className="historial-table-wrapper">
+                    <table className="historial-table">
+                      <thead>
+                        <tr>
+                          <th>ID Pedido</th>
+                          <th>Productos</th>
+                          <th>Total</th>
+                          <th>Descuentos</th>
+                          <th>Puntos generados</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {userOrders.map((orden) => {
+                          // Construimos texto de descuentos
+                          const descuentos = [];
+
+                          if (orden.discountPercent && orden.discountPercent > 0) {
+                            descuentos.push(`${orden.discountPercent}%`);
+                          }
+                          if (orden.usedPointsDiscount) {
+                            descuentos.push('Descuento Top 5');
+                          }
+                          if (orden.usedEmailDiscount) {
+                            descuentos.push('Correo DUOC 20%');
+                          }
+
+                          const textoDescuentos =
+                            descuentos.length > 0 ? descuentos.join(' + ') : 'Sin descuento';
+
+                          const puntosGenerados =
+                            orden.pointsGranted ?? orden.points ?? 0;
+
+                          return (
+                            <tr key={orden.id}>
+                              {/* ID Pedido + fecha en pequeño */}
+                              <td>
+                                <div className="historial-orden-id">
+                                  <div>#{orden.id.slice(0, 8)}...</div>
+                                  <small className="order-date">
+                                    {new Date(orden.createdAt).toLocaleString('es-CL')}
+                                  </small>
+                                </div>
+                              </td>
+
+                              {/* Productos */}
+                              <td>
+                                <div className="historial-productos">
+                                  {orden.items?.map((item) => (
+                                    <div
+                                      key={item.id}
+                                      className="historial-producto-row"
+                                    >
+                                      <img
+                                        src={item.image}
+                                        alt={item.name}
+                                        className="historial-producto-img"
+                                      />
+                                      <div className="historial-producto-info">
+                                        <p className="historial-producto-nombre">
+                                          {item.name}
+                                        </p>
+                                        <p className="historial-producto-detalle">
+                                          {item.quantity} x $
+                                          {item.price.toLocaleString('es-CL')}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </td>
+
+                              {/* Total */}
+                              <td>
+                                <strong>
+                                  ${orden.finalAmount.toLocaleString('es-CL')}
+                                </strong>
+                              </td>
+
+                              {/* Descuentos */}
+                              <td>{textoDescuentos}</td>
+
+                              {/* Puntos generados */}
+                              <td>
+                                {puntosGenerados.toLocaleString('es-CL')}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </section>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        </main>
+      </div>
     </div>
   );
 };

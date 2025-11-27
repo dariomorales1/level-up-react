@@ -65,6 +65,60 @@ button {
   outline: none;
 }
 
+.btn {
+  margin: 0 auto;
+  border: 1px solid var(--colorVerde);
+  padding: 8px 14px;
+  border-radius: 5px;
+  background-image: linear-gradient(45deg, var(--colorVerde) 50%, var(--colorGrisOscuro) 50%);
+  background-position: 100%;
+  background-size: 400%;
+  color: var(--colorVerde);
+  font-weight: bold;
+  cursor: pointer;
+  transition:
+      background 0.2s ease-in-out,
+      color 0.2s ease-in-out;
+}
+
+.btn:hover {
+  background-position: 0;
+  color: #000;
+}
+
+.btn2 {
+  margin: 0 auto;
+  border: 1px solid var(--colorVerde);
+  padding: 8px 14px;
+  border-radius: 5px;
+  background-image: linear-gradient(45deg, var(--colorGrisOscuro) 50%, var(--colorVerde) 50%);
+  background-position: 100%;
+  background-size: 400%;
+  color: var(--colorGrisOscuro);
+  font-weight: bold;
+  cursor: pointer;
+  transition:
+      background 0.2s ease-in-out,
+      color 0.2s ease-in-out;
+}
+
+.btn2:hover {
+  background-position: 0;
+  color: var(--colorVerde);
+}
+
+.btn,.btn2 {
+  display: inline-block;
+}
+
+button:disabled,
+.btn:disabled,
+.btn2:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(70%);
+}
+
 /* Utilidades */
 .container {
   max-width: 1200px;

@@ -3,9 +3,9 @@ import { useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://levelup.ddns.net:8080'; // o http://localhost:8080 en local
+const API_BASE_URL = 'http://levelup.ddns.net:8080'; // Gateway (cámbialo a http://localhost:8080 en local si quieres)
 
-// Axios instance para gateway / backend principal
+// Axios instance para auth / users
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -101,7 +101,7 @@ export const useAuth = () => {
   };
 
   // ===========================================
-  // 🔹 REFRESH TOKEN (axios)
+  // 🔹 REFRESH TOKEN (también con axios)
   // ===========================================
   const refreshToken = async () => {
     try {
@@ -164,7 +164,7 @@ export const useAuth = () => {
           JSON.stringify({
             user: userWithTokens,
             isAuthenticated: true,
-          })
+          }),
         );
       } else {
         localStorage.removeItem('authUser');
