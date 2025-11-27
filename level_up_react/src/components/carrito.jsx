@@ -183,7 +183,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                 disabled={loading}
               >
                 <i className="fa-solid fa-trash"></i>
-                {loading ? 'Vaciando...' : 'Vaciar Carrito'}
+                {loading ? ' Vaciando...' : ' Vaciar Carrito'}
               </button>
               <button
                 className="btnPrimary"
@@ -191,7 +191,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
                 disabled={loading}
               >
                 <i className="fa-solid fa-credit-card"></i>
-                {isAuthenticated ? 'Proceder al Pago' : 'Iniciar Sesión para Pagar'}
+                {isAuthenticated ? ' Proceder al Pago' : ' Iniciar Sesión para Pagar'}
               </button>
             </div>
           </div>

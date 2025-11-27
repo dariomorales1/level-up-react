@@ -1,110 +1,193 @@
+import { useState, useCallback } from 'react';
 import axios from 'axios';
 import { useApp } from '../context/AppContext';
-import { useAuth } from './useAuth';
 
-// Puedes sobreescribir esto con VITE_ORDER_SERVICE_URL en .env
+// 👉 Usa el gateway. Si en local usas otra URL, cámbiala aquí.
 const ORDER_API_BASE_URL = 'http://localhost:8080';
 
 const orderApi = axios.create({
-    baseURL: ORDER_API_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    });
+  baseURL: ORDER_API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-    export const useOrders = () => {
-    const { user, setUserOrders, setUserPoints } = useApp();
-    const { refreshToken } = useAuth();
+export const useOrders = () => {
+  const { user, setUserOrders, setUserPoints } = useApp();
 
-    const apiCallOrder = async (url, options = {}) => {
-        const accessToken = localStorage.getItem('accessToken');
-        if (!accessToken) {
-        throw new Error('No hay token de acceso disponible');
-        }
+  const [puntosUsuario, setPuntosUsuario] = useState(0);
+  const [esTop5PorPuntos, setEsTop5PorPuntos] = useState(false);
+  const [correoInstitucional, setCorreoInstitucional] = useState(false);
 
-        const method = options.method || 'GET';
-        const data = options.body || undefined;
-        const extraHeaders = options.headers || {};
+  // ==========================
+  // 🔹 Helper: get access token
+  // ==========================
+  const getAccessToken = () => {
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      throw new Error('No hay token de acceso disponible');
+    }
+    return token;
+  };
 
-        const doRequest = async (token) =>
-        orderApi.request({
-            url,
-            method,
-            data,
-            headers: {
-            Authorization: `Bearer ${token}`,
-            ...extraHeaders,
-            },
-        });
+  // ==========================
+  // 🔹 Axios + token
+  // ==========================
+  const doAuthRequest = async (config) => {
+    const token = getAccessToken();
 
-        try {
-        const response = await doRequest(accessToken);
-        return response;
-        } catch (error) {
-        if (error.response && error.response.status === 401) {
-            console.log('🔄 Token expirado (orders), intentando refresh...');
-            const newToken = await refreshToken();
-            if (!newToken) {
-            throw new Error('Sesión expirada');
-            }
-            const response = await doRequest(newToken);
-            return response;
-        }
-        console.error('❌ Error en apiCallOrder:', error);
-        throw error;
-        }
+    const finalConfig = {
+      ...config,
+      headers: {
+        ...(config.headers || {}),
+        Authorization: `Bearer ${token}`,
+      },
     };
 
-    async function obtenerOrdenesUsuario(userId) {
-        const response = await apiCallOrder(`/orders/user/${userId}`);
-        const data = response.data || [];
+    return orderApi.request(finalConfig);
+  };
+
+  // ======================================================
+  // 🔹 OBTENER ÓRDENES DEL USUARIO
+  // GET /orders/user/{userId}
+  // ======================================================
+  const obtenerOrdenesUsuario = useCallback(
+    async (userId) => {
+      if (!userId) {
+        throw new Error('userId es requerido para obtener órdenes');
+      }
+
+      const response = await doAuthRequest({
+        method: 'GET',
+        url: `/orders/user/${userId}`,
+      });
+
+      const data = response.data || [];
+
+      if (setUserOrders) {
         setUserOrders(data);
-        if (userId) {
-        localStorage.setItem(`orders_${userId}`, JSON.stringify(data));
-        }
-        return data;
-    }
+      }
 
-    async function obtenerPuntosUsuario(userId) {
-        const response = await apiCallOrder(`/orders/user/${userId}/points`);
-        const data = response.data; // { userId, totalPoints }
-        const puntos = data?.totalPoints ?? 0;
+      localStorage.setItem(`orders_${userId}`, JSON.stringify(data));
+
+      return data;
+    },
+    [setUserOrders]
+  );
+
+  // ======================================================
+  // 🔹 OBTENER PUNTOS + ESTADO TOP5 / CORREO
+  // GET /orders/user/{userId}/points
+  //
+  // Se asume que el backend puede devolver opcionalmente:
+  // { userId, totalPoints, top5ByPoints, hasDuocEmail }
+  // Si no lo hace, los flags quedan en false.
+  // ======================================================
+  const obtenerPuntosUsuario = useCallback(
+    async (userId) => {
+      if (!userId) {
+        throw new Error('userId es requerido para obtener puntos');
+      }
+
+      const response = await doAuthRequest({
+        method: 'GET',
+        url: `/orders/user/${userId}/points`,
+      });
+
+      const data = response.data || {};
+      const puntos = data.totalPoints ?? 0;
+
+      setPuntosUsuario(puntos);
+      if (setUserPoints) {
         setUserPoints(puntos);
-        if (userId) {
-        localStorage.setItem(`points_${userId}`, String(puntos));
-        }
-        return data;
-    }
+      }
 
-    async function cargarOrdenesYPoints(userIdParam) {
-        const id = userIdParam || user?.id;
-        if (!id) return;
-        await Promise.all([obtenerOrdenesUsuario(id), obtenerPuntosUsuario(id)]);
-    }
+      localStorage.setItem(`points_${userId}`, String(puntos));
 
-    async function crearOrdenDesdeCarrito(userId, { usePointsDiscount = false } = {}) {
-        const response = await apiCallOrder(
-        `/orders/user/${userId}?usePointsDiscount=${usePointsDiscount}`,
-        {
-            method: 'POST',
-        }
-        );
-        const data = response.data;
+      // Flags opcionales
+      const isTop5 = !!data.top5ByPoints;
+      const hasDuoc = !!data.hasDuocEmail;
 
-        if (data && typeof data.pointsAfter === 'number') {
-        setUserPoints(data.pointsAfter);
-        localStorage.setItem(`points_${userId}`, String(data.pointsAfter));
-        }
+      setEsTop5PorPuntos(isTop5);
 
+      // Si el backend no lo envía, lo deducimos del usuario logueado
+      if (data.hasDuocEmail !== undefined) {
+        setCorreoInstitucional(hasDuoc);
+      } else {
+        const email = user?.email?.toLowerCase() || '';
+        setCorreoInstitucional(email.endsWith('@duocuc.cl'));
+      }
+
+      return data;
+    },
+    [setUserPoints, user]
+  );
+
+  // ======================================================
+  // 🔹 CARGAR ÓRDENES + PUNTOS (para Historial)
+  // ======================================================
+  const cargarOrdenesYPoints = useCallback(
+    async (userId) => {
+      await Promise.all([
+        obtenerOrdenesUsuario(userId),
+        obtenerPuntosUsuario(userId),
+      ]);
+    },
+    [obtenerOrdenesUsuario, obtenerPuntosUsuario]
+  );
+
+  // ======================================================
+  // 🔹 SOLO refrescar puntos/top (para Checkout)
+  // ======================================================
+  const refrescarPuntosYTop = useCallback(
+    async (userId) => {
+      await obtenerPuntosUsuario(userId);
+    },
+    [obtenerPuntosUsuario]
+  );
+
+  // ======================================================
+  // 🔹 CREAR ORDEN DESDE CARRITO
+  // POST /orders/user/{userId}
+  // body: { usePointsDiscount: boolean }
+  // ======================================================
+  const crearOrdenDesdeCarrito = useCallback(
+    async (userId, payload = { usePointsDiscount: false }) => {
+      if (!userId) {
+        throw new Error('userId es requerido para crear una orden');
+      }
+
+      const response = await doAuthRequest({
+        method: 'POST',
+        url: `/orders/user/${userId}`,
+        data: JSON.stringify(payload),
+      });
+
+      const data = response.data;
+
+      // Después de crear la orden, refrescamos órdenes + puntos
+      try {
         await cargarOrdenesYPoints(userId);
+      } catch (e) {
+        console.warn('No se pudo refrescar órdenes/puntos después de crear la orden', e);
+      }
 
-        return data;
-    }
+      return data;
+    },
+    [cargarOrdenesYPoints]
+  );
 
-    return {
-        crearOrdenDesdeCarrito,
-        obtenerOrdenesUsuario,
-        obtenerPuntosUsuario,
-        cargarOrdenesYPoints,
-    };
+  return {
+    // datos
+    puntosUsuario,
+    esTop5PorPuntos,
+    correoInstitucional,
+
+    // acciones
+    crearOrdenDesdeCarrito,
+    obtenerOrdenesUsuario,
+    obtenerPuntosUsuario,
+    cargarOrdenesYPoints,
+    refrescarPuntosYTop,
+  };
 };

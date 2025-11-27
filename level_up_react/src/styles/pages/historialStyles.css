@@ -2,7 +2,7 @@
   padding-top: 70px;
 }
 
-/* Reutiliza la tarjeta oscura de perfil, pero puedes sobreescribir cosas aquí */
+/* Reutiliza la tarjeta oscura de perfil */
 .historial-card {
   margin-top: 10px;
 }
@@ -13,45 +13,302 @@
   margin-top: 10px;
 }
 
+/* Tabla de historial */
 .historial-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.95rem;
+  background: rgba(0, 0, 0, 0.85);
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .historial-table thead {
-  background: #020617;
+  background: var(--colorGrisOscuro);
 }
 
 .historial-table th,
 .historial-table td {
   padding: 10px 12px;
-  border-bottom: 1px solid #1f2937;
+  border-bottom: 1px solid #333;
   text-align: left;
-  color: #e5e7eb;
+  color: var(--colorBlanco);
 }
 
 .historial-table th {
   font-weight: 600;
-  color: #9ca3af;
+  color: #b3b3b3;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
 }
 
 .historial-table tr:hover {
-  background: rgba(15, 23, 42, 0.7);
+  background: rgba(0, 255, 255, 0.06);
+}
+
+/* Alinear mejor la columna de productos (2ª columna) */
+.historial-table td:nth-child(2) {
+  vertical-align: top;
 }
 
 .historial-empty {
   text-align: center;
-  color: #9ca3af;
+  color: #888;
   font-size: 0.95rem;
 }
 
 .historial-empty p {
   margin-bottom: 4px;
-  color: #e5e7eb;
+  color: var(--colorBlanco);
 }
 
-/* Estados de las órdenes */
+/* Puntos resumen */
+.historial-points-summary {
+  margin-bottom: 12px;
+}
+
+.points-card {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 0, 0.15),
+    rgba(0, 0, 0, 0.95)
+  );
+  border-radius: 16px;
+  padding: 14px 16px;
+  border: 1px solid rgba(0, 255, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+}
+
+.points-label {
+  font-size: 0.8rem;
+  color: #c4c4c4;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: var(--font-encabezado);
+}
+
+.points-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--colorVerde);
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+}
+
+.points-hint {
+  font-size: 0.85rem;
+  color: #d1d1d1;
+  margin-top: 4px;
+}
+
+/* Chips de descuentos */
+.historial-discounts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+/* Descuento aplicado */
+.chip-discount {
+  background: rgba(0, 255, 0, 0.12);
+  border-color: rgba(0, 255, 0, 0.6);
+  color: var(--colorVerde);
+  text-shadow: 0 0 6px rgba(0, 255, 0, 0.5);
+}
+
+/* Sin descuento */
+.chip-no-discount {
+  background: rgba(80, 80, 80, 0.2);
+  border-color: rgba(120, 120, 120, 0.5);
+  color: #e5e5e5;
+}
+
+/* Descuento top puntos */
+.chip-points {
+  background: rgba(0, 255, 255, 0.12);
+  border-color: rgba(0, 255, 255, 0.7);
+  color: var(--colorAzul);
+  text-shadow: 0 0 6px rgba(0, 255, 255, 0.6);
+}
+
+/* Descuento correo DUOC */
+.chip-email {
+  background: rgba(255, 255, 0, 0.12);
+  border-color: rgba(255, 255, 0, 0.8);
+  color: #fffacd;
+}
+
+/* =========================
+   NUEVO: Columna ID pedido
+   ========================= */
+.historial-orden-id {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.historial-orden-id > div {
+  font-weight: 600;
+}
+
+.historial-orden-id .order-date {
+  font-size: 0.75rem;
+  color: #b3b3b3;
+}
+
+/* =========================
+   NUEVO: Columna Productos
+   (lista tipo subtabla)
+   ========================= */
+.historial-productos {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.historial-producto-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid #262626;
+}
+
+.historial-producto-row:last-child {
+  border-bottom: none;
+}
+
+.historial-producto-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid rgba(0, 255, 255, 0.5);
+}
+
+.historial-producto-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.historial-producto-nombre {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--colorBlanco);
+}
+
+.historial-producto-detalle {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #b3b3b3;
+}
+
+/* (Opcional) resaltar total y puntos */
+.historial-table td:nth-child(3) strong {
+  font-size: 1rem;
+}
+
+.historial-table td:nth-child(5) {
+  font-weight: 600;
+  color: var(--colorVerde);
+}
+
+/* Detalle de productos de una orden (ESTO PUEDE QUEDAR POR SI LO USAS EN OTRO LADO) */
+.order-items-row {
+  background: var(--colorNegro);
+}
+
+.order-items-container {
+  padding: 10px 4px 4px 4px;
+}
+
+.order-items-container h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.9rem;
+  color: var(--colorBlanco);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Tabla interna de items */
+.order-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.order-items-table th,
+.order-items-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #262626;
+}
+
+.order-items-table th {
+  background: #111;
+  color: #cfcfcf;
+}
+
+/* Producto + imagen */
+.order-item-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.order-item-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid rgba(0, 255, 255, 0.5);
+}
+
+/* Resumen de puntos por orden */
+.order-points-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.8rem;
+  color: #b3b3b3;
+}
+
+/* Botón ver detalle */
+.btn-ver-detalle {
+  background: transparent;
+  border: 1px solid rgba(0, 255, 255, 0.5);
+  color: var(--colorBlanco);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.btn-ver-detalle:hover {
+  background: rgba(0, 255, 255, 0.12);
+  border-color: var(--colorAzul);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+}
+
+/* (Opcional) estados de órdenes si los usas aún */
 .estado {
   padding: 4px 8px;
   border-radius: 999px;
@@ -60,17 +317,17 @@
 }
 
 .estado-entregado {
-  background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
+  background: rgba(0, 255, 0, 0.15);
+  color: var(--colorVerde);
 }
 
 .estado-entránsito,
 .estado-entransito {
-  background: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+  background: rgba(0, 255, 255, 0.15);
+  color: var(--colorAzul);
 }
 
 .estado-pendiente {
-  background: rgba(234, 179, 8, 0.15);
-  color: #fbbf24;
+  background: rgba(255, 255, 0, 0.15);
+  color: #fffacd;
 }
