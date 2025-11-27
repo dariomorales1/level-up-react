@@ -3,9 +3,8 @@ import { useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://levelup.ddns.net:8080'; // Gateway (cámbialo a http://localhost:8080 en local si quieres)
+const API_BASE_URL = 'http://levelup.ddns.net:8080';
 
-// Axios instance para auth / users
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -16,9 +15,6 @@ const api = axios.create({
 export const useAuth = () => {
   const { user, dispatchUser } = useApp();
 
-  // ===========================================
-  // 🔹 AUTO-LOGIN SOLO SI isAuthenticated = true
-  // ===========================================
   useEffect(() => {
     const saved = localStorage.getItem('authUser');
     if (!saved || user) return;
@@ -39,9 +35,6 @@ export const useAuth = () => {
     }
   }, [user, dispatchUser]);
 
-  // ===========================================
-  // 🔹 FUNCIÓN PARA OBTENER TOKEN DE FIREBASE
-  // ===========================================
   window.obtenerTokenFirebase = async () => {
     const auth = getAuth();
     const currentUser = auth.currentUser;
@@ -56,9 +49,6 @@ export const useAuth = () => {
     return token;
   };
 
-  // ===========================================
-  // 🔹 apiCall con AXIOS (y refresh en 401)
-  // ===========================================
   const apiCall = async (url, options = {}) => {
     const accessToken = localStorage.getItem('accessToken');
 
@@ -87,7 +77,7 @@ export const useAuth = () => {
       return response;
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        console.log('🔄 Token expirado, intentando refresh...');
+        console.log('Token expirado, intentando refresh...');
         const newToken = await refreshToken();
         if (!newToken) {
           throw new Error('Sesión expirada');
@@ -95,14 +85,11 @@ export const useAuth = () => {
         const response = await doRequest(newToken);
         return response;
       }
-      console.error('❌ Error en apiCall:', error);
+      console.error('Error en api:', error);
       throw error;
     }
   };
 
-  // ===========================================
-  // 🔹 REFRESH TOKEN (también con axios)
-  // ===========================================
   const refreshToken = async () => {
     try {
       const refreshTokenValue = localStorage.getItem('refreshToken');
@@ -119,23 +106,20 @@ export const useAuth = () => {
       const data = response.data;
       if (data?.accessToken) {
         localStorage.setItem('accessToken', data.accessToken);
-        console.log('✅ Token refrescado exitosamente');
+        console.log('Token refrescado exitosamente');
         return data.accessToken;
       } else {
-        console.error('❌ Respuesta inválida al refrescar token');
+        console.error('Respuesta inválida al refrescar token');
         logout();
         return null;
       }
     } catch (error) {
-      console.error('❌ Error en refreshToken:', error);
+      console.error('Error en refreshToken:', error);
       logout();
       return null;
     }
   };
 
-  // ===========================================
-  // 🔹 LOGIN (solo maneja usuario y tokens)
-  // ===========================================
   const login = async (userData, rememberMe = false) => {
     console.log('LOGIN ejecutado - rememberMe:', rememberMe);
     console.log('UserData recibido:', userData);
@@ -172,17 +156,14 @@ export const useAuth = () => {
 
       dispatchUser({ type: 'LOGIN', payload: userWithTokens });
 
-      console.log('✅ Login completo exitoso - Usuario:', userWithTokens);
+      console.log('Login completo exitoso - Usuario:', userWithTokens);
       return true;
     } catch (error) {
-      console.error('❌ Error en login:', error);
+      console.error('Error en login:', error);
       throw error;
     }
   };
 
-  // ===========================================
-  // 🔹 FUNCIONES PARA GESTIÓN DE USUARIOS
-  // ===========================================
   const obtenerUsuarios = async () => {
     try {
       const response = await apiCall('/users');
@@ -226,9 +207,6 @@ export const useAuth = () => {
     }
   };
 
-  // ===========================================
-  // 🔹 LOGOUT
-  // ===========================================
   const logout = async () => {
     try {
       const refreshTokenValue = localStorage.getItem('refreshToken');
@@ -262,7 +240,7 @@ export const useAuth = () => {
 
     dispatchUser({ type: 'LOGOUT' });
 
-    console.log('✅ Logout completo exitoso');
+    console.log('Logout completo exitoso');
   };
 
   const isAuthenticated = !!user;

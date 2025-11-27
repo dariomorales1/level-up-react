@@ -44,7 +44,6 @@ const HistorialCompras = () => {
                 <p>Revisa el detalle de tus pedidos anteriores y tus puntos acumulados.</p>
               </div>
 
-              {/* Tarjeta de puntos */}
               <section className="perfil-card historial-card">
                 <h2>Mis puntos</h2>
                 <p>
@@ -56,7 +55,6 @@ const HistorialCompras = () => {
                 </p>
               </section>
 
-              {/* Tabla de órdenes */}
               <section className="perfil-card historial-card">
                 {loading ? (
                   <div className="historial-empty">
@@ -81,7 +79,6 @@ const HistorialCompras = () => {
                       </thead>
                       <tbody>
                         {userOrders.map((orden) => {
-                          // Construimos texto de descuentos
                           const descuentos = [];
 
                           if (orden.discountPercent && orden.discountPercent > 0) {
@@ -102,7 +99,6 @@ const HistorialCompras = () => {
 
                           return (
                             <tr key={orden.id}>
-                              {/* ID Pedido + fecha en pequeño */}
                               <td>
                                 <div className="historial-orden-id">
                                   <div>#{orden.id.slice(0, 8)}...</div>
@@ -112,7 +108,6 @@ const HistorialCompras = () => {
                                 </div>
                               </td>
 
-                              {/* Productos */}
                               <td>
                                 <div className="historial-productos">
                                   {orden.items?.map((item) => (
@@ -139,17 +134,14 @@ const HistorialCompras = () => {
                                 </div>
                               </td>
 
-                              {/* Total */}
                               <td>
                                 <strong>
                                   ${orden.finalAmount.toLocaleString('es-CL')}
                                 </strong>
                               </td>
 
-                              {/* Descuentos */}
                               <td>{textoDescuentos}</td>
 
-                              {/* Puntos generados */}
                               <td>
                                 {puntosGenerados.toLocaleString('es-CL')}
                               </td>

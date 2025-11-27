@@ -3,7 +3,6 @@ import Card from './card';
 import '../styles/components/gridCardsStyles.css';
 
 export default function CardsContainer({ productos }) {
-    // Si viene null, undefined o algo raro → forzar array
     const lista = Array.isArray(productos) ? productos : [];
 
     if (lista.length === 0) {
@@ -13,7 +12,6 @@ export default function CardsContainer({ productos }) {
     return (
         <div className="cardsContainer">
             {lista.map((p, index) => {
-                // Validar para evitar reventones
                 if (!p) {
                     console.warn("⚠ Producto inválido en el índice:", index);
                     return null;

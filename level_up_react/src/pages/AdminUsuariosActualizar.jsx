@@ -14,13 +14,12 @@ const AdminUsuariosActualizar = () => {
 
   const [form, setForm] = useState({
     nombre: '',
-    email: '',             // ← se edita pero lo dejamos disabled
-    fechaNacimiento: '',   // ← NUEVO CAMPO en el form
+    email: '',         
+    fechaNacimiento: '',  
     rol: 'USER',
     activo: true,
   });
 
-  // Buscar usuario por email en la lista de usuarios
   const handleSearch = async (e) => {
     e.preventDefault();
     
@@ -33,10 +32,8 @@ const AdminUsuariosActualizar = () => {
       setBuscando(true);
       setUsuarioEncontrado(null);
       
-      // Obtener todos los usuarios
       const usuarios = await obtenerUsuarios();
       
-      // Buscar por email
       const usuario = usuarios.find(
         u => u.email.toLowerCase() === email.toLowerCase()
       );
@@ -46,11 +43,9 @@ const AdminUsuariosActualizar = () => {
         return;
       }
 
-      // Normalizar fechaNacimiento a formato YYYY-MM-DD si viene con tiempo
       let fechaNacimiento = '';
       if (usuario.fechaNacimiento) {
         try {
-          // Si ya viene como 'YYYY-MM-DD', esto igual funciona
           const date = new Date(usuario.fechaNacimiento);
           if (!isNaN(date.getTime())) {
             const year = date.getFullYear();
@@ -58,7 +53,6 @@ const AdminUsuariosActualizar = () => {
             const day = String(date.getDate()).padStart(2, '0');
             fechaNacimiento = `${year}-${month}-${day}`;
           } else {
-            // Si no se pudo parsear, intenta usar solo los primeros 10 caracteres
             fechaNacimiento = String(usuario.fechaNacimiento).slice(0, 10);
           }
         } catch {
@@ -107,10 +101,9 @@ const AdminUsuariosActualizar = () => {
     try {
       setLoading(true);
       
-      // Preparar datos para actualizar según UsuarioRequest
       const datosActualizacion = {
         nombre: form.nombre,
-        email: form.email, // lo mostramos pero no lo dejamos editar (disabled)
+        email: form.email, 
         fechaNacimiento: form.fechaNacimiento || '2000-01-01',
         avatarUrl: usuarioEncontrado.avatarUrl || '',
         rol: form.rol,
@@ -147,7 +140,6 @@ const AdminUsuariosActualizar = () => {
     });
   };
 
-  // FECHA MÁXIMA: Hace exactamente 18 años desde HOY
   const getMaxDate = () => {
     const today = new Date();
     const maxDate = new Date(
@@ -158,7 +150,6 @@ const AdminUsuariosActualizar = () => {
     return maxDate.toISOString().split('T')[0];
   };
 
-  // FECHA MÍNIMA: Hace 100 años desde HOY
   const getMinDate = () => {
     const today = new Date();
     const minDate = new Date(
@@ -217,7 +208,6 @@ const AdminUsuariosActualizar = () => {
                 <>
                   <hr className="divider" />
 
-                  {/* Resumen del usuario encontrado */}
                   <div
                     className="usuario-info"
                     style={{
@@ -255,7 +245,6 @@ const AdminUsuariosActualizar = () => {
                     </p>
                   </div>
 
-                  {/* Formulario de edición */}
                   <form onSubmit={handleUpdate}>
                     <div className="input-group">
                       <label>Nombre</label>

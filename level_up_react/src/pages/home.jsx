@@ -24,7 +24,6 @@ export default function Home() {
     };
   }, []);
 
-  // Carga de productos y selección de primeros por categoría
   useEffect(() => {
     const fetchDestacados = async () => {
       try {
@@ -40,11 +39,9 @@ export default function Home() {
           return;
         }
 
-        // Agrupar y tomar el primer producto por categoría
         const primerosPorCategoria = {};
 
         productos.forEach((p) => {
-          // Nombre de la categoría según tu backend: "categoria"
           const categoria =
             p.categoria || p.category || p.Categoría || p.CATEGORY;
 

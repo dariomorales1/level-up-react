@@ -35,7 +35,6 @@ import CheckoutPage from './pages/CheckoutPage';
 function App() {
     return (
         <>
-        {/* No Router, no AppProvider aquí */}
         <ScrollToTop />
         <Header />
 

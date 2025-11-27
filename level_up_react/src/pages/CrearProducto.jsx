@@ -17,11 +17,11 @@ const CrearProducto = ({ onSave, onCancel }) => {
     Categoría: '',
     Stock: '',
     Especificaciones: [''],
-    imgLink: '', // se usará si no se sube archivo
+    imgLink: '', 
   });
 
-  const [imageFile, setImageFile] = useState(null);      // archivo seleccionado
-  const [imagePreview, setImagePreview] = useState('');  // preview local
+  const [imageFile, setImageFile] = useState(null); 
+  const [imagePreview, setImagePreview] = useState(''); 
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
@@ -65,7 +65,6 @@ const CrearProducto = ({ onSave, onCancel }) => {
     setFormData((prev) => ({ ...prev, Especificaciones: newSpecs }));
   };
 
-  // ======= NUEVO: manejo de archivo de imagen =======
   const handleImageFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -74,11 +73,10 @@ const CrearProducto = ({ onSave, onCancel }) => {
 
     const reader = new FileReader();
     reader.onload = () => {
-      setImagePreview(String(reader.result)); // preview local
+      setImagePreview(String(reader.result));
     };
     reader.readAsDataURL(file);
   };
-  // ==================================================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -100,7 +98,6 @@ const CrearProducto = ({ onSave, onCancel }) => {
       categoria: formData.Categoría,
       precio: precioNumerico,
       stock: parseInt(formData.Stock || '0', 10),
-      // imagenUrl se completará con la URL devuelta por el backend
       imagenUrl: formData.imgLink,
       especificaciones: formData.Especificaciones
         .filter((s) => s.trim() !== '')
@@ -110,13 +107,12 @@ const CrearProducto = ({ onSave, onCancel }) => {
     try {
       setLoading(true);
 
-      // 1) Si hay archivo de imagen, la subimos primero al backend (Supabase)
       if (imageFile) {
         const uploadResponse = await productService.uploadProductImage(
-          formData.Código,      // productCode
-          imageFile,            // file
-          formData.Categoría,   // categoria
-          formData.Nombre       // nombreProducto
+          formData.Código,     
+          imageFile,           
+          formData.Categoría,  
+          formData.Nombre      
         );
 
         const publicUrl =
@@ -135,13 +131,12 @@ const CrearProducto = ({ onSave, onCancel }) => {
         newProduct.imagenUrl = publicUrl;
       }
 
-      // 2) Crear el producto en el backend
       await productService.addProduct(newProduct);
       alert('Producto guardado correctamente');
       navigate('/PanelAdministrador');
     } catch (err) {
       console.log('Producto enviado al backend:', newProduct);
-      console.error('❌ Error al crear producto:', err);
+      console.error('Error al crear producto:', err);
       alert('Error al crear el producto');
     } finally {
       setLoading(false);
@@ -261,7 +256,6 @@ const CrearProducto = ({ onSave, onCancel }) => {
                 />
               </div>
 
-              {/* Imagen del producto: archivo + preview + URL opcional */}
               <div className="form-group">
                 <label>Imagen del producto</label>
                 <div className="product-image-upload">
@@ -281,7 +275,6 @@ const CrearProducto = ({ onSave, onCancel }) => {
                   )}
                 </div>
 
-                {/* Campo opcional por si quieres seguir permitiendo URL manual */}
                 <input
                   type="text"
                   name="imgLink"

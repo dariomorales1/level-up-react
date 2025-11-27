@@ -36,7 +36,6 @@ export default function NavbarProductos ({ onCategoryChange }) {
                         </ul>
                     </li>
 
-                    {/* Ropa y Personalizados */}
                     <li className="nav-item dropdown productosBtn">
                         <button className="nav-link dropdown-toggle productosBtnA" type="button" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Ropa y Personalizados
@@ -47,7 +46,6 @@ export default function NavbarProductos ({ onCategoryChange }) {
                         </ul>
                     </li>
 
-                    {/* Juegos y Accesorios */}
                     <li className="nav-item dropdown productosBtn">
                         <button className="nav-link dropdown-toggle productosBtnA" type="button" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Juegos y Accesorios
@@ -57,8 +55,6 @@ export default function NavbarProductos ({ onCategoryChange }) {
                         <li><button className="dropdown-item" type="button" onClick={(e) => handleCategoryClick(e, "Juegos de Mesa")}>Juegos de Mesa</button></li>
                         </ul>
                     </li>
-
-                    {/* Botón para mostrar todos los productos */}
                     
                 </ul>
             </div>

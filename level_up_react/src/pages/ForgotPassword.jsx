@@ -32,7 +32,6 @@ const ForgotPassword = () => {
     try {
       console.time("PASSWORD_RESET_EMAIL");
       
-      // Enviar email de recuperación de contraseña
       await sendPasswordResetEmail(auth, email);
       
       console.timeEnd("PASSWORD_RESET_EMAIL");

@@ -3,7 +3,6 @@ import { useAuth } from './useAuth';
 import cartService from '../services/cartService';
 import showToast from '../components/toast';
 
-// 👇 Función normal, sin hooks, para manejar sessionId guest
 function getOrCreateSessionId() {
   let sessionId = localStorage.getItem('cart_session_id');
   if (!sessionId) {
@@ -33,8 +32,6 @@ export const useCart = () => {
     return localStorage.getItem('cart_session_id') || null;
   });
 
-  // ===================== TOKEN =====================
-
   const getToken = useCallback(async () => {
     const currentUser = user;
     if (currentUser && typeof currentUser.getIdToken === 'function') {
@@ -42,8 +39,6 @@ export const useCart = () => {
     }
     return localStorage.getItem('accessToken');
   }, [user]);
-
-  // ===================== TRANSFORMACIÓN =====================
 
   const transformCartData = useCallback((cartData) => {
     if (!cartData || !cartData.items) {
@@ -67,17 +62,14 @@ export const useCart = () => {
     };
   }, []);
 
-  // ===================== CARGAR CARRITO =====================
-
   const loadCart = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
-      console.log('🛒 loadCart - Estado:', { isAuthenticated, userId, sessionId });
+      console.log('loadCart - Estado:', { isAuthenticated, userId, sessionId });
 
       if (isAuthenticated && userId) {
-        // Usuario autenticado
         try {
           const token = await getToken();
           const cartData = await cartService.getCart(userId, token);
@@ -94,7 +86,6 @@ export const useCart = () => {
           }
         }
       } else {
-        // Guest
         try {
           const sid = getOrCreateSessionId();
           if (!sessionId) {
@@ -115,15 +106,13 @@ export const useCart = () => {
         }
       }
     } catch (err) {
-      console.error('❌ loadCart - Error:', err);
+      console.error('loadCart - Error:', err);
       setError(err.message);
       showToast('Error al cargar el carrito', 'error');
     } finally {
       setLoading(false);
     }
   }, [userId, isAuthenticated, sessionId, getToken, transformCartData]);
-
-  // ===================== AGREGAR =====================
 
   const addToCart = async (product, quantity = 1) => {
     try {
@@ -143,7 +132,7 @@ export const useCart = () => {
       showToast('Producto agregado al carrito', 'success');
       return true;
     } catch (err) {
-      console.error('❌ addToCart - Error:', err);
+      console.error('addToCart - Error:', err);
       setError(err.message);
 
       let errorMessage = 'Error al agregar al carrito';
@@ -167,8 +156,6 @@ export const useCart = () => {
     }
   };
 
-  // ===================== ACTUALIZAR CANTIDAD =====================
-
   const updateQuantity = async (productId, newQuantity) => {
     try {
       setLoading(true);
@@ -187,7 +174,7 @@ export const useCart = () => {
       showToast('Cantidad actualizada', 'success');
       return true;
     } catch (err) {
-      console.error('❌ updateQuantity - Error:', err);
+      console.error('updateQuantity - Error:', err);
       setError(err.message);
       showToast('Error al actualizar cantidad', 'error');
       return false;
@@ -196,7 +183,6 @@ export const useCart = () => {
     }
   };
 
-  // ===================== ELIMINAR ITEM =====================
 
   const removeFromCart = async (productId) => {
     try {
@@ -216,7 +202,7 @@ export const useCart = () => {
       showToast('Producto eliminado del carrito', 'success');
       return true;
     } catch (err) {
-      console.error('❌ removeFromCart - Error:', err);
+      console.error('removeFromCart - Error:', err);
       setError(err.message);
       showToast('Error al eliminar del carrito', 'error');
       return false;
@@ -225,14 +211,13 @@ export const useCart = () => {
     }
   };
 
-  // ===================== VACIAR CARRITO (CLAVE) =====================
 
   const clearCart = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      console.log('🛒 clearCart - Iniciando');
+      console.log('clearCart - Iniciando');
 
       if (isAuthenticated && userId) {
         const token = await getToken();
@@ -243,13 +228,12 @@ export const useCart = () => {
         await cartService.clearGuestCart(sid);
       }
 
-      // 👉 refrescamos estado local al tiro
       setCart({ items: [], totalAmount: 0, updatedAt: null });
 
       showToast('Carrito vaciado', 'success');
       return true;
     } catch (err) {
-      console.error('❌ clearCart - Error:', err);
+      console.error('clearCart - Error:', err);
       setError(err.message);
       showToast('Error al vaciar carrito', 'error');
       return false;
@@ -258,8 +242,6 @@ export const useCart = () => {
     }
   };
 
-  // ===================== MIGRAR GUEST → USER =====================
-
   useEffect(() => {
     const migrateGuestCart = async () => {
       if (isAuthenticated && userId) {
@@ -267,7 +249,7 @@ export const useCart = () => {
 
         if (sid) {
           try {
-            console.log('🔄 migrateGuestCart - Iniciando migración:', {
+            console.log('migrateGuestCart - Iniciando migración:', {
               sessionId: sid,
               userId
             });
@@ -281,10 +263,10 @@ export const useCart = () => {
 
             await loadCart();
 
-            console.log('✅ migrateGuestCart - Migración completada');
+            console.log('migrateGuestCart - Migración completada');
             showToast('Carrito transferido correctamente', 'success');
           } catch (err) {
-            console.error('❌ migrateGuestCart - Error:', err);
+            console.error('migrateGuestCart - Error:', err);
           } finally {
             setLoading(false);
           }
@@ -295,10 +277,9 @@ export const useCart = () => {
     migrateGuestCart();
   }, [isAuthenticated, userId, getToken, loadCart]);
 
-  // ===================== EFECTO PRINCIPAL DE CARGA =====================
 
   useEffect(() => {
-    console.log('🛒 useEffect - loadCart por cambio de auth/session', {
+    console.log('useEffect - loadCart por cambio de auth/session', {
       isAuthenticated,
       userId,
       sessionId
@@ -306,7 +287,6 @@ export const useCart = () => {
     loadCart();
   }, [isAuthenticated, userId, sessionId, loadCart]);
 
-  // ===================== HELPERS =====================
 
   const getTotalItems = useCallback(() => {
     return cart.items.reduce((total, item) => total + item.quantity, 0);
@@ -334,7 +314,6 @@ export const useCart = () => {
     );
   }, [cart.items]);
 
-  // ===================== LIMPIAR ERROR =====================
 
   useEffect(() => {
     if (error) {
@@ -346,7 +325,6 @@ export const useCart = () => {
     }
   }, [error]);
 
-  // ===================== RETURN =====================
 
   return {
     cart,

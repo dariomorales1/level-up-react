@@ -12,7 +12,6 @@ const AdminUsuariosEliminar = () => {
   const [buscando, setBuscando] = useState(false);
   const { apiCall, obtenerUsuarios } = useAuth();
 
-  // Buscar usuario por email
   const handleBuscar = async (e) => {
     e.preventDefault();
     
@@ -25,10 +24,8 @@ const AdminUsuariosEliminar = () => {
       setBuscando(true);
       setUsuarioEncontrado(null);
       
-      // Obtener todos los usuarios
       const usuarios = await obtenerUsuarios();
       
-      // Buscar por email
       const usuario = usuarios.find(u => u.email.toLowerCase() === email.toLowerCase());
       
       if (!usuario) {
@@ -47,7 +44,6 @@ const AdminUsuariosEliminar = () => {
     }
   };
 
-  // Eliminar usuario
   const handleEliminar = async (e) => {
     e.preventDefault();
     
@@ -56,7 +52,6 @@ const AdminUsuariosEliminar = () => {
       return;
     }
 
-    // Confirmación de eliminación
     if (!window.confirm(`¿Estás seguro de eliminar al usuario ${usuarioEncontrado.nombre}?\n\n⚠️ ESTA ACCIÓN NO SE PUEDE DESHACER\n\nSe eliminará:\n• Usuario de la base de datos\n• Cuenta de Firebase Auth\n• Todos los datos asociados`)) {
       return;
     }
@@ -64,7 +59,6 @@ const AdminUsuariosEliminar = () => {
     try {
       setLoading(true);
 
-      // 1. Primero eliminar de Firebase Auth
       try {
         await apiCall('http://levelup.ddns.net:8080/auth/admin/delete-user', {
           method: 'DELETE',
@@ -72,25 +66,22 @@ const AdminUsuariosEliminar = () => {
             userId: usuarioEncontrado.id
           })
         });
-        console.log('✅ Usuario eliminado de Firebase');
+        console.log('Usuario eliminado de Firebase');
       } catch (firebaseError) {
         console.warn('No se pudo eliminar de Firebase:', firebaseError);
-        // Preguntar si continuar aunque falle Firebase
         if (!window.confirm('No se pudo eliminar de Firebase. ¿Deseas eliminar solo de la base de datos?')) {
           return;
         }
       }
 
-      // 2. Luego eliminar de la base de datos
       await apiCall(`http://levelup.ddns.net:8080/users/${usuarioEncontrado.id}`, {
         method: 'DELETE'
       });
 
-      console.log('✅ Usuario eliminado de la base de datos');
+      console.log('Usuario eliminado de la base de datos');
 
       showToast('Usuario eliminado correctamente del sistema.', 'success');
       
-      // Limpiar estado
       setUsuarioEncontrado(null);
       setEmail('');
       

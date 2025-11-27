@@ -43,7 +43,7 @@ const CartDrawer = ({ isOpen, onClose }) => {
       return;
     }
 
-    // 👇 NO limpiamos carrito, solo navegamos
+
     navigate('/checkout');
     onClose();
   };

@@ -15,23 +15,19 @@ const Producto = () => {
 
   const navigate = useNavigate();
 
-  // 👇 Solo usamos user desde AppContext (ya NO dispatchCart)
   const { user } = useApp();
 
-  // 👇 Carrito global desde CartContext
   const { addToCart } = useCart();
 
   const [producto, setProducto] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Estado para reseñas
   const [nuevoComentario, setNuevoComentario] = useState('');
   const [puntuacion, setPuntuacion] = useState(10);
   const [editingResenaId, setEditingResenaId] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // ===== Helpers para contar letras =====
   const contarLetras = (texto) => {
     if (!texto) return 0;
     return texto.trim().length;
@@ -40,7 +36,6 @@ const Producto = () => {
   const letrasRestantes =
     MAX_LETRAS - contarLetras(nuevoComentario || '');
 
-  // Cargar producto desde MS
   useEffect(() => {
     const fetchProducto = async () => {
       try {
@@ -51,7 +46,6 @@ const Producto = () => {
         console.log('🧩 Producto recibido desde MS:', prod);
         setProducto(prod);
 
-        // Reset formulario reseña
         setNuevoComentario('');
         setPuntuacion(10);
         setEditingResenaId(null);
@@ -68,7 +62,6 @@ const Producto = () => {
     }
   }, [codigo]);
 
-  // Promedio de puntuación desde las reseñas
   const promedioPuntuacion = useMemo(() => {
     if (!producto?.resenas || producto.resenas.length === 0) return null;
     const suma = producto.resenas.reduce(
@@ -85,7 +78,6 @@ const Producto = () => {
     if (totalLetras <= MAX_LETRAS) {
       setNuevoComentario(value);
     } else {
-      // Recortar a las primeras 1000 letras
       const recortado = value.substring(0, MAX_LETRAS);
       setNuevoComentario(recortado);
     }
@@ -95,12 +87,9 @@ const Producto = () => {
     setPuntuacion(Number(e.target.value));
   };
 
-  // 👇 AHORA usa addToCart del contexto de carrito
   const AddToCart = async (e) => {
     e.stopPropagation();
     if (!producto) return;
-
-    // Verificar stock disponible
     if (producto.stock <= 0) {
       showToast('Producto sin stock disponible', 'error');
       return;
@@ -158,7 +147,6 @@ const Producto = () => {
       setSubmitting(true);
 
       if (editingResenaId) {
-        // Editar reseña existente
         await productService.updateResena(producto.codigo, editingResenaId, {
           comentario: nuevoComentario.trim(),
           puntuacion,
@@ -166,7 +154,6 @@ const Producto = () => {
         });
         showToast('Reseña actualizada correctamente');
       } else {
-        // Crear reseña nueva
         await productService.addResena(producto.codigo, {
           comentario: nuevoComentario.trim(),
           puntuacion,
@@ -175,7 +162,6 @@ const Producto = () => {
         showToast('Reseña creada correctamente');
       }
 
-      // Limpiar formulario y recargar reseñas
       setNuevoComentario('');
       setPuntuacion(10);
       setEditingResenaId(null);
@@ -228,7 +214,6 @@ const Producto = () => {
     }
   };
 
-  // Función para determinar el estilo del stock
   const getStockStyle = () => {
     if (producto.stock <= 0) {
       return 'stock-agotado';
@@ -239,7 +224,6 @@ const Producto = () => {
     }
   };
 
-  // Función para obtener el texto del stock
   const getStockText = () => {
     if (producto.stock <= 0) {
       return 'Sin stock';
@@ -277,7 +261,6 @@ const Producto = () => {
           <div className="col-1"></div>
           <div className="col-10">
             <section className="productDetalle">
-              {/* Header: Título + botón volver a la derecha */}
               <div className="product-header">
                 <h2 className="productName">{producto.nombre}</h2>
                 <button
@@ -290,7 +273,6 @@ const Producto = () => {
                 </button>
               </div>
 
-              {/* Card principal: imagen + descripción + rating + compra */}
               <div className="cardDetalle">
                 <div className="product-image-wrapper">
                   <img
@@ -349,7 +331,6 @@ const Producto = () => {
               <hr />
 
               <div className="detalles">
-                {/* Columna izquierda: Especificaciones */}
                 <div className="detalles-col">
                   <div className="panel especificaciones-panel">
                     <div className="panel-header">
@@ -377,14 +358,12 @@ const Producto = () => {
                   </div>
                 </div>
 
-                {/* Columna derecha: Reseñas */}
                 <div className="detalles-col">
                   <div className="panel resenas-panel">
                     <div className="panel-header">
                       <h3>Reseñas</h3>
                     </div>
 
-                    {/* Lista de reseñas */}
                     <div className="resenas-list">
                       {producto.resenas && producto.resenas.length > 0 ? (
                         producto.resenas.map((r) => (
@@ -429,7 +408,6 @@ const Producto = () => {
                       )}
                     </div>
 
-                    {/* Formulario de nueva reseña / edición */}
                     <div className="resena-form-wrapper">
                       {user ? (
                         <>

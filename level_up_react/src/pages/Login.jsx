@@ -57,7 +57,6 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // 1️⃣ Autenticar con Firebase Auth
       console.time("FIREBASE_AUTH");
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -68,12 +67,10 @@ const Login = () => {
 
       const firebaseUser = userCredential.user;
 
-      // 2️⃣ Obtener token de Firebase
       console.time("FIREBASE_ID_TOKEN");
       const firebaseIdToken = await firebaseUser.getIdToken();
       console.timeEnd("FIREBASE_ID_TOKEN");
 
-      // 3️⃣ 🔥 ENVIAR TOKEN A BACKEND PARA GENERAR JWT
       console.time("BACKEND_AUTH");
       const backendResponse = await fetch('http://levelup.ddns.net:8080/auth/login', {
         method: 'POST',
@@ -94,9 +91,8 @@ const Login = () => {
       const backendAuth = await backendResponse.json();
       console.timeEnd("BACKEND_AUTH");
 
-      console.log("✅ Backend response COMPLETA:", backendAuth);
+      console.log("Backend response COMPLETA:", backendAuth);
 
-      // 4️⃣ Obtener datos adicionales del usuario (opcional)
       let name = firebaseUser.displayName || "Usuario";
 
       try {
@@ -114,7 +110,6 @@ const Login = () => {
         console.warn("No se pudo obtener documento de usuario en Firestore:", error);
       }
 
-      // 5️⃣ Construir objeto para contexto (USANDO DATOS DEL BACKEND)
       const userForAuth = {
         id: firebaseUser.uid,
         name,
@@ -127,16 +122,14 @@ const Login = () => {
       console.log("LOGIN - userForAuth final:", userForAuth);
       console.log("ROL del backend:", backendAuth.rol);
 
-      // 6️⃣ Guardar en contexto de auth
       await login(userForAuth, rememberMe);
       showToast(`¡Bienvenido de nuevo, ${userForAuth.name}!`);
 
-      // 7️⃣ Redirigir según rol DEL BACKEND (usar directamente backendAuth.rol)
       if (backendAuth.rol === "ADMIN") {
-        console.log("🔄 Redirigiendo a panel de administrador");
+        console.log("Redirigiendo a panel de administrador");
         navigate("/dashboard", { replace: true });
       } else {
-        console.log("🔄 Redirigiendo a dashboard de usuario");
+        console.log("Redirigiendo a dashboard de usuario");
         navigate("/dashboard", { replace: true });
       }
 

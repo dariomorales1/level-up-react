@@ -4,26 +4,9 @@ import '../styles/pages/panelAdministrador.css';
 import '../styles/pages/cuentaStyles.css';
 import '../styles/pages/direccionesStyles.css';
 
-/**
- * Direcciones.jsx
- *
- * Requisitos backend:
- * - Base URL: http://levelup.ddns.net:8080/users
- * - Endpoints:
- *    GET    /users/me/direcciones
- *    POST   /users/me/direcciones
- *    PUT    /users/me/direcciones/{id}
- *    DELETE /users/me/direcciones/{id}
- *
- * Seguridad:
- * - El backend requiere Authorization: Bearer <JWT>
- * - Este frontend verifica localmente el JWT usando la claim "exp"
- *   para detectar tokens expirados antes de llamar al servidor.
- *
- * Ajusta TOKEN_KEY si tu app guarda el JWT con otra clave en localStorage.
- */
 
-const TOKEN_KEY = 'accessToken'; // <-- cambia si usas otra key
+
+const TOKEN_KEY = 'accessToken'; 
 
 const Direcciones = () => {
   const [direcciones, setDirecciones] = useState([]);
@@ -41,19 +24,15 @@ const Direcciones = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
 
-  // ---------- Helpers de JWT ----------
   const getToken = () => localStorage.getItem(TOKEN_KEY);
 
-  // Decodifica payload del JWT (no verifica firma) - retorna objeto o null
   const parseJwtPayload = (token) => {
     try {
       const parts = token.split('.');
       if (parts.length < 2) return null;
-      // payload está en parts[1], base64url
       const payloadB64 = parts[1]
         .replace(/-/g, '+')
         .replace(/_/g, '/');
-      // add padding
       const pad = payloadB64.length % 4;
       const padded = payloadB64 + (pad ? '='.repeat(4 - pad) : '');
       const json = atob(padded);
@@ -68,7 +47,6 @@ const Direcciones = () => {
     if (!token) return true;
     const payload = parseJwtPayload(token);
     if (!payload) return true;
-    // "exp" typicalmente es segundos desde epoch
     const exp = payload.exp;
     if (!exp) return true;
     const nowSec = Math.floor(Date.now() / 1000);
@@ -85,17 +63,13 @@ const Direcciones = () => {
       setMessage('La sesión expiró. Por favor inicia sesión de nuevo.');
       return false;
     }
-    // token válido localmente
     return true;
   };
 
-  // ---------- Cargas iniciales ----------
   useEffect(() => {
-    // al montar, si token válido, trae direcciones
     if (ensureValidTokenOrSetMessage()) {
       fetchDirecciones();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchDirecciones = async () => {
@@ -144,7 +118,6 @@ const Direcciones = () => {
     }
   };
 
-  // ---------- Form handling ----------
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
@@ -177,7 +150,6 @@ const Direcciones = () => {
     }
   };
 
-  // ---------- CRUD calls ----------
   const crearDireccion = async (payload) => {
     setLoading(true);
     setMessage(null);
@@ -301,7 +273,6 @@ const Direcciones = () => {
     }
   };
 
-  // ---------- UI helper: seleccionar para editar ----------
   const seleccionarParaEditar = (direccion) => {
     setEditingId(direccion.id);
     setForm({
@@ -349,7 +320,6 @@ const Direcciones = () => {
               </div>
 
               <div className="direcciones-grid">
-                {/* Formulario nueva dirección / editar */}
                 <section className="perfil-card">
                   <h2>{editingId ? 'Editar dirección' : 'Nueva dirección'}</h2>
 
@@ -451,7 +421,6 @@ const Direcciones = () => {
                   </form>
                 </section>
 
-                {/* Lista de direcciones guardadas */}
                 <section className="perfil-card direcciones-list-card">
                   <h2>Direcciones guardadas</h2>
 
