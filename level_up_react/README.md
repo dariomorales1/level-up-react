@@ -1,70 +1,271 @@
-# Getting Started with Create React App.
+https://github.com/dariomorales1/level-up-react.git
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+🌐 LevelUP Gamer – Frontend Web (React)
 
-## Available Scripts
+Frontend oficial de LevelUP Gamer, una plataforma de e-commerce enfocada en productos gamer, desarrollada en React + Context API, con integración a un backend propio, autenticación con Firebase y manejo avanzado de carrito y pedidos.
 
-In the project directory, you can run:
+Proyecto académico para demostrar arquitectura frontend moderna, consumo de APIs, administración de usuarios/productos, componentes reutilizables y una experiencia UI/UX profesional.
 
-### `npm start`
+👥 Integrantes del Proyecto
+Rol	Nombre
+Frontend Developer	Felipe Ulloa
+Frontend Developer	Darío Morales
+🏗️ Tecnologías Principales
+🎨 Frontend & UI
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+CSS Modules + CSS personalizado
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Bootstrap 5.3
+FontAwesome Icons
+React Router DOM
 
-### `npm test`
+🔥 Autenticación & Backend
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Firebase Authentication
+Persistencia en localStorage
+Axios para consumo de API
+Tokens JWT (access + refresh)
 
-### `npm run build`
+🛠 Arquitectura & Estado
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Context API (Auth, App, Cart)
+Custom Hooks (useAuth, useCart, useOrders)
+Estructura modular basada en componentes reutilizables
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+📦 Descripción del Proyecto
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+La plataforma incluye:
 
-### `npm run eject`
+✔ Catálogo gamer completo
+✔ Filtros por categoría
+✔ Detalle de producto
+✔ Carrito persistente por usuario o invitado
+✔ Sistema de registro/login con Firebase
+✔ Panel de administración con creación, edición y eliminación de productos
+✔ Módulo completo de administración de usuarios
+✔ Puntos, descuentos, órdenes y checkout
+✔ Blog de noticias gamer
+✔ Contacto y páginas informativas
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Todo el frontend se basa en React, manteniendo un flujo de navegación simple, moderno y responsivo.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+✨ Funcionalidades Principales
+🧑‍💻 Autenticación
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own. holi
+Login con Firebase ID Token
+Persistencia de sesión
+Refresh automático del token
+Logout completo
+Roles: CLIENTE / ADMIN
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+🛍 Catálogo y productos
 
-## Learn More
+Listado completo desde microservicio
+Filtros por categoría
+Buscador (a nivel API)
+Vista de detalle con imágenes, precios, especificaciones y stock
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+🛒 Carrito de compras
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Añadir, editar, eliminar productos
+Carrito individual por usuario
+Carrito invitado (guest session)
+Migración automática de carrito invitado al iniciar sesión
+Cálculo de total, subtotal y envío
 
-### Code Splitting
+💳 Checkout
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Resumen de compra
+Sistema de puntos y top 5
+Descuento institucional DUOC
+Creación de orden vía API
 
-### Analyzing the Bundle Size
+🧭 Panel de administración
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Administración de productos:
 
-### Making a Progressive Web App
+Crear productos
+Editar productos
+Eliminar productos
+Subida de imágenes
+Vista en cards
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Advanced Configuration
+Administración de usuarios:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Listar todos los usuarios
+Actualizar datos
+Eliminar usuario (base + Firebase)
+Vista en tarjetas responsivas
 
-### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+📄 Blog & Páginas extra
 
-### `npm run build` fails to minify
+Noticias gamer 2025
+Contacto
+Garantías
+Términos
+Dashboard y perfil usuario
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+📂 Estructura del Proyecto
+
+Resumido a partir del repo completo:
+
+src/
+  components/
+  context/
+  hooks/
+  pages/
+  services/
+  styles/
+public/
+scripts/
+
+
+🧩 Componentes clave
+
+Header + SideBar + NavButton
+Card, CardsContainer, Carousel
+CartDrawer (carrito lateral)
+Toast (notificación temporal)
+
+🧠 Contextos
+
+AppContext → info de usuario + sesión
+CartContext → carrito (auth & guest)
+useAuth → login, logout, refresh
+useOrders → puntos, órdenes y top 5
+
+
+🔌 Servicios
+
+productService.jsx
+cartService.jsx
+
+Conexión vía Axios a:
+
+http://levelup.ddns.net:8080
+
+🔗 Endpoints Consumidos
+🧑‍💻 Autenticación
+Método	Endpoint	Descripción
+| POST	/auth/login	Iniciar sesión con Firebase Token
+| POST	/auth/refresh	Renovar Access Token
+| POST	/auth/logout	Cerrar sesión
+| DELETE	/auth/admin/delete-user	Eliminar usuario Firebase
+
+👤 Usuarios
+
+| GET	/users
+| GET	/users/{id}
+| PUT	/users/{id}
+| DELETE	/users/{id}
+| GET	/users/me
+
+🛒 Carrito
+
+| GET | /carts/user/{userId} 
+| POST | /carts/user/{userId}/items 
+| PUT | /carts/user/{userId}/items/{productId} 
+| DELETE | /carts/user/{userId}/items/{productId} 
+| DELETE | /carts/user/{userId}/clear 
+| GET | /carts/guest/{sessionId} 
+
+🛍 Productos
+
+| GET | /products 
+| GET | /products/{codigo} 
+| POST | /products 
+| PUT | /products/{codigo} 
+| DELETE | /products/{codigo} 
+
+📦 Órdenes
+
+| GET | /orders/user/{id} 
+| GET | /orders/user/{id}/points 
+| POST | /orders/user/{id} 
+
+
+▶️ Instalación y Ejecución
+
+1️⃣ Clonar el repositorio
+git clone <repo-url>
+cd level_up_react
+
+2️⃣ Instalar dependencias
+npm install
+
+3️⃣ Variables necesarias (Firebase)
+
+Crea archivo:
+
+src/firebase/config.js
+
+4️⃣ Ejecutar en modo desarrollo
+npm start
+
+5️⃣ Compilar para producción
+npm run build
+
+
+
+🧪 Testing
+
+Includes basic tests in:
+/spec/src/components/*.spec.js
+
+Frameworks:
+Jasmine
+Jest (CRA setup)
+
+
+
+
+🏛️ Arquitectura Completa
+
+🧠 State Management
+Todo el estado global usa Context API
+
+Flujo:
+Hooks → Context → Components → Pages
+
+
+🔁 Ciclos importantes
+
+Autologin al cargar app
+Carga y migración del carrito
+Refresh del token automático
+Sincronización de puntos/top 5
+
+
+🔐 Seguridad
+
+Tokens guardados en localStorage
+Refresh + verificación de expiración
+Headers dinámicos en Axios
+
+
+🎨 UI & UX
+
+Responsive desktop/mobile
+Drawer lateral
+Cards con hover
+Componentes claros y consistentes
+Iconografía moderna
+
+
+📘 Objetivo educativo
+
+Este proyecto demuestra dominio en:
+
+React avanzado
+Integración con microservicios
+Manejo de autenticación real
+Administración de usuarios/productos
+Diseño y arquitectura escalable
+Manejo de estado y ciclos complejos
+
+📄 Licencia
+
+Proyecto académico – uso exclusivo para fines educativos.
