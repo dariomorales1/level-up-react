@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://levelup.ddns.net:8080';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://levelup.ddns.net:8080';
 
 const api = axios.create({
   baseURL: API_BASE_URL,

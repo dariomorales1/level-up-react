@@ -60,7 +60,7 @@ const AdminUsuariosEliminar = () => {
       setLoading(true);
 
       try {
-        await apiCall('http://levelup.ddns.net:8080/auth/admin/delete-user', {
+        await apiCall(`${process.env.REACT_APP_API_URL || 'http://levelup.ddns.net:8080'}/auth/admin/delete-user`, {
           method: 'DELETE',
           body: JSON.stringify({
             userId: usuarioEncontrado.id
@@ -74,7 +74,7 @@ const AdminUsuariosEliminar = () => {
         }
       }
 
-      await apiCall(`http://levelup.ddns.net:8080/users/${usuarioEncontrado.id}`, {
+      await apiCall(`${process.env.REACT_APP_API_URL || 'http://levelup.ddns.net:8080'}/users/${usuarioEncontrado.id}`, {
         method: 'DELETE'
       });
 

@@ -16,7 +16,7 @@ const AdminUsuariosListado = () => {
       setLoading(true);
       setError(null);
 
-      const response = await apiCall('http://levelup.ddns.net:8080/users');
+      const response = await apiCall(`${process.env.REACT_APP_API_URL || 'http://levelup.ddns.net:8080'}/users`);
 
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);

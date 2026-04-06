@@ -56,7 +56,7 @@ export default function Register() {
 
       const rol = userData.email.endsWith("@levelup.ddns.net") ? "ADMIN" : "USER";
 
-      const response = await fetch('http://levelup.ddns.net:8080/users/public/register', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://levelup.ddns.net:8080'}/users/public/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

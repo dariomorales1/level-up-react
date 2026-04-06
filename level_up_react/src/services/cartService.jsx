@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const CART_BASE_URL = 'http://levelup.ddns.net:8080';
+const CART_BASE_URL = process.env.REACT_APP_API_URL || 'http://levelup.ddns.net:8080';
 
 const axiosInstance = axios.create({
     baseURL: CART_BASE_URL,

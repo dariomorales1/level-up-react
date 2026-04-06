@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://levelup.ddns.net:8080/products';
+const API_BASE_URL = `${process.env.REACT_APP_API_URL || 'http://levelup.ddns.net:8080'}/products`;
 
 const axiosInstance = axios.create({
     baseURL: API_BASE_URL,

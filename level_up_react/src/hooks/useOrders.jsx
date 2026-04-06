@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useApp } from '../context/AppContext';
 
 
-const ORDER_API_BASE_URL = 'http://levelup.ddns.net:8080';
+const ORDER_API_BASE_URL = process.env.REACT_APP_API_URL || 'http://levelup.ddns.net:8080';
 
 const orderApi = axios.create({
   baseURL: ORDER_API_BASE_URL,

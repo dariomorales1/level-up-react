@@ -72,7 +72,7 @@ const Login = () => {
       console.timeEnd("FIREBASE_ID_TOKEN");
 
       console.time("BACKEND_AUTH");
-      const backendResponse = await fetch('http://levelup.ddns.net:8080/auth/login', {
+      const backendResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://levelup.ddns.net:8080'}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

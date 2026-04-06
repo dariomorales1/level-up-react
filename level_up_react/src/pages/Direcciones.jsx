@@ -6,7 +6,8 @@ import '../styles/pages/direccionesStyles.css';
 
 
 
-const TOKEN_KEY = 'accessToken'; 
+const TOKEN_KEY = 'accessToken';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://levelup.ddns.net:8080';
 
 const Direcciones = () => {
   const [direcciones, setDirecciones] = useState([]);
@@ -85,7 +86,7 @@ const Direcciones = () => {
     }
 
     try {
-      const res = await fetch(`http://levelup.ddns.net:8080/users/me/direcciones`, {
+      const res = await fetch(`${API_BASE_URL}/users/me/direcciones`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
@@ -156,7 +157,7 @@ const Direcciones = () => {
     const token = getToken();
 
     try {
-      const res = await fetch(`http://levelup.ddns.net:8080/users/me/direcciones`, {
+      const res = await fetch(`${API_BASE_URL}/users/me/direcciones`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -197,7 +198,7 @@ const Direcciones = () => {
     const token = getToken();
 
     try {
-      const res = await fetch(`http://levelup.ddns.net:8080/users/me/direcciones/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/users/me/direcciones/${id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -242,7 +243,7 @@ const Direcciones = () => {
     const token = getToken();
 
     try {
-      const res = await fetch(`http://levelup.ddns.net:8080/users/me/direcciones/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/users/me/direcciones/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,

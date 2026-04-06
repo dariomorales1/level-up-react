@@ -3,7 +3,7 @@ import SideBar from '../components/SideBar';
 import '../styles/pages/cuentaStyles.css';
 import '../styles/pages/panelAdministrador.css';
 
-const BASE_URL = 'http://levelup.ddns.net:8080/users';
+const BASE_URL = `${process.env.REACT_APP_API_URL || 'http://levelup.ddns.net:8080'}/users`;
 const TOKEN_KEY = 'accessToken';
 
 const camposIniciales = {
